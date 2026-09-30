@@ -19,20 +19,6 @@ npm run build
 
 Copia `.env.example` a `.env.local` para activar las funciones opcionales (en vivo y valoraciones). Sin variables, el sitio funciona igual con datos gratuitos.
 
-## Publicar en Vercel
-
-1. Sube el repositorio a GitHub.
-2. En [vercel.com](https://vercel.com) → **Add New… → Project** → importa el repositorio (Vercel detecta Next.js solo).
-3. En **Settings → Environment Variables** carga las que quieras de `.env.example` (todas son opcionales).
-4. Cada `git push` a `main` vuelve a publicar el sitio.
-
-### Valoraciones (Supabase, opcional)
-
-1. Crea un proyecto gratis en [supabase.com](https://supabase.com).
-2. En **SQL Editor** pega y ejecuta [`supabase/schema.sql`](supabase/schema.sql).
-3. Copia `Project URL` y la `service_role` key (Project Settings → API) en `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`, y define un `RATINGS_SALT` aleatorio.
-
-El navegador nunca habla con Supabase: todo pasa por `/api/ratings`. No se guarda la IP, solo un hash con sal.
 
 ### Timing en vivo (OpenF1, opcional)
 
