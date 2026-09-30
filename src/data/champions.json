@@ -1,0 +1,1626 @@
+[
+ {
+  "season": 1950,
+  "driver": {
+   "driverId": "farina",
+   "givenName": "Nino",
+   "familyName": "Farina",
+   "nationality": "Italian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Nino_Farina",
+   "constructorId": "alfa",
+   "constructorName": "Alfa Romeo",
+   "points": 30,
+   "wins": 3
+  },
+  "constructor": null
+ },
+ {
+  "season": 1951,
+  "driver": {
+   "driverId": "fangio",
+   "givenName": "Juan",
+   "familyName": "Fangio",
+   "nationality": "Argentine",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Juan_Manuel_Fangio",
+   "constructorId": "alfa",
+   "constructorName": "Alfa Romeo",
+   "points": 31,
+   "wins": 3
+  },
+  "constructor": null
+ },
+ {
+  "season": 1952,
+  "driver": {
+   "driverId": "ascari",
+   "givenName": "Alberto",
+   "familyName": "Ascari",
+   "nationality": "Italian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alberto_Ascari",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 36,
+   "wins": 6
+  },
+  "constructor": null
+ },
+ {
+  "season": 1953,
+  "driver": {
+   "driverId": "ascari",
+   "givenName": "Alberto",
+   "familyName": "Ascari",
+   "nationality": "Italian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alberto_Ascari",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 34.5,
+   "wins": 5
+  },
+  "constructor": null
+ },
+ {
+  "season": 1954,
+  "driver": {
+   "driverId": "fangio",
+   "givenName": "Juan",
+   "familyName": "Fangio",
+   "nationality": "Argentine",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Juan_Manuel_Fangio",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 42,
+   "wins": 6
+  },
+  "constructor": null
+ },
+ {
+  "season": 1955,
+  "driver": {
+   "driverId": "fangio",
+   "givenName": "Juan",
+   "familyName": "Fangio",
+   "nationality": "Argentine",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Juan_Manuel_Fangio",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 40,
+   "wins": 4
+  },
+  "constructor": null
+ },
+ {
+  "season": 1956,
+  "driver": {
+   "driverId": "fangio",
+   "givenName": "Juan",
+   "familyName": "Fangio",
+   "nationality": "Argentine",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Juan_Manuel_Fangio",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 30,
+   "wins": 3
+  },
+  "constructor": null
+ },
+ {
+  "season": 1957,
+  "driver": {
+   "driverId": "fangio",
+   "givenName": "Juan",
+   "familyName": "Fangio",
+   "nationality": "Argentine",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Juan_Manuel_Fangio",
+   "constructorId": "maserati",
+   "constructorName": "Maserati",
+   "points": 40,
+   "wins": 4
+  },
+  "constructor": null
+ },
+ {
+  "season": 1958,
+  "driver": {
+   "driverId": "hawthorn",
+   "givenName": "Mike",
+   "familyName": "Hawthorn",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Mike_Hawthorn",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 42,
+   "wins": 1
+  },
+  "constructor": {
+   "constructorId": "vanwall",
+   "name": "Vanwall",
+   "nationality": "British",
+   "points": 48,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1959,
+  "driver": {
+   "driverId": "jack_brabham",
+   "givenName": "Jack",
+   "familyName": "Brabham",
+   "nationality": "Australian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jack_Brabham",
+   "constructorId": "cooper-climax",
+   "constructorName": "Cooper-Climax",
+   "points": 31,
+   "wins": 2
+  },
+  "constructor": {
+   "constructorId": "cooper-climax",
+   "name": "Cooper-Climax",
+   "nationality": "British",
+   "points": 40,
+   "wins": 5
+  }
+ },
+ {
+  "season": 1960,
+  "driver": {
+   "driverId": "jack_brabham",
+   "givenName": "Jack",
+   "familyName": "Brabham",
+   "nationality": "Australian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jack_Brabham",
+   "constructorId": "cooper-climax",
+   "constructorName": "Cooper-Climax",
+   "points": 43,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "cooper-climax",
+   "name": "Cooper-Climax",
+   "nationality": "British",
+   "points": 48,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1961,
+  "driver": {
+   "driverId": "phil_hill",
+   "givenName": "Phil",
+   "familyName": "Hill",
+   "nationality": "American",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Phil_Hill",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 34,
+   "wins": 2
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 45,
+   "wins": 5
+  }
+ },
+ {
+  "season": 1962,
+  "driver": {
+   "driverId": "hill",
+   "givenName": "Graham",
+   "familyName": "Hill",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Graham_Hill",
+   "constructorId": "brm",
+   "constructorName": "BRM",
+   "points": 42,
+   "wins": 4
+  },
+  "constructor": {
+   "constructorId": "brm",
+   "name": "BRM",
+   "nationality": "British",
+   "points": 42,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1963,
+  "driver": {
+   "driverId": "clark",
+   "givenName": "Jim",
+   "familyName": "Clark",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jim_Clark",
+   "constructorId": "lotus-climax",
+   "constructorName": "Lotus-Climax",
+   "points": 54,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "lotus-climax",
+   "name": "Lotus-Climax",
+   "nationality": "British",
+   "points": 54,
+   "wins": 7
+  }
+ },
+ {
+  "season": 1964,
+  "driver": {
+   "driverId": "surtees",
+   "givenName": "John",
+   "familyName": "Surtees",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/John_Surtees",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 40,
+   "wins": 2
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 45,
+   "wins": 3
+  }
+ },
+ {
+  "season": 1965,
+  "driver": {
+   "driverId": "clark",
+   "givenName": "Jim",
+   "familyName": "Clark",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jim_Clark",
+   "constructorId": "lotus-climax",
+   "constructorName": "Lotus-Climax",
+   "points": 54,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "lotus-climax",
+   "name": "Lotus-Climax",
+   "nationality": "British",
+   "points": 54,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1966,
+  "driver": {
+   "driverId": "jack_brabham",
+   "givenName": "Jack",
+   "familyName": "Brabham",
+   "nationality": "Australian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jack_Brabham",
+   "constructorId": "brabham-repco",
+   "constructorName": "Brabham-Repco",
+   "points": 42,
+   "wins": 4
+  },
+  "constructor": {
+   "constructorId": "brabham-repco",
+   "name": "Brabham-Repco",
+   "nationality": "British",
+   "points": 42,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1967,
+  "driver": {
+   "driverId": "hulme",
+   "givenName": "Denny",
+   "familyName": "Hulme",
+   "nationality": "New Zealander",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Denny_Hulme",
+   "constructorId": "brabham-repco",
+   "constructorName": "Brabham-Repco",
+   "points": 51,
+   "wins": 2
+  },
+  "constructor": {
+   "constructorId": "brabham-repco",
+   "name": "Brabham-Repco",
+   "nationality": "British",
+   "points": 67,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1968,
+  "driver": {
+   "driverId": "hill",
+   "givenName": "Graham",
+   "familyName": "Hill",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Graham_Hill",
+   "constructorId": "lotus-ford",
+   "constructorName": "Lotus-Ford",
+   "points": 48,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "lotus-ford",
+   "name": "Lotus-Ford",
+   "nationality": "British",
+   "points": 62,
+   "wins": 5
+  }
+ },
+ {
+  "season": 1969,
+  "driver": {
+   "driverId": "stewart",
+   "givenName": "Jackie",
+   "familyName": "Stewart",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jackie_Stewart",
+   "constructorId": "matra-ford",
+   "constructorName": "Matra-Ford",
+   "points": 63,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "matra-ford",
+   "name": "Matra-Ford",
+   "nationality": "French",
+   "points": 66,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1970,
+  "driver": {
+   "driverId": "rindt",
+   "givenName": "Jochen",
+   "familyName": "Rindt",
+   "nationality": "Austrian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jochen_Rindt",
+   "constructorId": "team_lotus",
+   "constructorName": "Team Lotus",
+   "points": 45,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "team_lotus",
+   "name": "Team Lotus",
+   "nationality": "British",
+   "points": 59,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1971,
+  "driver": {
+   "driverId": "stewart",
+   "givenName": "Jackie",
+   "familyName": "Stewart",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jackie_Stewart",
+   "constructorId": "tyrrell",
+   "constructorName": "Tyrrell",
+   "points": 62,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "tyrrell",
+   "name": "Tyrrell",
+   "nationality": "British",
+   "points": 73,
+   "wins": 7
+  }
+ },
+ {
+  "season": 1972,
+  "driver": {
+   "driverId": "emerson_fittipaldi",
+   "givenName": "Emerson",
+   "familyName": "Fittipaldi",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Emerson_Fittipaldi",
+   "constructorId": "team_lotus",
+   "constructorName": "Team Lotus",
+   "points": 61,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "team_lotus",
+   "name": "Team Lotus",
+   "nationality": "British",
+   "points": 61,
+   "wins": 5
+  }
+ },
+ {
+  "season": 1973,
+  "driver": {
+   "driverId": "stewart",
+   "givenName": "Jackie",
+   "familyName": "Stewart",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jackie_Stewart",
+   "constructorId": "tyrrell",
+   "constructorName": "Tyrrell",
+   "points": 71,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "team_lotus",
+   "name": "Team Lotus",
+   "nationality": "British",
+   "points": 91,
+   "wins": 7
+  }
+ },
+ {
+  "season": 1974,
+  "driver": {
+   "driverId": "emerson_fittipaldi",
+   "givenName": "Emerson",
+   "familyName": "Fittipaldi",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Emerson_Fittipaldi",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 55,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 72,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1975,
+  "driver": {
+   "driverId": "lauda",
+   "givenName": "Niki",
+   "familyName": "Lauda",
+   "nationality": "Austrian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Niki_Lauda",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 64.5,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 72.5,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1976,
+  "driver": {
+   "driverId": "hunt",
+   "givenName": "James",
+   "familyName": "Hunt",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/James_Hunt",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 69,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 83,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1977,
+  "driver": {
+   "driverId": "lauda",
+   "givenName": "Niki",
+   "familyName": "Lauda",
+   "nationality": "Austrian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Niki_Lauda",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 70,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 84,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1978,
+  "driver": {
+   "driverId": "mario_andretti",
+   "givenName": "Mario",
+   "familyName": "Andretti",
+   "nationality": "American",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Mario_Andretti",
+   "constructorId": "team_lotus",
+   "constructorName": "Team Lotus",
+   "points": 64,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "team_lotus",
+   "name": "Team Lotus",
+   "nationality": "British",
+   "points": 86,
+   "wins": 8
+  }
+ },
+ {
+  "season": 1979,
+  "driver": {
+   "driverId": "scheckter",
+   "givenName": "Jody",
+   "familyName": "Scheckter",
+   "nationality": "South African",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Jody_Scheckter",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 51,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 113,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1980,
+  "driver": {
+   "driverId": "jones",
+   "givenName": "Alan",
+   "familyName": "Jones",
+   "nationality": "Australian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alan_Jones_(Formula_1)",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 67,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 120,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1981,
+  "driver": {
+   "driverId": "piquet",
+   "givenName": "Nelson",
+   "familyName": "Piquet",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Nelson_Piquet",
+   "constructorId": "brabham",
+   "constructorName": "Brabham",
+   "points": 50,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 95,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1982,
+  "driver": {
+   "driverId": "keke_rosberg",
+   "givenName": "Keke",
+   "familyName": "Rosberg",
+   "nationality": "Finnish",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Keke_Rosberg",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 44,
+   "wins": 1
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 74,
+   "wins": 3
+  }
+ },
+ {
+  "season": 1983,
+  "driver": {
+   "driverId": "piquet",
+   "givenName": "Nelson",
+   "familyName": "Piquet",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Nelson_Piquet",
+   "constructorId": "brabham",
+   "constructorName": "Brabham",
+   "points": 59,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 89,
+   "wins": 4
+  }
+ },
+ {
+  "season": 1984,
+  "driver": {
+   "driverId": "lauda",
+   "givenName": "Niki",
+   "familyName": "Lauda",
+   "nationality": "Austrian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Niki_Lauda",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 72,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 143.5,
+   "wins": 12
+  }
+ },
+ {
+  "season": 1985,
+  "driver": {
+   "driverId": "prost",
+   "givenName": "Alain",
+   "familyName": "Prost",
+   "nationality": "French",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alain_Prost",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 73,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 90,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1986,
+  "driver": {
+   "driverId": "prost",
+   "givenName": "Alain",
+   "familyName": "Prost",
+   "nationality": "French",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alain_Prost",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 72,
+   "wins": 4
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 141,
+   "wins": 9
+  }
+ },
+ {
+  "season": 1987,
+  "driver": {
+   "driverId": "piquet",
+   "givenName": "Nelson",
+   "familyName": "Piquet",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Nelson_Piquet",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 73,
+   "wins": 3
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 137,
+   "wins": 9
+  }
+ },
+ {
+  "season": 1988,
+  "driver": {
+   "driverId": "senna",
+   "givenName": "Ayrton",
+   "familyName": "Senna",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Ayrton_Senna",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 90,
+   "wins": 8
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 199,
+   "wins": 15
+  }
+ },
+ {
+  "season": 1989,
+  "driver": {
+   "driverId": "prost",
+   "givenName": "Alain",
+   "familyName": "Prost",
+   "nationality": "French",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alain_Prost",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 76,
+   "wins": 4
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 141,
+   "wins": 10
+  }
+ },
+ {
+  "season": 1990,
+  "driver": {
+   "driverId": "senna",
+   "givenName": "Ayrton",
+   "familyName": "Senna",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Ayrton_Senna",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 78,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 121,
+   "wins": 6
+  }
+ },
+ {
+  "season": 1991,
+  "driver": {
+   "driverId": "senna",
+   "givenName": "Ayrton",
+   "familyName": "Senna",
+   "nationality": "Brazilian",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Ayrton_Senna",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 96,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 139,
+   "wins": 8
+  }
+ },
+ {
+  "season": 1992,
+  "driver": {
+   "driverId": "mansell",
+   "givenName": "Nigel",
+   "familyName": "Mansell",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Nigel_Mansell",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 108,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 164,
+   "wins": 10
+  }
+ },
+ {
+  "season": 1993,
+  "driver": {
+   "driverId": "prost",
+   "givenName": "Alain",
+   "familyName": "Prost",
+   "nationality": "French",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Alain_Prost",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 99,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 168,
+   "wins": 10
+  }
+ },
+ {
+  "season": 1994,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "benetton",
+   "constructorName": "Benetton",
+   "points": 92,
+   "wins": 8
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 118,
+   "wins": 7
+  }
+ },
+ {
+  "season": 1995,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "benetton",
+   "constructorName": "Benetton",
+   "points": 102,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "benetton",
+   "name": "Benetton",
+   "nationality": "Italian",
+   "points": 147,
+   "wins": 11
+  }
+ },
+ {
+  "season": 1996,
+  "driver": {
+   "driverId": "damon_hill",
+   "givenName": "Damon",
+   "familyName": "Hill",
+   "nationality": "British",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Damon_Hill",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 97,
+   "wins": 8
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 175,
+   "wins": 12
+  }
+ },
+ {
+  "season": 1997,
+  "driver": {
+   "driverId": "villeneuve",
+   "givenName": "Jacques",
+   "familyName": "Villeneuve",
+   "nationality": "Canadian",
+   "code": "VIL",
+   "url": "http://en.wikipedia.org/wiki/Jacques_Villeneuve",
+   "constructorId": "williams",
+   "constructorName": "Williams",
+   "points": 81,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "williams",
+   "name": "Williams",
+   "nationality": "British",
+   "points": 123,
+   "wins": 8
+  }
+ },
+ {
+  "season": 1998,
+  "driver": {
+   "driverId": "hakkinen",
+   "givenName": "Mika",
+   "familyName": "Häkkinen",
+   "nationality": "Finnish",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Mika_H%C3%A4kkinen",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 100,
+   "wins": 8
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 156,
+   "wins": 9
+  }
+ },
+ {
+  "season": 1999,
+  "driver": {
+   "driverId": "hakkinen",
+   "givenName": "Mika",
+   "familyName": "Häkkinen",
+   "nationality": "Finnish",
+   "code": null,
+   "url": "http://en.wikipedia.org/wiki/Mika_H%C3%A4kkinen",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 76,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 128,
+   "wins": 6
+  }
+ },
+ {
+  "season": 2000,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 108,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 170,
+   "wins": 10
+  }
+ },
+ {
+  "season": 2001,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 123,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 179,
+   "wins": 9
+  }
+ },
+ {
+  "season": 2002,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 144,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 221,
+   "wins": 15
+  }
+ },
+ {
+  "season": 2003,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 93,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 158,
+   "wins": 8
+  }
+ },
+ {
+  "season": 2004,
+  "driver": {
+   "driverId": "michael_schumacher",
+   "givenName": "Michael",
+   "familyName": "Schumacher",
+   "nationality": "German",
+   "code": "MSC",
+   "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 148,
+   "wins": 13
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 262,
+   "wins": 15
+  }
+ },
+ {
+  "season": 2005,
+  "driver": {
+   "driverId": "alonso",
+   "givenName": "Fernando",
+   "familyName": "Alonso",
+   "nationality": "Spanish",
+   "code": "ALO",
+   "url": "http://en.wikipedia.org/wiki/Fernando_Alonso",
+   "constructorId": "renault",
+   "constructorName": "Renault",
+   "points": 133,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "renault",
+   "name": "Renault",
+   "nationality": "French",
+   "points": 191,
+   "wins": 8
+  }
+ },
+ {
+  "season": 2006,
+  "driver": {
+   "driverId": "alonso",
+   "givenName": "Fernando",
+   "familyName": "Alonso",
+   "nationality": "Spanish",
+   "code": "ALO",
+   "url": "http://en.wikipedia.org/wiki/Fernando_Alonso",
+   "constructorId": "renault",
+   "constructorName": "Renault",
+   "points": 134,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "renault",
+   "name": "Renault",
+   "nationality": "French",
+   "points": 206,
+   "wins": 8
+  }
+ },
+ {
+  "season": 2007,
+  "driver": {
+   "driverId": "raikkonen",
+   "givenName": "Kimi",
+   "familyName": "Räikkönen",
+   "nationality": "Finnish",
+   "code": "RAI",
+   "url": "http://en.wikipedia.org/wiki/Kimi_R%C3%A4ikk%C3%B6nen",
+   "constructorId": "ferrari",
+   "constructorName": "Ferrari",
+   "points": 110,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 204,
+   "wins": 9
+  }
+ },
+ {
+  "season": 2008,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 98,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "ferrari",
+   "name": "Ferrari",
+   "nationality": "Italian",
+   "points": 172,
+   "wins": 8
+  }
+ },
+ {
+  "season": 2009,
+  "driver": {
+   "driverId": "button",
+   "givenName": "Jenson",
+   "familyName": "Button",
+   "nationality": "British",
+   "code": "BUT",
+   "url": "http://en.wikipedia.org/wiki/Jenson_Button",
+   "constructorId": "brawn",
+   "constructorName": "Brawn",
+   "points": 95,
+   "wins": 6
+  },
+  "constructor": {
+   "constructorId": "brawn",
+   "name": "Brawn",
+   "nationality": "British",
+   "points": 172,
+   "wins": 8
+  }
+ },
+ {
+  "season": 2010,
+  "driver": {
+   "driverId": "vettel",
+   "givenName": "Sebastian",
+   "familyName": "Vettel",
+   "nationality": "German",
+   "code": "VET",
+   "url": "http://en.wikipedia.org/wiki/Sebastian_Vettel",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 256,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 498,
+   "wins": 9
+  }
+ },
+ {
+  "season": 2011,
+  "driver": {
+   "driverId": "vettel",
+   "givenName": "Sebastian",
+   "familyName": "Vettel",
+   "nationality": "German",
+   "code": "VET",
+   "url": "http://en.wikipedia.org/wiki/Sebastian_Vettel",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 392,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 650,
+   "wins": 12
+  }
+ },
+ {
+  "season": 2012,
+  "driver": {
+   "driverId": "vettel",
+   "givenName": "Sebastian",
+   "familyName": "Vettel",
+   "nationality": "German",
+   "code": "VET",
+   "url": "http://en.wikipedia.org/wiki/Sebastian_Vettel",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 281,
+   "wins": 5
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 460,
+   "wins": 7
+  }
+ },
+ {
+  "season": 2013,
+  "driver": {
+   "driverId": "vettel",
+   "givenName": "Sebastian",
+   "familyName": "Vettel",
+   "nationality": "German",
+   "code": "VET",
+   "url": "http://en.wikipedia.org/wiki/Sebastian_Vettel",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 397,
+   "wins": 13
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 596,
+   "wins": 13
+  }
+ },
+ {
+  "season": 2014,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 384,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 701,
+   "wins": 16
+  }
+ },
+ {
+  "season": 2015,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 381,
+   "wins": 10
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 703,
+   "wins": 16
+  }
+ },
+ {
+  "season": 2016,
+  "driver": {
+   "driverId": "rosberg",
+   "givenName": "Nico",
+   "familyName": "Rosberg",
+   "nationality": "German",
+   "code": "ROS",
+   "url": "http://en.wikipedia.org/wiki/Nico_Rosberg",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 385,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 765,
+   "wins": 19
+  }
+ },
+ {
+  "season": 2017,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 363,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 668,
+   "wins": 12
+  }
+ },
+ {
+  "season": 2018,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 408,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 655,
+   "wins": 11
+  }
+ },
+ {
+  "season": 2019,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 413,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 739,
+   "wins": 15
+  }
+ },
+ {
+  "season": 2020,
+  "driver": {
+   "driverId": "hamilton",
+   "givenName": "Lewis",
+   "familyName": "Hamilton",
+   "nationality": "British",
+   "code": "HAM",
+   "url": "http://en.wikipedia.org/wiki/Lewis_Hamilton",
+   "constructorId": "mercedes",
+   "constructorName": "Mercedes",
+   "points": 347,
+   "wins": 11
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 573,
+   "wins": 13
+  }
+ },
+ {
+  "season": 2021,
+  "driver": {
+   "driverId": "max_verstappen",
+   "givenName": "Max",
+   "familyName": "Verstappen",
+   "nationality": "Dutch",
+   "code": "VER",
+   "url": "http://en.wikipedia.org/wiki/Max_Verstappen",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 395.5,
+   "wins": 10
+  },
+  "constructor": {
+   "constructorId": "mercedes",
+   "name": "Mercedes",
+   "nationality": "German",
+   "points": 613.5,
+   "wins": 9
+  }
+ },
+ {
+  "season": 2022,
+  "driver": {
+   "driverId": "max_verstappen",
+   "givenName": "Max",
+   "familyName": "Verstappen",
+   "nationality": "Dutch",
+   "code": "VER",
+   "url": "http://en.wikipedia.org/wiki/Max_Verstappen",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 454,
+   "wins": 15
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 759,
+   "wins": 17
+  }
+ },
+ {
+  "season": 2023,
+  "driver": {
+   "driverId": "max_verstappen",
+   "givenName": "Max",
+   "familyName": "Verstappen",
+   "nationality": "Dutch",
+   "code": "VER",
+   "url": "http://en.wikipedia.org/wiki/Max_Verstappen",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 575,
+   "wins": 19
+  },
+  "constructor": {
+   "constructorId": "red_bull",
+   "name": "Red Bull",
+   "nationality": "Austrian",
+   "points": 860,
+   "wins": 21
+  }
+ },
+ {
+  "season": 2024,
+  "driver": {
+   "driverId": "max_verstappen",
+   "givenName": "Max",
+   "familyName": "Verstappen",
+   "nationality": "Dutch",
+   "code": "VER",
+   "url": "http://en.wikipedia.org/wiki/Max_Verstappen",
+   "constructorId": "red_bull",
+   "constructorName": "Red Bull",
+   "points": 437,
+   "wins": 9
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 666,
+   "wins": 6
+  }
+ },
+ {
+  "season": 2025,
+  "driver": {
+   "driverId": "norris",
+   "givenName": "Lando",
+   "familyName": "Norris",
+   "nationality": "British",
+   "code": "NOR",
+   "url": "http://en.wikipedia.org/wiki/Lando_Norris",
+   "constructorId": "mclaren",
+   "constructorName": "McLaren",
+   "points": 423,
+   "wins": 7
+  },
+  "constructor": {
+   "constructorId": "mclaren",
+   "name": "McLaren",
+   "nationality": "British",
+   "points": 833,
+   "wins": 14
+  }
+ }
+]

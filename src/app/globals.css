@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+/* F1 Majoda — tema oscuro inspirado en Box Box Club */
+:root {
+  --bg: #060608;
+  --surface: #111114;
+  --surface-2: #1c1c1e;
+  --surface-3: #2a2a2e;
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.16);
+  --ink: #f5f5f7;
+  --ink-2: #a1a1aa;
+  --ink-3: #6e6e78;
+  --accent: #ff3b1f;
+  --accent-2: #ff9500;
+  --ember: #7a0a00;
+  --purple: #af52de;
+  --green: #30d158;
+  --yellow: #ffd60a;
+  --blue: #3b82f6;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-ember: var(--ember);
+  --color-purple: var(--purple);
+  --color-green: var(--green);
+  --color-yellow: var(--yellow);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-titillium), var(--font-geist), sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+@layer components {
+  /* Tarjeta tipo vidrio */
+  .glass {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.025));
+    border: 1px solid var(--line);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-radius: 1.25rem;
+  }
+
+  /* Degradado cálido de "final de carrera" */
+  .ember-glow {
+    background:
+      radial-gradient(120% 90% at 85% 110%, rgb(255 149 0 / 0.55) 0%, rgb(122 10 0 / 0.5) 35%, transparent 70%),
+      radial-gradient(80% 60% at 0% 0%, rgb(255 59 31 / 0.18), transparent 60%),
+      var(--surface);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 0.95;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+
+  .scroll-x {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+  }
+  .data-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    font-weight: 600;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .data-table td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .data-table tbody tr:hover td {
+    background: rgb(255 255 255 / 0.025);
+  }
+}
+
+/* Trazado con efecto 3D extruido */
+.track-3d {
+  transform: perspective(900px) rotateX(48deg) rotateZ(-8deg);
+  transform-style: preserve-3d;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+.live-dot {
+  animation: pulse-live 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
