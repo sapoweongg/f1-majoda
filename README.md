@@ -2,6 +2,8 @@
 
 Dashboard de Fórmula 1 en español e inglés: resultados, campeonatos de pilotos y constructores, calculadora del título, comparativa de pilotos, telemetría, estrategia de neumáticos, calendario con pronóstico, historia desde 1950, timing en vivo (o repetición de la última carrera) y valoraciones de los fans.
 
+**En línea:** https://f1-majoda.vercel.app
+
 Hecho con Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Recharts, motion y next-intl.
 
 ## Desarrollo
@@ -21,7 +23,7 @@ Copia `.env.example` a `.env.local` para activar las funciones opcionales (en vi
 
 1. Sube el repositorio a GitHub.
 2. En [vercel.com](https://vercel.com) → **Add New… → Project** → importa el repositorio (Vercel detecta Next.js solo).
-3. En **Settings → Environment Variables** carga las que quieras de `.env.example` (como mínimo `NEXT_PUBLIC_SITE_URL`).
+3. En **Settings → Environment Variables** carga las que quieras de `.env.example` (todas son opcionales).
 4. Cada `git push` a `main` vuelve a publicar el sitio.
 
 ### Valoraciones (Supabase, opcional)

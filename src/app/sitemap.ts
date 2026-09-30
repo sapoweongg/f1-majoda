@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
 import { routing } from "@/i18n/routing";
 
 const PAGES = ["", "/live", "/standings", "/races", "/compare", "/telemetry", "/calendar", "/history", "/ratings"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base = siteUrl();
   return PAGES.flatMap((path) =>
     routing.locales.map((locale) => ({
       url: `${base}/${locale}${path}`,
