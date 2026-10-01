@@ -35,7 +35,8 @@ type Copy = {
   pause: string;
   photoCaption: string;
   galleryTitle: string;
-  gallery: { parade: string; museum: string; battle: string; profile: string };
+  gallery: { parade: string; museum: string; battle: string; profile: string; side: string; pack: string };
+  paradeQuote: string;
   creditsTitle: string;
   credits: string[];
   back: string;
@@ -121,7 +122,10 @@ export const MAX_2023: Record<"es" | "en", Copy> = {
       museum: "El RB19 campeón, expuesto en el Petersen Automotive Museum",
       battle: "En pista · GP de Austria 2023",
       profile: "El número 1 tras la carrera · GP de Austria 2023",
+      side: "A fondo en el Red Bull Ring · GP de Austria 2023",
+      pack: "Al frente del grupo · GP de Austria 2023",
     },
+    paradeQuote: "Detrás de cada récord, un piloto que disfrutaba cada vuelta.",
     creditsTitle: "Créditos",
     credits: [
       "Estadísticas de la temporada calculadas con datos de Jolpica-F1. Los récords anteriores y las 1.003 vueltas lideradas provienen del registro histórico de la Fórmula 1.",
@@ -208,7 +212,10 @@ export const MAX_2023: Record<"es" | "en", Copy> = {
       museum: "The championship-winning RB19 on display at the Petersen Automotive Museum",
       battle: "On track · 2023 Austrian GP",
       profile: "The number 1 after the race · 2023 Austrian GP",
+      side: "Flat out at the Red Bull Ring · 2023 Austrian GP",
+      pack: "Leading the pack · 2023 Austrian GP",
     },
+    paradeQuote: "Behind every record, a driver enjoying every lap.",
     creditsTitle: "Credits",
     credits: [
       "Season statistics computed from Jolpica-F1 data. Previous records and the 1,003 laps led come from Formula 1's historical record.",
@@ -230,4 +237,6 @@ export const PHOTOS = {
   parade: "File:FIA F1 Austria 2023 Max Verstappen.jpg",
   museum: "File:Max Verstappen Red Bull RB19 Petersen Automotive Museum.jpg",
   battle: "File:FIA F1 Austria 2023 Race (2).jpg",
+  side: "File:FIA F1 Austria 2023 Nr. 1 (2).jpg",
+  pack: "File:FIA F1 Austria 2023 Race (1).jpg",
 };

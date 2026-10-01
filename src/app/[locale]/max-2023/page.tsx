@@ -46,6 +46,53 @@ function SectionTitle({ eyebrow, title, intro }: { eyebrow?: string; title: stri
   );
 }
 
+/** Foto con degradado, pie y crédito (autor y licencia enlazados a Commons). */
+function PhotoBanner({
+  img,
+  caption,
+  quote,
+  small,
+  className,
+  position = "object-center",
+}: {
+  img: { src: string; credit: string; filePage: string };
+  caption: string;
+  quote?: string;
+  small?: boolean;
+  className?: string;
+  position?: string;
+}) {
+  return (
+    <figure
+      className={cn(
+        "group relative overflow-hidden border border-white/10",
+        small ? "rounded-2xl" : "-mx-4 rounded-none sm:mx-0 sm:rounded-[2rem]",
+        className,
+      )}
+    >
+      <Image
+        src={img.src}
+        alt={caption}
+        fill
+        sizes={small ? "(min-width: 1024px) 40vw, 100vw" : "100vw"}
+        className={cn("object-cover transition-transform duration-700 group-hover:scale-[1.03]", position)}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+      {quote && (
+        <p className="display absolute right-5 top-5 max-w-[55%] text-right text-2xl leading-tight [text-shadow:0_4px_24px_rgb(0_0_0/0.8)] sm:right-10 sm:top-10 sm:max-w-md sm:text-5xl">
+          {quote}
+        </p>
+      )}
+      <figcaption className={cn("absolute", small ? "inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4" : "inset-x-6 bottom-5 sm:inset-x-8")}>
+        <p className={cn("font-semibold leading-snug", small ? "text-sm" : "display text-xl sm:text-2xl")}>{caption}</p>
+        <a href={img.filePage} target="_blank" rel="noreferrer" className="mt-0.5 block truncate text-[10px] text-white/55 hover:text-white">
+          {img.credit}
+        </a>
+      </figcaption>
+    </figure>
+  );
+}
+
 export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2023">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -66,8 +113,13 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
   // Retratos oficiales de cuerpo entero (fondo transparente)
   const bodySide = driverBodyImage("redbullracing", "maxver01", 2024, "right");
   const bodyFront = driverBodyImage("redbullracing", "maxver01", 2024, "front");
-  const gallery = (["parade", "museum", "battle", "profile", "sparks"] as const)
-    .map((key) => ({ key, img: photos.get(PHOTOS[key]) }))
+  const photo = (key: keyof typeof PHOTOS) => photos.get(PHOTOS[key]);
+  const sparks = photo("sparks");
+  const parade = photo("parade");
+  const museum = photo("museum");
+  // Galería final: las fotos que no aparecen repartidas por la página
+  const gallery = (["side", "battle", "pack", "profile"] as const)
+    .map((key) => ({ key, img: photo(key) }))
     .filter((g): g is { key: (typeof g)["key"]; img: NonNullable<typeof g.img> } => Boolean(g.img));
 
   const recordValues: Record<RecordId, string> = {
@@ -253,46 +305,15 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
         </section>
       )}
 
-      {/* ---------- GALERÍA ---------- */}
-      {gallery.length > 0 && (
-        <section>
-          <SectionTitle title={c.galleryTitle} />
-          <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] lg:grid-cols-4">
-            {gallery.map(({ key, img }) => (
-              <figure
-                key={key}
-                className={cn(
-                  "group relative overflow-hidden rounded-2xl border border-white/10",
-                  key === "parade" && "col-span-2 row-span-2",
-                  key === "museum" && "col-span-2",
-                  key === "sparks" && "col-span-2 lg:col-span-4 lg:row-span-2",
-                )}
-              >
-                <Image
-                  src={img.src}
-                  alt={key === "sparks" ? c.photoCaption : c.gallery[key]}
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-                <figcaption className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4">
-                  <p className={cn("font-semibold leading-snug", key === "parade" || key === "sparks" ? "display text-xl sm:text-2xl" : "text-sm")}>
-                    {key === "sparks" ? c.photoCaption : c.gallery[key]}
-                  </p>
-                  <a href={img.filePage} target="_blank" rel="noreferrer" className="mt-0.5 block truncate text-[10px] text-white/55 hover:text-white">
-                    {img.credit}
-                  </a>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* ---------- FOTO: RB19 CON CHISPAS ---------- */}
+      {sparks && <PhotoBanner img={sparks} caption={c.photoCaption} className="h-[22rem] sm:h-[32rem]" />}
 
       {/* ---------- CARRERA A CARRERA ---------- */}
       <section>
-        <SectionTitle title={c.seasonTitle} intro={c.seasonIntro} />
+        <div className="mb-8 grid items-end gap-6 lg:grid-cols-[1fr_minmax(0,26rem)]">
+          <SectionTitle title={c.seasonTitle} intro={c.seasonIntro} />
+          {museum && <PhotoBanner img={museum} caption={c.gallery.museum} small className="h-56 sm:h-64" />}
+        </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {data.rows.map((r) => {
             const shape = trackShape(r.circuitId, 2023);
@@ -398,6 +419,11 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
         )}
       </section>
 
+      {/* ---------- FOTO: MAX SALUDANDO ---------- */}
+      {parade && (
+        <PhotoBanner img={parade} caption={c.gallery.parade} quote={c.paradeQuote} className="h-[24rem] sm:h-[34rem]" position="object-[30%_40%]" />
+      )}
+
       {/* ---------- RADIOS ---------- */}
       {radioGroups.length > 0 && (
         <section>
@@ -410,6 +436,28 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
                 tag={clips.some((x) => x.session === "sprint") ? c.sprint : undefined}
                 clips={clips.map((x) => x.url)}
                 labels={{ play: c.play, pause: c.pause }}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ---------- GALERÍA ---------- */}
+      {gallery.length > 0 && (
+        <section>
+          <SectionTitle title={c.galleryTitle} />
+          <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] lg:grid-cols-4">
+            {gallery.map(({ key, img }) => (
+              <PhotoBanner
+                key={key}
+                img={img}
+                caption={c.gallery[key]}
+                small
+                className={cn(
+                  "h-full",
+                  key === "side" && "col-span-2 row-span-2",
+                  key === "battle" && "col-span-2",
+                )}
               />
             ))}
           </div>
