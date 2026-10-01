@@ -10,6 +10,7 @@ import { trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
 import { cn } from "@/lib/format";
 import { getMax2023 } from "@/lib/max2023";
+import { driverBodyImage } from "@/lib/media";
 import { getOfficialHeadshots } from "@/lib/photos";
 import { safe } from "@/lib/safe";
 import { progressionSeries } from "@/lib/view";
@@ -20,7 +21,9 @@ import { RevealOnView } from "@/components/max2023/RevealOnView";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { EmptyState, Flag } from "@/components/ui/primitives";
 
-export const revalidate = 86400;
+// Se genera en cada visita (los datos vienen de la caché de datos, 30 días para 2023): así un fallo
+// puntual de la API durante el build no deja la página vacía en caché.
+export const dynamic = "force-dynamic";
 
 const YELLOW = "#ffcc00";
 const NAVY = "#0b1530";
@@ -59,9 +62,13 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
   if (!data) return <EmptyState>{lang === "en" ? "Data unavailable right now." : "Datos no disponibles ahora mismo."}</EmptyState>;
 
   const hero = photos.get(PHOTOS.hero);
-  const sparks = photos.get(PHOTOS.sparks);
-  const helmet = photos.get(PHOTOS.helmet);
   const headshot = headshots.get("VER");
+  // Retratos oficiales de cuerpo entero (fondo transparente)
+  const bodySide = driverBodyImage("redbullracing", "maxver01", 2024, "right");
+  const bodyFront = driverBodyImage("redbullracing", "maxver01", 2024, "front");
+  const gallery = (["parade", "museum", "battle", "profile", "sparks"] as const)
+    .map((key) => ({ key, img: photos.get(PHOTOS[key]) }))
+    .filter((g): g is { key: (typeof g)["key"]; img: NonNullable<typeof g.img> } => Boolean(g.img));
 
   const recordValues: Record<RecordId, string> = {
     wins: String(data.wins),
@@ -176,10 +183,16 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
             ))}
           </div>
         </div>
-        {helmet && (
-          <figure className="relative mx-auto w-64 lg:w-full">
-            <div className="absolute inset-6 rounded-full opacity-40 blur-3xl" style={{ background: YELLOW }} aria-hidden />
-            <Image src={helmet.src} alt="Casco 2023" width={640} height={590} className="relative drop-shadow-2xl" />
+        {bodySide && (
+          <figure className="relative mx-auto h-[26rem] w-56 lg:h-[32rem] lg:w-full">
+            <div className="absolute inset-x-6 bottom-6 top-16 rounded-full opacity-30 blur-3xl" style={{ background: YELLOW }} aria-hidden />
+            <Image
+              src={bodySide}
+              alt="Max Verstappen"
+              fill
+              sizes="320px"
+              className="relative object-contain object-bottom drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)]"
+            />
           </figure>
         )}
       </section>
@@ -240,18 +253,41 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
         </section>
       )}
 
-      {/* ---------- FOTO ---------- */}
-      {sparks && (
-        <figure className="relative -mx-4 h-[22rem] overflow-hidden sm:mx-0 sm:h-[30rem] sm:rounded-[2rem]">
-          <Image src={sparks.src} alt="RB19" fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-          <figcaption className="absolute bottom-5 left-6 right-6 flex flex-wrap items-end justify-between gap-2">
-            <span className="display text-2xl sm:text-3xl">{c.photoCaption}</span>
-            <a href={sparks.filePage} target="_blank" rel="noreferrer" className="text-[10px] text-white/60 hover:text-white">
-              {sparks.credit}
-            </a>
-          </figcaption>
-        </figure>
+      {/* ---------- GALERÍA ---------- */}
+      {gallery.length > 0 && (
+        <section>
+          <SectionTitle title={c.galleryTitle} />
+          <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] lg:grid-cols-4">
+            {gallery.map(({ key, img }) => (
+              <figure
+                key={key}
+                className={cn(
+                  "group relative overflow-hidden rounded-2xl border border-white/10",
+                  key === "parade" && "col-span-2 row-span-2",
+                  key === "museum" && "col-span-2",
+                  key === "sparks" && "col-span-2 lg:col-span-4 lg:row-span-2",
+                )}
+              >
+                <Image
+                  src={img.src}
+                  alt={key === "sparks" ? c.photoCaption : c.gallery[key]}
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                <figcaption className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4">
+                  <p className={cn("font-semibold leading-snug", key === "parade" || key === "sparks" ? "display text-xl sm:text-2xl" : "text-sm")}>
+                    {key === "sparks" ? c.photoCaption : c.gallery[key]}
+                  </p>
+                  <a href={img.filePage} target="_blank" rel="noreferrer" className="mt-0.5 block truncate text-[10px] text-white/55 hover:text-white">
+                    {img.credit}
+                  </a>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ---------- CARRERA A CARRERA ---------- */}
@@ -328,7 +364,8 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
       )}
 
       {/* ---------- MOMENTOS ---------- */}
-      <section>
+      <section className="grid gap-10 lg:grid-cols-[1fr_300px]">
+        <div>
         <SectionTitle title={c.momentsTitle} />
         <ol className="relative space-y-6 border-l border-[#ffcc00]/30 pl-6 sm:pl-8">
           {moments.map((r) => (
@@ -350,6 +387,15 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
             </li>
           ))}
         </ol>
+        </div>
+        {bodyFront && (
+          <figure className="relative hidden lg:block">
+            <div className="sticky top-24 h-[34rem]">
+              <div className="absolute inset-x-4 bottom-10 top-24 rounded-full opacity-25 blur-3xl" style={{ background: YELLOW }} aria-hidden />
+              <Image src={bodyFront} alt="Max Verstappen" fill sizes="300px" className="object-contain object-bottom drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)]" />
+            </div>
+          </figure>
+        )}
       </section>
 
       {/* ---------- RADIOS ---------- */}

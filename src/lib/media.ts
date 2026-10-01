@@ -29,3 +29,9 @@ export function largeHeadshot(url: string | null | undefined): string | null {
   if (!OFFICIAL_MEDIA || !url) return null;
   return url.replace("/1col/", "/4col/");
 }
+
+/** Retrato oficial de cuerpo entero (fondo transparente). Existe desde 2024 en el CDN de F1. */
+export function driverBodyImage(teamSlug: string, driverCode: string, year: number, pose: "right" | "front", width = 700) {
+  if (!OFFICIAL_MEDIA) return null;
+  return `${CDN}/c_lfill,w_${width}/q_auto/${VERSION}/common/f1/${year}/${teamSlug}/${driverCode}/${year}${teamSlug}${driverCode}${pose}.webp`;
+}

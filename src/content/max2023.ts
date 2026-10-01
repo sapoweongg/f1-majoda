@@ -34,6 +34,8 @@ type Copy = {
   play: string;
   pause: string;
   photoCaption: string;
+  galleryTitle: string;
+  gallery: { parade: string; museum: string; battle: string; profile: string };
   creditsTitle: string;
   credits: string[];
   back: string;
@@ -113,11 +115,19 @@ export const MAX_2023: Record<"es" | "en", Copy> = {
     play: "Reproducir",
     pause: "Pausa",
     photoCaption: "Red Bull RB19 · GP de Austria 2023",
+    galleryTitle: "Galería",
+    gallery: {
+      parade: "Max saluda al público en el desfile de pilotos · GP de Austria 2023",
+      museum: "El RB19 campeón, expuesto en el Petersen Automotive Museum",
+      battle: "En pista · GP de Austria 2023",
+      profile: "El número 1 tras la carrera · GP de Austria 2023",
+    },
     creditsTitle: "Créditos",
     credits: [
       "Estadísticas de la temporada calculadas con datos de Jolpica-F1. Los récords anteriores y las 1.003 vueltas lideradas provienen del registro histórico de la Fórmula 1.",
       "Radios: grabaciones oficiales de Formula 1 Live Timing, obtenidas a través de OpenF1. © Formula 1.",
-      "Fotos del RB19: Lukas Raich (CC BY-SA 4.0). Casco: Auge=mit (CC BY-SA 4.0). Wikimedia Commons.",
+      "Fotos de Austria 2023: Lukas Raich (CC BY-SA 4.0). RB19 en el museo: TaurusEmerald (CC BY-SA 4.0). Wikimedia Commons.",
+      "Retratos oficiales de Max Verstappen: © Formula 1.",
     ],
     back: "Volver a Max Verstappen",
   },
@@ -192,11 +202,19 @@ export const MAX_2023: Record<"es" | "en", Copy> = {
     play: "Play",
     pause: "Pause",
     photoCaption: "Red Bull RB19 · 2023 Austrian GP",
+    galleryTitle: "Gallery",
+    gallery: {
+      parade: "Max waves to the crowd at the drivers parade · 2023 Austrian GP",
+      museum: "The championship-winning RB19 on display at the Petersen Automotive Museum",
+      battle: "On track · 2023 Austrian GP",
+      profile: "The number 1 after the race · 2023 Austrian GP",
+    },
     creditsTitle: "Credits",
     credits: [
       "Season statistics computed from Jolpica-F1 data. Previous records and the 1,003 laps led come from Formula 1's historical record.",
       "Radio: official Formula 1 Live Timing recordings, obtained through OpenF1. © Formula 1.",
-      "RB19 photos: Lukas Raich (CC BY-SA 4.0). Helmet: Auge=mit (CC BY-SA 4.0). Wikimedia Commons.",
+      "2023 Austria photos: Lukas Raich (CC BY-SA 4.0). RB19 at the museum: TaurusEmerald (CC BY-SA 4.0). Wikimedia Commons.",
+      "Official portraits of Max Verstappen: © Formula 1.",
     ],
     back: "Back to Max Verstappen",
   },
@@ -209,5 +227,7 @@ export const PHOTOS = {
   hero: "File:FIA F1 Austria 2023 Nr. 1 (1).jpg",
   sparks: "File:FIA F1 Austria 2023 Nr. 1 (3).jpg",
   profile: "File:FIA F1 Austria 2023 Nr. 1 (Post-Race).jpg",
-  helmet: "File:Max Verstappen Integralhelm 2023.jpg",
+  parade: "File:FIA F1 Austria 2023 Max Verstappen.jpg",
+  museum: "File:Max Verstappen Red Bull RB19 Petersen Automotive Museum.jpg",
+  battle: "File:FIA F1 Austria 2023 Race (2).jpg",
 };

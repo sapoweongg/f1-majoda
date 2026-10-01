@@ -39,8 +39,11 @@ async function rawJson<T>(url: string, opts: Options): Promise<T> {
     });
     if (res.ok) return (await res.json()) as T;
     // 429 = límite alcanzado; 5xx = fallo temporal. Reintentamos con espera creciente.
-    if ((res.status === 429 || res.status >= 500) && attempt < 3) {
-      await new Promise((r) => setTimeout(r, 800 * 2 ** attempt));
+    if ((res.status === 429 || res.status >= 500) && attempt < 4) {
+      // Si la API indica cuánto esperar (Retry-After), lo respetamos (máx. 10 s)
+      const retryAfter = Number(res.headers.get("retry-after"));
+      const wait = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 10) * 1000 : 1000 * 2 ** attempt;
+      await new Promise((r) => setTimeout(r, wait));
       continue;
     }
     throw new ApiError(res.status, url);
