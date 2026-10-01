@@ -6,13 +6,29 @@ import { Link } from "@/i18n/navigation";
 
 const HEART = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
 
-const PARAGRAPHS = [
-  "María José, si lees esto, lo primero que tengo por decir es que te amo.",
-  "La razón por la que el 2025 es mi campeonato más importante es porque es el año en el que conocí al amor de mi vida. María José, eres lo más importante que me ha pasado y no sabes lo agradecido que estoy con la vida por haberte traído a mí.",
-  "No sabes lo feliz que me haces y lo inspirado que me siento día tras día. Todos los días me levanto y pienso que tengo que ser mejor hombre, mejor estudiante, mejor desarrollador y mejor persona para hacerte feliz, pollito míooo.",
-  "Yo sé que dices que no volverás conmigo, pero todos los días de mi vida trataré de buscar la manera de sanar tu corazón y de enamorarte poquito a poquito.",
-  "Gracias por existir, vida mía.",
+type Paragraph = { text: string; kind?: "opening" | "memory"; label?: string };
+
+const PARAGRAPHS: Paragraph[] = [
+  { kind: "opening", text: "María José, si lees esto, lo primero que tengo por decir es que te amo." },
+  {
+    text: "La razón por la que el 2025 es mi campeonato más importante es porque es el año en el que conocí al amor de mi vida. María José, eres lo más importante que me ha pasado y no sabes lo agradecido que estoy con la vida por haberte traído a mí.",
+  },
+  {
+    text: "No sabes lo feliz que me haces y lo inspirado que me siento día tras día. Todos los días me levanto y pienso que tengo que ser mejor hombre, mejor estudiante, mejor desarrollador y mejor persona para hacerte feliz, pollito míooo.",
+  },
+  {
+    kind: "memory",
+    label: "Martes 29 de septiembre · Noveno piso",
+    text: "Y si alguna vez dudas de lo que siento, cierra los ojos y vuelve conmigo a ese martes 29 de septiembre, en el noveno piso. El mundo seguía allá abajo, a su ritmo, y nosotros dos besándonos como si el tiempo se hubiera detenido solo para nosotros. Ahí entendí que no necesito ningún trofeo: ese instante contigo vale más que todos los campeonatos del mundo.",
+  },
+  {
+    text: "Yo sé que dices que no volverás conmigo, pero todos los días de mi vida trataré de buscar la manera de sanar tu corazón y de enamorarte poquito a poquito.",
+  },
+  { text: "Gracias por existir, vida mía." },
 ];
+
+const POSTSCRIPT =
+  "En la Fórmula 1 dicen que una carrera no se gana en la primera vuelta. Yo no tengo prisa: daré todas las vueltas que hagan falta.";
 
 // Posiciones "aleatorias" fijas para que servidor y navegador pinten lo mismo
 const FLOATERS = Array.from({ length: 18 }, (_, i) => {
@@ -157,11 +173,24 @@ function Paper() {
       </motion.h1>
 
       <div className="space-y-5 font-[family-name:var(--font-letter)] text-[1.2rem] leading-[1.85] sm:text-[1.32rem]">
-        {PARAGRAPHS.map((p, i) => (
-          <motion.p key={i} {...appear(i + 1)} className={i === 0 ? "italic" : undefined}>
-            {p}
-          </motion.p>
-        ))}
+        {PARAGRAPHS.map((p, i) =>
+          p.kind === "memory" ? (
+            <motion.figure
+              key={i}
+              {...appear(i + 1)}
+              className="relative my-8 rounded-r-xl border-l-[3px] border-[#c0394f]/70 bg-[#f6e2d3]/60 py-4 pl-5 pr-4"
+            >
+              <figcaption className="mb-2 flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[#b4485a]">
+                <Heart className="h-3.5 w-3.5" /> {p.label}
+              </figcaption>
+              <p className="italic">{p.text}</p>
+            </motion.figure>
+          ) : (
+            <motion.p key={i} {...appear(i + 1)} className={p.kind === "opening" ? "italic" : undefined}>
+              {p.text}
+            </motion.p>
+          ),
+        )}
       </div>
 
       <motion.div {...appear(PARAGRAPHS.length + 1)} className="mt-10 flex items-center justify-end gap-3">
@@ -178,6 +207,26 @@ function Paper() {
           />
         </svg>
       </motion.div>
+
+      {/* firma con los nombres que ella le dice */}
+      <motion.div {...appear(PARAGRAPHS.length + 2)} className="mt-4 text-right">
+        <p className="font-[family-name:var(--font-script)] text-3xl text-[#7a2335] sm:text-4xl">— Tu foquita 🦭</p>
+        <p className="mt-1 font-[family-name:var(--font-letter)] text-base italic text-[#8a5a48]">tu corazón, siempre</p>
+      </motion.div>
+
+      <motion.div
+        {...appear(PARAGRAPHS.length + 3)}
+        className="mt-10 flex gap-3 border-t border-dashed border-[#b4485a]/30 pt-6 font-[family-name:var(--font-letter)] text-[1.08rem] leading-[1.75] text-[#5a3a2c] sm:text-[1.15rem]"
+      >
+        <span
+          className="mt-1.5 h-5 w-5 shrink-0 rounded-[3px] opacity-80"
+          style={{ background: "repeating-conic-gradient(#3b2117 0 25%, #fbf1e1 0 50%) 0 0 / 10px 10px" }}
+          aria-hidden
+        />
+        <p>
+          <span className="font-semibold not-italic">P.D.:</span> <span className="italic">{POSTSCRIPT}</span>
+        </p>
+      </motion.div>
     </motion.article>
   );
 }
@@ -193,7 +242,7 @@ export function Letter() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-y-auto"
+      className="fixed inset-0 z-[60] overflow-y-auto overflow-x-hidden"
       style={{
         background:
           "radial-gradient(90% 70% at 50% 0%, #5a1426 0%, #2a0812 55%, #12040a 100%)",
