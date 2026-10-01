@@ -189,7 +189,10 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                     return (
                       <tr key={s.season}>
                         <td>
-                          <Link href={`/standings?season=${s.season}`} className="display text-lg hover:text-accent">
+                          <Link
+                            href={driverId === "max_verstappen" && s.season === 2025 ? "/parc-ferme" : `/standings?season=${s.season}`}
+                            className="display text-lg hover:text-accent"
+                          >
                             {s.season}
                           </Link>
                         </td>
