@@ -120,3 +120,44 @@ export async function getWikiImages(urls: string[], size = 400): Promise<Map<str
   }
   return result;
 }
+
+/** Archivos concretos de Commons (p. ej. "File:Foto.jpg") a un ancho dado, con autor y licencia. */
+export async function getCommonsFiles(files: string[], width = 1600): Promise<Map<string, WikiImage>> {
+  const out = new Map<string, WikiImage>();
+  if (!files.length) return out;
+  const titles = [...new Set(files)].sort();
+  let info: {
+    query?: {
+      normalized?: Mapping;
+      pages?: Record<
+        string,
+        {
+          title: string;
+          imageinfo?: { thumburl?: string; url: string; descriptionurl: string; extmetadata?: Record<string, { value: string } | undefined> }[];
+        }
+      >;
+    };
+  };
+  try {
+    info = await cachedJson(
+      `https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=extmetadata|url&iiurlwidth=${width}&titles=${encodeURIComponent(titles.join("|"))}`,
+      { revalidate: TTL, tags: ["wiki"], headers, throttle },
+    );
+  } catch {
+    return out;
+  }
+  const byTitle = new Map(Object.values(info.query?.pages ?? {}).map((p) => [p.title, p.imageinfo?.[0]]));
+  for (const file of files) {
+    const ii = byTitle.get(follow(file, info.query?.normalized));
+    if (!ii) continue;
+    const meta = ii.extmetadata ?? {};
+    const artist = stripHtml(meta.Artist?.value) || "Wikimedia Commons";
+    const license = stripHtml(meta.LicenseShortName?.value);
+    out.set(file, {
+      src: ii.thumburl ?? ii.url,
+      credit: license ? `${artist} · ${license}` : artist,
+      filePage: ii.descriptionurl,
+    });
+  }
+  return out;
+}

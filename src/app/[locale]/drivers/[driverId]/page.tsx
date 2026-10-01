@@ -190,11 +190,25 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                       <tr key={s.season}>
                         <td>
                           <Link
-                            href={driverId === "max_verstappen" && s.season === 2025 ? "/parc-ferme" : `/standings?season=${s.season}`}
+                            href={
+                              driverId === "max_verstappen" && s.season === 2025
+                                ? "/parc-ferme"
+                                : driverId === "max_verstappen" && s.season === 2023
+                                  ? "/max-2023"
+                                  : `/standings?season=${s.season}`
+                            }
                             className="display text-lg hover:text-accent"
                           >
                             {s.season}
                           </Link>
+                          {driverId === "max_verstappen" && s.season === 2023 && (
+                            <Link
+                              href="/max-2023"
+                              className="ml-2 rounded-full border border-[#ffcc00]/40 bg-[#ffcc00]/10 px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wider text-[#ffcc00] hover:bg-[#ffcc00]/20"
+                            >
+                              ★ {locale === "en" ? "Historic" : "Histórico"}
+                            </Link>
+                          )}
                         </td>
                         <td>
                           <span className="flex items-center gap-2">
