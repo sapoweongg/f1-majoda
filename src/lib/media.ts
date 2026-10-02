@@ -30,6 +30,15 @@ export function largeHeadshot(url: string | null | undefined): string | null {
   return url.replace("/1col/", "/4col/");
 }
 
+/**
+ * Recorte cuadrado de cara y hombros sacado del retrato de cuerpo entero, con el mismo encuadre que
+ * los de OpenF1. Sirve para pilotos nuevos cuyo recorte antiguo ya no existe en el CDN.
+ */
+export function driverHeadshot(teamSlug: string, driverCode: string, year: number, size = 432) {
+  if (!OFFICIAL_MEDIA) return null;
+  return `${CDN}/c_fill,w_${size},h_${size},g_north/q_auto/${VERSION}/common/f1/${year}/${teamSlug}/${driverCode}/${year}${teamSlug}${driverCode}right.webp`;
+}
+
 /** Retrato oficial de cuerpo entero (fondo transparente). Existe desde 2024 en el CDN de F1. */
 export function driverBodyImage(teamSlug: string, driverCode: string, year: number, pose: "right" | "front", width = 700) {
   if (!OFFICIAL_MEDIA) return null;

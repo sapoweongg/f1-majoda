@@ -3,7 +3,9 @@ import { circuitInfo, trackShape } from "@/lib/circuits";
 import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { lapTime, parseLapTime } from "@/lib/format";
+import { mergeRacePages, type Race } from "@/lib/api/jolpica";
 import { matchDriver } from "@/lib/mapping";
+import { f1DriverCode } from "@/lib/photos";
 import { validateVote, voterHash } from "@/lib/ratings";
 import { teamColor, teamStyle } from "@/lib/teams";
 import { qualifying, results, sprints } from "./fixtures";
@@ -96,5 +98,37 @@ describe("valoraciones", () => {
     expect(h).toBe(voterHash("1.2.3.4", "UA", "sal"));
     expect(h).not.toBe(voterHash("1.2.3.5", "UA", "sal"));
     expect(h).not.toContain("1.2.3.4");
+  });
+});
+
+describe("carreras de varias temporadas", () => {
+  const race = (season: string, round: string, extra: Partial<Race> = {}) =>
+    ({ season, round, raceName: `${season}-${round}`, ...extra }) as Race;
+
+  it("ordena por temporada y luego por ronda", () => {
+    // Mónaco 1959 fue la ronda 1: ordenar solo por ronda la ponía delante de 1950 (ronda 2)
+    const merged = mergeRacePages([[race("2026", "6"), race("1950", "2"), race("1959", "1")], [race("1955", "2")]]);
+    expect(merged.map((r) => r.season)).toEqual(["1950", "1955", "1959", "2026"]);
+  });
+
+  it("une las vueltas cortadas entre páginas", () => {
+    const timing = (driverId: string) => ({ driverId, position: "1", time: "1:30.000" });
+    const merged = mergeRacePages([
+      [race("2024", "1", { Laps: [{ number: "1", Timings: [timing("a")] }] })],
+      [race("2024", "1", { Laps: [{ number: "1", Timings: [timing("b")] }, { number: "2", Timings: [timing("a")] }] })],
+    ]);
+    expect(merged).toHaveLength(1);
+    expect(merged[0].Laps?.map((l) => l.Timings.length)).toEqual([2, 1]);
+  });
+});
+
+describe("fotos oficiales", () => {
+  it("saca el código del CDN de la URL de OpenF1 o lo arma con el nombre", () => {
+    const url = "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ARVLIN01_Arvid_Lindblad/arvlin01.png.transform/1col/image.png";
+    expect(f1DriverCode(url)).toBe("arvlin01");
+    expect(f1DriverCode(null, "Ayumu", "Iwasa")).toBe("ayuiwa01");
+    expect(f1DriverCode(null, "Andrea Kimi", "Antonelli")).toBe("andant01");
+    expect(f1DriverCode(null, "Nico", "Hülkenberg")).toBe("nichul01");
+    expect(f1DriverCode(null)).toBeUndefined();
   });
 });

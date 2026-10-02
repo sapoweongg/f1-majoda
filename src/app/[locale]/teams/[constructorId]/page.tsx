@@ -33,7 +33,7 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
   ]);
   const lastSeason = seasons.at(-1)?.season ?? new Date().getUTCFullYear();
   const drivers = await safe(getConstructorDrivers(constructorId, lastSeason), []);
-  const photos = await safe(getDriverPhotos(drivers, lastSeason), {});
+  const photos = await safe(getDriverPhotos(drivers, lastSeason, Object.fromEntries(drivers.map((d) => [d.driverId, constructorId]))), {});
   const style = teamStyle(constructorId);
   const titles = champions.filter((c) => c.constructor?.constructorId === constructorId).map((c) => c.season);
   const best = titles.length ? 1 : Math.min(...seasons.map((s) => Number(s.standing?.position ?? 99)));

@@ -2,7 +2,7 @@ import { serverNow } from "@/lib/clock";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
-import { getCarData, getDrivers, getLaps, getLocation, type OFLap } from "@/lib/api/openf1";
+import { getCarData, getDrivers, getLaps, getLocation, type OFDriver, type OFLap } from "@/lib/api/openf1";
 import { distinctPair } from "@/lib/color";
 import { lapTime } from "@/lib/format";
 import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
@@ -14,6 +14,7 @@ import { DriverAvatar } from "@/components/ui/media";
 import { EmptyState, GlassCard, PageTitle, SectionHeader } from "@/components/ui/primitives";
 import { ParamSelect, SeasonSelect } from "@/components/ui/SeasonSelect";
 import { largeHeadshot } from "@/lib/media";
+import { getOfficialHeadshots } from "@/lib/photos";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/telemetry">): Promise<Metadata> {
   const { locale } = await params;
@@ -76,7 +77,15 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
     );
   }
 
-  const drivers = await safe(getDrivers(session.session_key), []);
+  const [drivers, official] = await Promise.all([
+    safe(getDrivers(session.session_key), []),
+    safe(getOfficialHeadshots(season), new Map<string, string>()),
+  ]);
+  // Recorte comprobado: el que enlaza OpenF1 puede ser la imagen de reserva en blanco del CDN
+  const photoOf = (d: OFDriver) => {
+    const src = official.get(d.name_acronym) ?? largeHeadshot(d.headshot_url);
+    return src ? { src, cutout: true } : undefined;
+  };
   const allLaps = await safe(getLaps(session.session_key), []);
   // Pilotos ordenados por su vuelta más rápida
   const best = drivers
@@ -181,7 +190,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
               {[A, B].map((x, i) => (
                 <div key={x.d.driver_number} className="flex items-center gap-3 border-b border-line py-3 last:border-0">
                   <DriverAvatar
-                    photo={x.d.headshot_url ? { src: largeHeadshot(x.d.headshot_url) ?? x.d.headshot_url, cutout: true } : undefined}
+                    photo={photoOf(x.d)}
                     name={x.d.full_name}
                     color={i === 0 ? pair.a : pair.b}
                     size={44}

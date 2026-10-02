@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Carpetas locales de trabajo (no van al repo)
+    ".tmp/**",
+    ".swc-cache/**",
   ]),
 ]);
 

@@ -49,8 +49,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     safe(getLatestSession(), undefined),
   ]);
 
-  // Pretemporada: todavía no hay clasificación del año, mostramos la del anterior.
-  const standingsSeason = driverStandings.standings.length ? season : season - 1;
+  // Pretemporada (o primera carrera aún sin clasificar): mostramos la clasificación del año anterior.
+  // Se decide con el calendario y no solo porque la respuesta llegue vacía: si la API falla a mitad de
+  // temporada, enseñar el campeonato del año pasado como si fuera el actual confunde más que un "sin datos".
+  const done = schedule.filter((r) => raceStart(r).getTime() < now.getTime()).length;
+  const standingsSeason = !driverStandings.standings.length && done <= 1 ? season - 1 : season;
   const [ds, cs] =
     standingsSeason === season
       ? [driverStandings, constructorStandings]
@@ -93,8 +96,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       forecast = list.find((f) => f.date === next.date);
     }
   }
-
-  const done = schedule.filter((r) => raceStart(r).getTime() < now.getTime()).length;
 
   return (
     <div className="space-y-14">

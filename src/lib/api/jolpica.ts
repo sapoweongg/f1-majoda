@@ -131,10 +131,19 @@ async function allRaces(path: string, revalidate: number, tags: string[] = []): 
   for (let offset = 100; offset < total; offset += 100) {
     pages.push(await get<RaceTable>(pageUrl(offset), revalidate, tags));
   }
+  return mergeRacePages(pages.map((p) => p.MRData.RaceTable.Races));
+}
+
+/**
+ * Une las páginas de una consulta en una carrera por temporada y ronda, en orden cronológico.
+ * Las consultas de varias temporadas (ganadores de un circuito, carrera de un piloto) mezclan años,
+ * así que se ordena primero por temporada y luego por ronda.
+ */
+export function mergeRacePages(pages: Race[][]): Race[] {
   const byRound = new Map<string, Race>();
   const listKeys = ["Results", "SprintResults", "QualifyingResults", "Laps", "PitStops"] as const;
   for (const page of pages) {
-    for (const race of page.MRData.RaceTable.Races) {
+    for (const race of page) {
       const key = `${race.season}-${race.round}`;
       const prev = byRound.get(key);
       if (!prev) {
@@ -158,7 +167,9 @@ async function allRaces(path: string, revalidate: number, tags: string[] = []): 
       }
     }
   }
-  return [...byRound.values()].sort((a, b) => Number(a.round) - Number(b.round));
+  return [...byRound.values()].sort(
+    (a, b) => Number(a.season) - Number(b.season) || Number(a.round) - Number(b.round),
+  );
 }
 
 // ---------- Temporada y calendario ----------

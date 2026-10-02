@@ -17,7 +17,7 @@ import { getRaceControl, getStints, getWeather } from "@/lib/api/openf1";
 import { countryToIso } from "@/lib/countries";
 import { parseLapTime } from "@/lib/format";
 import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
-import { getDriverPhotos } from "@/lib/photos";
+import { getDriverPhotos, teamsOf } from "@/lib/photos";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
 import { LineSeriesChart, type Series } from "@/components/charts/LineSeriesChart";
@@ -104,7 +104,7 @@ export default async function RacePage({
   const allDrivers = results.map((r) => r.Driver);
 
   if (tab === "results") {
-    const photos = await safe(getDriverPhotos(allDrivers, season), {});
+    const photos = await safe(getDriverPhotos(allDrivers, season, teamsOf(results)), {});
     body = results.length ? (
       <ResultsTable
         results={results}
@@ -124,7 +124,7 @@ export default async function RacePage({
     );
   } else if (tab === "qualifying") {
     const quali = await safe(getRaceQualifying(season, round), []);
-    const photos = await safe(getDriverPhotos(quali.map((q) => q.Driver), season), {});
+    const photos = await safe(getDriverPhotos(quali.map((q) => q.Driver), season, teamsOf(quali)), {});
     body = quali.length ? (
       <QualifyingTable results={quali} photos={photos} labels={{ pos: tc("pos"), driver: tc("driver") }} />
     ) : (
@@ -132,7 +132,7 @@ export default async function RacePage({
     );
   } else if (tab === "sprint") {
     const sprint = await safe(getRaceSprint(season, round), []);
-    const photos = await safe(getDriverPhotos(sprint.map((q) => q.Driver), season), {});
+    const photos = await safe(getDriverPhotos(sprint.map((q) => q.Driver), season, teamsOf(sprint)), {});
     body = sprint.length ? (
       <ResultsTable
         results={sprint}
