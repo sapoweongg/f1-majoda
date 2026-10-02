@@ -57,3 +57,30 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - Valoraciones: crear proyecto en Supabase, ejecutar `supabase/schema.sql` y cargar `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `RATINGS_SALT` en Vercel.
 - Timing en tiempo real: suscripción de OpenF1 + credenciales en Vercel.
 - Foto de las 10 victorias seguidas en Monza: solo si el usuario aporta una imagen con permiso de uso.
+
+### Revisión de navegación y UX (2 oct 2026), sin arreglar todavía
+
+El usuario pidió revisarla; está pendiente decidir qué se arregla. Hallazgos por prioridad:
+
+1. **No hay índice de pilotos, equipos ni circuitos, ni buscador.** `/es/drivers`, `/teams` y `/circuits` dan 404. Un piloto histórico que no fue campeón solo se encuentra entrando a una carrera o temporada de su época.
+2. **El inicio muestra el campeonato 2025 aunque la temporada es 2026.** Si `getDriverStandings(season)` falla (`safe` devuelve una lista vacía), el código lo toma como pretemporada y enseña el año anterior, mezclado con el último GP de 2026.
+3. **Ficha de circuito con datos mal ordenados.** `getCircuitWinners` no se ordena: Mónaco dice "Primer GP 1959" (fue 1950) y la tabla de ganadores sale desordenada. Hay que ordenar por temporada y ronda.
+4. **Móvil, resultados de carrera.** La tabla mide 819 px dentro de 341 px: solo se ven la posición y el piloto. El tiempo, los puntos y el motivo de abandono quedan fuera, sin aviso de que se puede deslizar.
+5. **Callejones sin salida.**
+   - Carrera: sin enlace al equipo, sin GP anterior/siguiente, sin volver a la temporada, sin enlace a su telemetría.
+   - Piloto: sin enlace al equipo ni a "comparar", y las filas de cada temporada llevan al campeonato general en vez de a sus carreras.
+   - Circuito: solo se llega desde la ficha de una carrera; el calendario no enlaza circuitos.
+6. **Menú.**
+   - 9 entradas al mismo nivel.
+   - "Carreras" y "Calendario" muestran casi lo mismo.
+   - "Valoraciones" lleva a una página vacía (Supabase sin configurar).
+   - "En vivo" tiene el punto rojo latiendo siempre, aunque no haya sesión.
+7. **GP futuro.** Solo dice "Aún no se ha disputado": sin horarios, cuenta atrás, clima ni ganadores anteriores.
+8. **Fotos vacías.** Leclerc, Hadjar, Lindblad y Ocon (y Iwasa en la ficha de Red Bull) reciben la imagen de reserva en blanco del CDN de F1 (`d_driver_fallback_image`). Probar `driverBodyImage` o el formato nuevo del CDN.
+9. **Idioma y formato.**
+   - "3.337 km" y "260.3" usan punto decimal, que en español se lee como miles.
+   - "3607.5 puntos" sin formato.
+   - "Retired" sin traducir.
+   - Nombres de GP en inglés.
+   - "1 sprints".
+10. **Telemetría.** Las gráficas salen vacías unos segundos, sin indicador de carga.
