@@ -2,14 +2,26 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { teamStory } from "@/content/teams";
 import champions from "@/data/champions.json";
-import { getConstructor, getConstructorDrivers, getConstructorSeasons, getConstructorWinCount } from "@/lib/api/jolpica";
+import {
+  getConstructor,
+  getConstructorDrivers,
+  getConstructorSeasons,
+  getConstructorWinCount,
+  getCurrentSeason,
+  type Driver,
+} from "@/lib/api/jolpica";
+import { serverNow } from "@/lib/clock";
+import { familyExtras } from "@/lib/constructors";
+import { nationalityToIso } from "@/lib/countries";
+import { currentGrid } from "@/lib/grid";
 import { carImage, teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
-import { teamStyle } from "@/lib/teams";
+import { teamFamily, teamStyle } from "@/lib/teams";
 import { DriverHero, TeamCar, TeamLogo } from "@/components/ui/media";
-import { EmptyState, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
+import { BackLink, EmptyState, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
 
 export const revalidate = 3600;
 
@@ -27,20 +39,37 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
   const t = await getTranslations("team");
   const tc = await getTranslations("common");
 
-  const [seasons, wins] = await Promise.all([
+  const [seasons, apiWins, current] = await Promise.all([
     safe(getConstructorSeasons(constructorId), []),
     safe(getConstructorWinCount(constructorId), 0),
+    safe(getCurrentSeason(), new Date().getUTCFullYear()),
   ]);
-  const lastSeason = seasons.at(-1)?.season ?? new Date().getUTCFullYear();
-  const drivers = await safe(getConstructorDrivers(constructorId, lastSeason), []);
+  const lastSeason = seasons.at(-1)?.season ?? current;
+  // En la temporada en curso, los pilotos de la última carrera: la lista de Jolpica incluye a los
+  // que solo hicieron libres
+  let drivers: Driver[] = [];
+  if (lastSeason === current) {
+    const grid = await currentGrid(current, serverNow());
+    if (grid?.season === current) drivers = grid.teams.find((x) => x.id === constructorId)?.drivers.map((r) => r.Driver) ?? [];
+  }
+  if (!drivers.length) drivers = await safe(getConstructorDrivers(constructorId, lastSeason), []);
   const photos = await safe(getDriverPhotos(drivers, lastSeason, Object.fromEntries(drivers.map((d) => [d.driverId, constructorId]))), {});
   const style = teamStyle(constructorId);
-  const titles = champions.filter((c) => c.constructor?.constructorId === constructorId).map((c) => c.season);
+  const story = teamStory(constructorId, locale);
+  // Los chasis-motor de los años 50-70 ("lotus-climax") cuentan como su equipo
+  const family = teamFamily(constructorId);
+  const titles = champions
+    .filter((c) => c.constructor && teamFamily(c.constructor.constructorId) === family)
+    .map((c) => c.season);
+  const wins = apiWins + familyExtras(constructorId).wins;
+  const iso = nationalityToIso(team.nationality);
+  const country = iso ? new Intl.DisplayNames([locale], { type: "region" }).of(iso.toUpperCase()) : team.nationality;
   const best = titles.length ? 1 : Math.min(...seasons.map((s) => Number(s.standing?.position ?? 99)));
   const maxPts = Math.max(1, ...seasons.map((s) => Number(s.standing?.points ?? 0)));
 
   return (
     <div className="space-y-10">
+      <BackLink href="/teams">{t("allTeams")}</BackLink>
       <section
         className="relative overflow-hidden rounded-[2rem] border border-white/10"
         style={{ background: `linear-gradient(120deg, #0b0b0f 25%, ${style.color} 100%)` }}
@@ -49,8 +78,9 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
           <div className="relative z-10 space-y-4">
             <TeamLogo src={teamLogo(constructorId, lastSeason, 160)} name={team.name} className="h-14 w-auto" />
             <h1 className="display text-5xl sm:text-7xl">{team.name}</h1>
-            <p className="text-sm text-white/70">
-              {team.nationality} · {seasons[0]?.season}–{lastSeason}
+            <p className="flex items-center gap-2 text-sm text-white/70">
+              <Flag iso={iso} />
+              {country} · {seasons[0]?.season}–{lastSeason}
             </p>
           </div>
           <TeamCar
@@ -70,6 +100,48 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
         <StatNumber value={wins} label={tc("wins")} />
         <StatNumber value={Number.isFinite(best) && best < 99 ? `P${best}` : "—"} label={t("bestFinish")} />
       </div>
+
+      <section className={story ? "grid gap-6 lg:grid-cols-[1.7fr_1fr]" : "grid gap-6"}>
+        {story && (
+          <GlassCard className="p-6 sm:p-8">
+            <p className="eyebrow mb-2">{t("about")}</p>
+            <p className="display text-2xl leading-tight sm:text-3xl">{story.tagline}</p>
+            <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-ink-2">
+              {story.text.map((paragraph) => (
+                <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+              ))}
+            </div>
+          </GlassCard>
+        )}
+        <GlassCard className="p-6">
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-1">
+            {story?.base && (
+              <div className="col-span-2 lg:col-span-1">
+                <dt className="eyebrow mb-1">{t("base")}</dt>
+                <dd className="font-semibold">{story.base}</dd>
+              </div>
+            )}
+            <div>
+              <dt className="eyebrow mb-1">{t("nationality")}</dt>
+              <dd className="flex items-center gap-2 font-semibold">
+                <Flag iso={iso} /> {country}
+              </dd>
+            </div>
+            <div>
+              <dt className="eyebrow mb-1">{t("debut")}</dt>
+              <dd className="font-semibold">{seasons[0]?.season ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="eyebrow mb-1">{t("seasonsRaced")}</dt>
+              <dd className="font-semibold">{seasons.length}</dd>
+            </div>
+            <div>
+              <dt className="eyebrow mb-1">{lastSeason >= current ? t("active") : t("lastSeason")}</dt>
+              <dd className="font-semibold">{lastSeason >= current ? "✓" : lastSeason}</dd>
+            </div>
+          </dl>
+        </GlassCard>
+      </section>
 
       {drivers.length > 0 && (
         <section>

@@ -17,7 +17,7 @@ import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
 import { teamStyle } from "@/lib/teams";
 import { DriverHero, TeamLogo } from "@/components/ui/media";
-import { EmptyState, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
+import { BackLink, EmptyState, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
 
 export const revalidate = 3600;
 
@@ -106,6 +106,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
 
   return (
     <div className="space-y-10">
+      <BackLink href="/drivers">{t("allDrivers")}</BackLink>
       <section
         className="relative overflow-hidden rounded-[2rem] border border-white/10"
         style={{ background: `radial-gradient(110% 120% at 100% 100%, ${style.color} 0%, ${style.color}88 30%, #0b0b0f 72%)` }}

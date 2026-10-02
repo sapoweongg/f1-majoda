@@ -55,3 +55,8 @@ export function clampSeason(value: string | undefined, fallback: number, max: nu
   if (!Number.isInteger(n) || n < 1950 || n > max) return fallback;
   return n;
 }
+
+/** 2015, 2026 → "2015–2026"; un solo año → "2015" */
+export function yearSpan(from: number, to: number) {
+  return from === to ? String(from) : `${from}–${to}`;
+}

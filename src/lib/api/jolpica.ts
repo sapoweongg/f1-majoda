@@ -306,6 +306,12 @@ export async function getCircuit(circuitId: string): Promise<Circuit | undefined
   return data.MRData.CircuitTable.Circuits[0];
 }
 
+/** Todos los circuitos que han acogido una carrera del campeonato. */
+export async function getAllCircuits(): Promise<Circuit[]> {
+  const data = await get<{ CircuitTable: { Circuits: Circuit[] } }>("/circuits.json?limit=100", 30 * DAY);
+  return data.MRData.CircuitTable.Circuits;
+}
+
 /** Ganadores de todas las carreras disputadas en un circuito. */
 export const getCircuitWinners = (circuitId: string) => allRaces(`/circuits/${circuitId}/results/1`, DAY);
 

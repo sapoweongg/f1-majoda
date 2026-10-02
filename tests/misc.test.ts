@@ -3,7 +3,9 @@ import { circuitInfo, trackShape } from "@/lib/circuits";
 import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { lapTime, parseLapTime } from "@/lib/format";
-import { mergeRacePages, type DriverStanding, type Race } from "@/lib/api/jolpica";
+import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
+import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
+import { buildCircuitIndex } from "@/lib/races-index";
 import { addSeason, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
@@ -159,5 +161,59 @@ describe("índice de pilotos", () => {
     const once = addSeason(base, 2026, [standing("max", "1", "10")], true);
     expect(once[0]).toMatchObject({ seasons: 12, wins: 81, titles: 5 });
     expect(addSeason(once, 2026, [standing("max", "1", "10")], true)[0]).toMatchObject({ seasons: 12, titles: 5 });
+  });
+});
+
+describe("índice de equipos", () => {
+  const team = (id: string, years: number[], wins = 0, titles = 0): TeamIndexEntry => ({
+    id,
+    name: id,
+    nationality: "British",
+    from: years[0],
+    to: years.at(-1)!,
+    years,
+    wins,
+    titles,
+  });
+
+  it("une los chasis-motor con su equipo", () => {
+    const merged = mergeFamilies([
+      team("team_lotus", [1958, 1959, 1994], 45, 4),
+      team("lotus-climax", [1959, 1960], 22, 2),
+      team("lotus-ford", [1967, 1968], 12, 1),
+      team("lotus_f1", [2012, 2015], 2, 0),
+      team("de_tomaso-ferrari", [1970]),
+    ]);
+    const lotus = merged.find((t) => t.id === "team_lotus")!;
+    expect(lotus).toMatchObject({ from: 1958, to: 1994, wins: 79, titles: 7 });
+    expect(lotus.years).toEqual([1958, 1959, 1960, 1967, 1968, 1994]);
+    // Lotus F1 (2012-2015) es otro equipo y los combinados sin equipo base se quedan solos
+    expect(merged.map((t) => t.id).sort()).toEqual(["de_tomaso-ferrari", "lotus_f1", "team_lotus"]);
+  });
+
+  it("suma una temporada nueva sin repetirla", () => {
+    const standing = { position: "1", positionText: "1", points: "500", wins: "10", Constructor: { constructorId: "audi", name: "Audi", nationality: "German" } } as ConstructorStanding;
+    const once = addTeamSeason([], 2026, [standing], false);
+    expect(once[0]).toMatchObject({ id: "audi", from: 2026, to: 2026, years: [2026], wins: 10, titles: 0 });
+    expect(addTeamSeason(once, 2026, [standing], false)[0].years).toEqual([2026]);
+  });
+});
+
+describe("índice de circuitos", () => {
+  const circuit = (id: string) => ({ circuitId: id, circuitName: id, Location: { locality: "x", country: "Italy", lat: "0", long: "0" } }) as Circuit;
+  const scheduled = (id: string, date: string) =>
+    ({ season: "2026", round: "1", raceName: "GP", date, time: "13:00:00Z", Circuit: circuit(id) }) as Race;
+
+  it("cuenta las carreras disputadas y marca el calendario actual", () => {
+    const index = buildCircuitIndex(
+      [circuit("monza"), circuit("madring"), circuit("aintree")],
+      [[1950, 7, "Italian GP", "monza", "Italy"], [2025, 16, "Italian GP", "monza", "Italy"], [1962, 1, "British GP", "aintree", "UK"]],
+      [scheduled("monza", "2026-09-06"), scheduled("madring", "2026-12-01")],
+      Date.parse("2026-10-01T00:00:00Z"),
+    );
+    expect(index.find((c) => c.id === "monza")).toMatchObject({ from: 1950, to: 2026, races: 3 });
+    // Madrid aún no se ha corrido: está en el calendario pero sin carreras
+    expect(index.find((c) => c.id === "madring")).toMatchObject({ from: 2026, to: 2026, races: 0 });
+    expect(index.find((c) => c.id === "aintree")).toMatchObject({ from: 1962, to: 1962, races: 1 });
   });
 });

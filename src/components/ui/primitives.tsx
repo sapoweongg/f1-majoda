@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/format";
 
@@ -113,4 +114,13 @@ export function EmptyState({ children }: { children: ReactNode }) {
 
 export function TeamStripe({ color, className }: { color: string; className?: string }) {
   return <span className={cn("inline-block w-1 self-stretch rounded-full", className)} style={{ background: color }} />;
+}
+
+/** Enlace de vuelta al índice (p. ej. "← Todos los pilotos") encima de una ficha. */
+export function BackLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link href={href} className="-mb-6 inline-flex items-center gap-1.5 text-sm text-ink-3 transition-colors hover:text-ink">
+      <ArrowLeft size={14} aria-hidden /> {children}
+    </Link>
+  );
 }

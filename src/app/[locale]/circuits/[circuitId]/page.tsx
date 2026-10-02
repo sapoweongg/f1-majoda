@@ -8,7 +8,7 @@ import { countryToIso } from "@/lib/countries";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
 import { TrackOutline } from "@/components/track/TrackOutline";
-import { Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
+import { BackLink, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
 
 export const revalidate = 86400;
 
@@ -42,6 +42,7 @@ export default async function CircuitPage({ params }: PageProps<"/[locale]/circu
 
   return (
     <div className="space-y-10">
+      <BackLink href="/circuits">{t("allCircuits")}</BackLink>
       <section className="ember-glow relative overflow-hidden rounded-[2rem] border border-line">
         <div className="grid items-center gap-6 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr]">
           <div className="space-y-4">

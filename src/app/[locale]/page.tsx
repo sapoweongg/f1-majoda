@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/jolpica";
 import { getLatestSession } from "@/lib/api/openf1";
 import { getForecast } from "@/lib/api/weather";
+import { isSessionLive } from "@/lib/live-types";
 import { buildProgression } from "@/lib/championship";
 import { circuitInfo, trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
@@ -78,10 +79,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const top3 = ds.standings.slice(0, 3).map((s) => s.Driver.driverId);
   const trend = progressionSeries(progression, top3);
 
-  const live =
-    latestSession &&
-    new Date(latestSession.date_start).getTime() - 10 * 60 * 1000 < now.getTime() &&
-    now.getTime() < new Date(latestSession.date_end).getTime() + 15 * 60 * 1000;
+  const live = latestSession && isSessionLive(latestSession.date_start, latestSession.date_end, now.getTime());
 
   const sessions = next ? weekendSessions(next) : [];
   const upcoming = sessions.find((s) => new Date(s.iso).getTime() > now.getTime()) ?? sessions.at(-1);

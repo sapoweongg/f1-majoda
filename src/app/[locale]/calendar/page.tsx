@@ -13,6 +13,7 @@ import { weekendSessions } from "@/lib/view";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { EmptyState, Flag, GlassCard, PageTitle, SectionHeader } from "@/components/ui/primitives";
 import { SeasonSelect } from "@/components/ui/SeasonSelect";
+import { RacesTabs } from "@/components/races/RacesTabs";
 import { Countdown, LocalTime, TimeZoneName } from "@/components/ui/time";
 import { WeatherIcon } from "@/components/ui/Weather";
 
@@ -68,6 +69,7 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
       >
         <SeasonSelect value={season} max={current + 1} />
       </PageTitle>
+      <RacesTabs season={season} current={current} active="calendar" />
 
       {schedule.length === 0 ? (
         <EmptyState>{tc("noData")}</EmptyState>

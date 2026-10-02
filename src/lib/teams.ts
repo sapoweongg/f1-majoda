@@ -107,3 +107,14 @@ const OPENF1_TEAM: Record<string, string> = {
 export function constructorIdFromOpenF1(teamName: string | null | undefined) {
   return teamName ? OPENF1_TEAM[teamName.toLowerCase()] : undefined;
 }
+
+/**
+ * Equipo al que pertenece un id de Jolpica. En los años 50-70 Jolpica separa chasis y motor
+ * ("lotus-climax", "brabham-repco", "cooper-climax"): cuentan como su equipo.
+ */
+const FAMILY: Record<string, string> = { lotus: "team_lotus" };
+
+export function teamFamily(constructorId: string) {
+  const base = constructorId.split("-")[0];
+  return FAMILY[base] ?? base;
+}

@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import "flag-icons/css/flag-icons.min.css";
 import "../globals.css";
 import { routing } from "@/i18n/routing";
+import { ratingsEnabled } from "@/lib/ratings";
 import { siteUrl } from "@/lib/site";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -43,7 +44,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     <html lang={locale} className={`${geist.variable} ${geistMono.variable} ${titillium.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
-          <SiteHeader />
+          <SiteHeader ratingsEnabled={ratingsEnabled()} />
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-6 sm:px-6">{children}</main>
           <SiteFooter />
         </NextIntlClientProvider>

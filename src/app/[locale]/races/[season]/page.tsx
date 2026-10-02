@@ -15,6 +15,7 @@ import { TrackOutline } from "@/components/track/TrackOutline";
 import { DriverAvatar } from "@/components/ui/media";
 import { EmptyState, Flag, PageTitle } from "@/components/ui/primitives";
 import { SeasonSelect } from "@/components/ui/SeasonSelect";
+import { RacesTabs } from "@/components/races/RacesTabs";
 import { LocalTime } from "@/components/ui/time";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/races/[season]">): Promise<Metadata> {
@@ -50,6 +51,7 @@ export default async function SeasonRacesPage({ params }: PageProps<"/[locale]/r
       <PageTitle title={t("title", { season })}>
         <SeasonSelect value={season} max={current} basePath="/races" />
       </PageTitle>
+      <RacesTabs season={season} current={current} active="results" />
       {schedule.length === 0 ? (
         <EmptyState>{tc("noData")}</EmptyState>
       ) : (

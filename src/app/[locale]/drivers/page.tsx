@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import {
-  getConstructorStandings,
-  getCurrentSeason,
-  getDriverStandings,
-  getRace,
-  getSchedule,
-  type Result,
-} from "@/lib/api/jolpica";
+import { getCurrentSeason } from "@/lib/api/jolpica";
 import { serverNow } from "@/lib/clock";
 import { nationalityToIso } from "@/lib/countries";
 import { getDriverIndex } from "@/lib/drivers";
-import { raceStart } from "@/lib/mapping";
+import { yearSpan } from "@/lib/format";
+import { currentGrid } from "@/lib/grid";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos, teamsOf, type Photo } from "@/lib/photos";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
-import { DriverDirectory, type DirectoryEntry } from "@/components/drivers/DriverDirectory";
+import { Directory, type DirectoryItem } from "@/components/ui/Directory";
 import { DriverHero, TeamLogo } from "@/components/ui/media";
 import { Flag, PageTitle, SectionHeader } from "@/components/ui/primitives";
 
@@ -29,24 +23,6 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/drivers"
   return { title: t("title"), description: t("subtitle") };
 }
 
-/**
- * Parrilla actual: pilotos y equipos de la última carrera con resultados. La clasificación no sirve
- * para esto porque lista todos los equipos por los que pasó un piloto en el año, sin orden fiable.
- */
-async function latestGrid(season: number, now: number): Promise<{ season: number; results: Result[] } | undefined> {
-  for (const s of [season, season - 1]) {
-    const finished = (await safe(getSchedule(s), []))
-      .filter((r) => raceStart(r).getTime() + 2 * 3600 * 1000 < now)
-      .reverse();
-    // La última carrera puede no tener resultados aún: probamos también la anterior
-    for (const r of finished.slice(0, 2)) {
-      const race = await safe(getRace(s, Number(r.round)), undefined);
-      if (race?.Results?.length) return { season: s, results: race.Results };
-    }
-  }
-  return undefined;
-}
-
 export default async function DriversPage({ params }: PageProps<"/[locale]/drivers">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -54,47 +30,49 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
   const tc = await getTranslations("common");
 
   const current = await safe(getCurrentSeason(), new Date().getUTCFullYear());
-  const [grid, index] = await Promise.all([latestGrid(current, serverNow()), getDriverIndex(current)]);
-
-  // Equipos en el orden del campeonato de constructores; pilotos en el del campeonato de pilotos
+  const [grid, index] = await Promise.all([currentGrid(current, serverNow()), getDriverIndex(current)]);
   const gridSeason = grid?.season ?? current;
-  const [ds, cs, photos] = await Promise.all([
-    safe(getDriverStandings(gridSeason), { round: 0, standings: [] }),
-    safe(getConstructorStandings(gridSeason), { round: 0, standings: [] }),
-    grid ? safe(getDriverPhotos(grid.results.map((r) => r.Driver), gridSeason, teamsOf(grid.results)), {}) : ({} as Record<string, Photo>),
-  ]);
-  const driverPos = new Map(ds.standings.map((s, i) => [s.Driver.driverId, { pos: Number(s.position ?? i + 1), pts: s.points }]));
-  const teamPos = new Map(cs.standings.map((s, i) => [s.Constructor.constructorId, i]));
-  const teams = new Map<string, { name: string; drivers: Result[] }>();
-  for (const r of grid?.results ?? []) {
-    const team = teams.get(r.Constructor.constructorId) ?? { name: r.Constructor.name, drivers: [] };
-    team.drivers.push(r);
-    teams.set(r.Constructor.constructorId, team);
-  }
-  const ordered = [...teams.entries()]
-    .sort(([a], [b]) => (teamPos.get(a) ?? 99) - (teamPos.get(b) ?? 99))
-    .map(([id, team]) => ({
-      id,
-      ...team,
-      drivers: team.drivers.sort((a, b) => (driverPos.get(a.Driver.driverId)?.pos ?? 99) - (driverPos.get(b.Driver.driverId)?.pos ?? 99)),
-    }));
+  const photos: Record<string, Photo> = grid
+    ? await safe(getDriverPhotos(grid.results.map((r) => r.Driver), gridSeason, teamsOf(grid.results)), {})
+    : {};
 
   // País traducido en el servidor para que el buscador también encuentre "Colombia" o "Reino Unido"
   const regions = new Intl.DisplayNames([locale], { type: "region" });
-  const entries: DirectoryEntry[] = index.map((d) => {
+  const items: DirectoryItem[] = index.map((d) => {
     const iso = nationalityToIso(d.nationality);
-    return { ...d, iso, country: iso ? (regions.of(iso.toUpperCase()) ?? "") : "" };
+    const meta = [yearSpan(d.from, d.to), t("seasons", { n: d.seasons }), d.wins > 0 && t("wins", { n: d.wins })];
+    return {
+      id: d.id,
+      href: `/drivers/${d.id}`,
+      given: d.given,
+      name: d.family,
+      meta: meta.filter(Boolean).join(" · "),
+      iso,
+      search: `${iso ? (regions.of(iso.toUpperCase()) ?? "") : ""} ${d.nationality}`,
+      from: d.from,
+      to: d.to,
+      wins: d.wins,
+      titles: d.titles,
+      count: d.seasons,
+    };
   });
 
   return (
     <div>
       <PageTitle eyebrow={t("subtitle")} title={t("title")} />
-      <DriverDirectory drivers={entries} current={current}>
-        {ordered.length > 0 && (
+      <Directory
+        items={items}
+        current={current}
+        namespace="drivers"
+        filters={["champions", "winners", "active"]}
+        sorts={["recent", "wins", "titles", "name"]}
+        upperName
+      >
+        {grid && grid.teams.length > 0 && (
           <section>
             <SectionHeader eyebrow={t("gridHint")} title={t("grid", { season: gridSeason })} />
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {ordered.map((team) => {
+              {grid.teams.map((team) => {
                 const color = teamColor(team.id);
                 return (
                   <div
@@ -113,7 +91,6 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
                       {team.drivers.map((r) => {
                         const d = r.Driver;
                         const photo = photos[d.driverId];
-                        const standing = driverPos.get(d.driverId);
                         return (
                           <Link
                             key={d.driverId}
@@ -122,9 +99,9 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
                             style={{ background: `radial-gradient(120% 100% at 50% 115%, ${color}, #111114 72%)` }}
                           >
                             <span className="display absolute right-2 top-1 text-6xl text-white/10">{d.permanentNumber ?? r.number}</span>
-                            {standing && (
+                            {r.pos !== undefined && (
                               <span className="chip absolute left-2 top-2 z-10 !bg-black/45 !text-[0.65rem] backdrop-blur">
-                                P{standing.pos} · {standing.pts} {tc("pts")}
+                                P{r.pos} · {r.pts} {tc("pts")}
                               </span>
                             )}
                             {photo && (
@@ -155,7 +132,7 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
             </div>
           </section>
         )}
-      </DriverDirectory>
+      </Directory>
     </div>
   );
 }
