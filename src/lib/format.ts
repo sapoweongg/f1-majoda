@@ -60,3 +60,8 @@ export function clampSeason(value: string | undefined, fallback: number, max: nu
 export function yearSpan(from: number, to: number) {
   return from === to ? String(from) : `${from}–${to}`;
 }
+
+/** Número con el formato del idioma: 3.337 → "3,337" en español. `fixed` fuerza los decimales. */
+export function num(n: number, locale: string, digits = 0, fixed = false) {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: digits, minimumFractionDigits: fixed ? digits : 0 }).format(n);
+}

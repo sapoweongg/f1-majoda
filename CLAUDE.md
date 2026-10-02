@@ -60,39 +60,19 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 
 ### Revisión de navegación y UX (2 oct 2026)
 
-Plan acordado con el usuario, en orden:
-1. Los tres errores visibles. **Hecho.**
-2. Página de Pilotos. **Hecho.** Faltan los índices de Equipos y Circuitos.
-3. Buscador global en el menú.
-4. Reordenar el menú.
-5. Mejoras de la página de carrera y enlaces entre fichas.
-
-**Hecho el 2 oct 2026:**
-- `allRaces` ordenaba solo por ronda. Ahora usa `mergeRacePages` y ordena por temporada y ronda.
-- El inicio decide "pretemporada" con el calendario, no porque la clasificación llegue vacía.
-- Fotos de pilotos nuevos (Lindblad, Iwasa).
-- `/drivers`: parrilla actual por equipos, sacada de la última carrera, más un buscador de los 817 pilotos desde 1950. El buscador ignora tildes y acepta país y año ("brasil 1988").
-- El menú completo se muestra desde `xl` (1280 px); en 1024 px desbordaba.
+**Hecho:**
+- Errores corregidos: orden de carreras, campeonato del inicio y fotos.
+- Índices con buscador: `/drivers`, `/teams` (con historia de cada equipo en `src/content/teams.ts`) y `/circuits`.
+- Buscador general del menú (Ctrl+K, `/api/search-index/[locale]`).
+- Menú reorganizado: Carreras con pestaña Calendario, desplegable Análisis, Valoraciones oculta sin Supabase y punto de En vivo real (`/api/live-status`).
+- Página de carrera:
+  - GP anterior/siguiente y tabla compacta en el móvil.
+  - Estados traducidos (`src/lib/status.ts`).
+  - Vista previa de GPs futuros.
+- Nombres de GP en español (`src/lib/gp-names.ts`) y números y países con el formato del idioma.
+- Enlaces entre fichas (piloto → equipo y comparar).
 
 **Pendiente:**
-
-1. **Índices de equipos y circuitos.** Siguen sin existir: `/teams` y `/circuits` dan 404.
-2. **Móvil, resultados de carrera.** La tabla mide 819 px dentro de 341 px: solo se ven la posición y el piloto. El tiempo, los puntos y el motivo de abandono quedan fuera, sin aviso de que se puede deslizar.
-3. **Callejones sin salida.**
-   - Carrera: sin enlace al equipo, sin GP anterior/siguiente, sin volver a la temporada, sin enlace a su telemetría.
-   - Piloto: sin enlace al equipo ni a "comparar", y las filas de cada temporada llevan al campeonato general en vez de a sus carreras.
-   - Circuito: solo se llega desde la ficha de una carrera; el calendario no enlaza circuitos.
-4. **Menú.**
-   - 10 entradas al mismo nivel (con "Pilotos").
-   - "Carreras" y "Calendario" muestran casi lo mismo.
-   - "Valoraciones" lleva a una página vacía (Supabase sin configurar).
-   - "En vivo" tiene el punto rojo latiendo siempre, aunque no haya sesión.
-5. **GP futuro.** Solo dice "Aún no se ha disputado": sin horarios, cuenta atrás, clima ni ganadores anteriores.
-6. **Fotos en `/live`.** `live.ts` sigue usando el recorte de OpenF1 sin comprobarlo; Lindblad saldría vacío en la torre.
-7. **Idioma y formato.**
-   - "3.337 km" y "260.3" usan punto decimal, que en español se lee como miles.
-   - "3607.5 puntos" sin formato.
-   - "Retired" sin traducir.
-   - Nombres de GP en inglés.
-   - "1 sprints".
-8. **Telemetría.** Las gráficas salen vacías unos segundos, sin indicador de carga.
+- Telemetría: indicador de carga mientras las gráficas están vacías.
+- `/live`: `live.ts` usa el recorte de OpenF1 sin comprobarlo (Lindblad saldría vacío); usar `getOfficialHeadshots`.
+- Mensajes de dirección de carrera en inglés (vienen así de OpenF1).

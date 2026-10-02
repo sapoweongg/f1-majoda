@@ -70,3 +70,12 @@ export function gpName(raceName: string, locale: string, short = false): string 
   if (!place) return shorten(raceName);
   return `${short ? "GP" : "Gran Premio"} ${place}`;
 }
+
+/** Solo el lugar ("Mónaco", "Bahrain"): para tarjetas pequeñas. */
+export function gpPlace(raceName: string, locale: string): string {
+  if (locale === "es") {
+    const full = gpName(raceName, locale);
+    return full.startsWith("Gran Premio ") ? full.slice("Gran Premio ".length).replace(/^del? /, "") : full;
+  }
+  return raceName.replace(/ Grand Prix/i, "");
+}

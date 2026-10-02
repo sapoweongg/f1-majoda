@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Users } from "lucide-react";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import champions from "@/data/champions.json";
 import { Link } from "@/i18n/navigation";
@@ -11,7 +12,7 @@ import {
   getDriverSeasons,
 } from "@/lib/api/jolpica";
 import { nationalityToIso } from "@/lib/countries";
-import { age, points as fmtPoints } from "@/lib/format";
+import { age, num } from "@/lib/format";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
@@ -119,7 +120,11 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
             <div className="flex items-center gap-3">
               <Flag iso={nationalityToIso(driver.nationality)} className="text-xl" />
               {lastTeam && <TeamLogo src={teamLogo(lastTeam.id, lastSeason)} name={lastTeam.name} className="h-7 w-auto" />}
-              {lastTeam && <span className="text-sm text-white/75">{lastTeam.name}</span>}
+              {lastTeam && (
+                <Link href={`/teams/${lastTeam.id}`} className="text-sm text-white/75 underline-offset-4 hover:text-white hover:underline">
+                  {lastTeam.name}
+                </Link>
+              )}
             </div>
             <div>
               <p className="text-xl text-white/80">{driver.givenName}</p>
@@ -130,6 +135,12 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
               {yearsOld ? ` · ${tc("age", { age: yearsOld })}` : ""}
               {driver.permanentNumber ? ` · ${t("number")} ${driver.permanentNumber}` : ""}
             </p>
+            <Link
+              href={`/compare?season=${lastSeason}&a=${driverId}`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/30 px-3.5 py-1.5 text-sm font-semibold backdrop-blur transition-colors [text-shadow:none] hover:bg-black/50"
+            >
+              <Users size={14} aria-hidden /> {t("compareWith", { season: lastSeason })}
+            </Link>
           </div>
           {photo && (
             <DriverHero
@@ -153,7 +164,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
         <StatNumber value={totals.wins} label={tc("wins")} />
         <StatNumber value={totals.podiums} label={tc("podiums")} />
         <StatNumber value={poles} label={tc("poles")} />
-        <StatNumber value={fmtPoints(Math.round(totals.points * 10) / 10)} label={t("careerPoints")} />
+        <StatNumber value={num(Math.round(totals.points * 10) / 10, locale, 1)} label={t("careerPoints")} />
       </div>
       {titles.length > 0 && (
         <p className="flex flex-wrap gap-2">
@@ -213,8 +224,17 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                         </td>
                         <td>
                           <span className="flex items-center gap-2">
-                            <span className="h-2.5 w-2.5 rounded-full" style={{ background: color }} />
-                            {s.teams.map((x) => x.name).join(" / ")}
+                            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} />
+                            <span>
+                              {s.teams.map((x, i) => (
+                                <span key={x.id}>
+                                  {i > 0 && " / "}
+                                  <Link href={`/teams/${x.id}`} className="hover:text-accent">
+                                    {x.name}
+                                  </Link>
+                                </span>
+                              ))}
+                            </span>
                           </span>
                         </td>
                         <td className="display num text-right text-lg">
@@ -228,7 +248,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                             <div className="h-full rounded-full" style={{ width: `${(s.points / maxPts) * 100}%`, background: color }} />
                           </div>
                         </td>
-                        <td className="num text-right">{fmtPoints(s.points)}</td>
+                        <td className="num text-right">{num(s.points, locale, 1)}</td>
                       </tr>
                     );
                   })}

@@ -1,4 +1,5 @@
 import { serverNow } from "@/lib/clock";
+import { gpName } from "@/lib/gp-names";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -99,7 +100,7 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
                   const isNext = r.round === next?.round;
                   return (
                     <a key={r.round} href={`#gp-${r.round}`}>
-                      <title>{`${r.round}. ${r.raceName}`}</title>
+                      <title>{`${r.round}. ${gpName(r.raceName, locale)}`}</title>
                       {isNext && <circle cx={p.x} cy={p.y} r={11} fill="#ff3b1f" opacity={0.25} className="live-dot" />}
                       <circle cx={p.x} cy={p.y} r={isNext ? 6 : 4.5} fill={done ? "#6e6e78" : "#ff3b1f"} stroke="#111114" strokeWidth={2} />
                     </a>
@@ -146,7 +147,7 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
                     <h3 className="display mt-2 flex items-center gap-2 text-2xl">
                       <Flag iso={countryToIso(race.Circuit.Location.country)} />
                       <Link href={`/races/${season}/${race.round}`} className="hover:text-accent">
-                        {race.raceName}
+                        {gpName(race.raceName, locale)}
                       </Link>
                     </h3>
                     <p className="text-xs text-ink-3">

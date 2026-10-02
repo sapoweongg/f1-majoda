@@ -10,6 +10,7 @@ import {
   getSeasonResults,
   getSeasonSprints,
 } from "@/lib/api/jolpica";
+import { gpName } from "@/lib/gp-names";
 import { getLatestSession } from "@/lib/api/openf1";
 import { getForecast } from "@/lib/api/weather";
 import { isSessionLive } from "@/lib/live-types";
@@ -124,7 +125,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 <p className="eyebrow mb-3 !text-white/60">
                   {t("nextRace")} · {tc("round")} {next.round}
                 </p>
-                <h1 className="display text-5xl uppercase sm:text-7xl">{next.raceName.replace(/Grand Prix/i, "GP")}</h1>
+                <h1 className="display text-5xl uppercase sm:text-7xl">{gpName(next.raceName, locale, true)}</h1>
                 <p className="mt-3 flex items-center gap-2 text-ink-2">
                   <Flag iso={countryToIso(next.Circuit.Location.country)} />
                   {next.Circuit.circuitName} · {next.Circuit.Location.locality}
@@ -223,7 +224,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <p className="eyebrow mb-1">{t("lastRace")}</p>
             <h3 className="display flex items-center gap-2 text-2xl">
               <Flag iso={countryToIso(last.Circuit.Location.country)} />
-              {last.raceName}
+              {gpName(last.raceName, locale)}
             </h3>
             <ol className="mt-5 space-y-2">
               {podium.map((p) => (
@@ -265,7 +266,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <h3 className="display mb-4 text-2xl">{t("top3Trend")}</h3>
             <LineSeriesChart
               labels={progression.rounds.map((r) => String(r.round))}
-              fullLabels={progression.rounds.map((r) => r.raceName)}
+              fullLabels={progression.rounds.map((r) => gpName(r.raceName, locale))}
               series={trend}
               height={300}
               tableLabel={tc("table")}

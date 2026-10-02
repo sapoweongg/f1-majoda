@@ -8,6 +8,7 @@ import {
   getSeasonResults,
   getSeasonSprints,
 } from "@/lib/api/jolpica";
+import { gpName } from "@/lib/gp-names";
 import { buildProgression, maxRemainingPoints, remainingEvents, titleContention } from "@/lib/championship";
 import { nationalityToIso } from "@/lib/countries";
 import { clampSeason } from "@/lib/format";
@@ -175,7 +176,7 @@ export default async function StandingsPage({ params, searchParams }: PageProps<
               <p className="-mt-2 mb-4 text-xs text-ink-3">{t("progressionNote")}</p>
               <LineSeriesChart
                 labels={progression.rounds.map((r) => String(r.round))}
-                fullLabels={progression.rounds.map((r) => `${r.round}. ${r.raceName}`)}
+                fullLabels={progression.rounds.map((r) => `${r.round}. ${gpName(r.raceName, locale)}`)}
                 series={series}
                 height={380}
                 tableLabel={tc("table")}

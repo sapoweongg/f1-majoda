@@ -122,8 +122,8 @@
     "progression": "Cumulative points",
     "progressionNote": "Race and sprint points added up round by round.",
     "calculator": "Who can still win the title?",
-    "remaining": "{races} races and {sprints} sprints left: {points} points available per driver.",
-    "remainingTeams": "{races} races and {sprints} sprints left: {points} points available per team.",
+    "remaining": "{races, plural, one {# race} other {# races}}{sprints, plural, =0 {} one { and # sprint} other { and # sprints}} left: {points} points available per driver.",
+    "remainingTeams": "{races, plural, one {# race} other {# races}}{sprints, plural, =0 {} one { and # sprint} other { and # sprints}} left: {points} points available per team.",
     "maxPossible": "Max possible",
     "statusChampion": "Champion",
     "statusLeader": "Leader",
@@ -226,7 +226,8 @@
     "number": "Number",
     "finalPosition": "Final position",
     "team": "Team",
-    "allDrivers": "All drivers"
+    "allDrivers": "All drivers",
+    "compareWith": "Compare in {season}"
   },
   "drivers": {
     "title": "Drivers",

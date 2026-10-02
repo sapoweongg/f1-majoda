@@ -122,8 +122,8 @@
     "progression": "Puntos acumulados",
     "progressionNote": "Suma de puntos de carrera y sprint ronda a ronda.",
     "calculator": "¿Quién puede ser campeón?",
-    "remaining": "Quedan {races} carreras y {sprints} sprints: {points} puntos en juego por piloto.",
-    "remainingTeams": "Quedan {races} carreras y {sprints} sprints: {points} puntos en juego por equipo.",
+    "remaining": "{races, plural, one {Queda # carrera} other {Quedan # carreras}}{sprints, plural, =0 {} one { y # sprint} other { y # sprints}}: {points} puntos en juego por piloto.",
+    "remainingTeams": "{races, plural, one {Queda # carrera} other {Quedan # carreras}}{sprints, plural, =0 {} one { y # sprint} other { y # sprints}}: {points} puntos en juego por equipo.",
     "maxPossible": "Máximo posible",
     "statusChampion": "Campeón",
     "statusLeader": "Líder",
@@ -226,7 +226,8 @@
     "number": "Dorsal",
     "finalPosition": "Posición final",
     "team": "Equipo",
-    "allDrivers": "Todos los pilotos"
+    "allDrivers": "Todos los pilotos",
+    "compareWith": "Comparar en {season}"
   },
   "drivers": {
     "title": "Pilotos",

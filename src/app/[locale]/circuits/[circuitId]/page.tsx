@@ -4,7 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCircuit, getCircuitWinners } from "@/lib/api/jolpica";
 import { circuitFacts, trackShape } from "@/lib/circuits";
-import { countryToIso } from "@/lib/countries";
+import { countryName, countryToIso } from "@/lib/countries";
+import { num } from "@/lib/format";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
 import { TrackOutline } from "@/components/track/TrackOutline";
@@ -48,15 +49,15 @@ export default async function CircuitPage({ params }: PageProps<"/[locale]/circu
           <div className="space-y-4">
             <p className="flex items-center gap-2 text-ink-2">
               <Flag iso={countryToIso(circuit.Location.country)} />
-              {circuit.Location.locality}, {circuit.Location.country}
+              {circuit.Location.locality}, {countryName(circuit.Location.country, locale)}
             </p>
             <h1 className="display text-5xl sm:text-6xl">{circuit.circuitName}</h1>
             {facts && (
               <div className="grid grid-cols-2 gap-6 pt-4 sm:grid-cols-4">
-                <StatNumber value={facts.km.toFixed(3)} label={`${t("length")} (km)`} size="md" />
+                <StatNumber value={num(facts.km, locale, 3, true)} label={`${t("length")} (km)`} size="md" />
                 <StatNumber value={facts.laps} label={t("laps")} size="md" />
                 <StatNumber value={facts.turns} label={t("turns")} size="md" />
-                <StatNumber value={facts.distance} label={`${t("distance")} (km)`} size="md" />
+                <StatNumber value={num(facts.distance, locale, 1)} label={`${t("distance")} (km)`} size="md" />
               </div>
             )}
             <div className="grid grid-cols-2 gap-6 pt-2 sm:grid-cols-4">

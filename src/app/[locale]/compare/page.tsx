@@ -9,6 +9,7 @@ import {
   getSeasonSprints,
   type Driver,
 } from "@/lib/api/jolpica";
+import { gpName } from "@/lib/gp-names";
 import { buildProgression } from "@/lib/championship";
 import { distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
@@ -97,7 +98,9 @@ export default async function ComparePage({ params, searchParams }: PageProps<"/
   const defA = ordered[0];
   const defB = ordered.find((id) => id !== defA && teamOf.get(id) === teamOf.get(defA)) ?? ordered[1];
   const aId = typeof sp.a === "string" && byId.has(sp.a) ? sp.a : defA;
-  const bId = typeof sp.b === "string" && byId.has(sp.b) ? sp.b : defB;
+  // Si solo llega el piloto A (desde su ficha), el rival por defecto es su compañero de equipo
+  const mate = ordered.find((id) => id !== aId && teamOf.get(id) === teamOf.get(aId)) ?? ordered.find((id) => id !== aId);
+  const bId = typeof sp.b === "string" && byId.has(sp.b) ? sp.b : aId === defA ? defB : mate;
 
   const options = ordered.map((id) => {
     const d = byId.get(id)!;
@@ -198,7 +201,7 @@ export default async function ComparePage({ params, searchParams }: PageProps<"/
               <SectionHeader title={tc("points")} />
               <LineSeriesChart
                 labels={progression.rounds.map((r) => String(r.round))}
-                fullLabels={progression.rounds.map((r) => `${r.round}. ${r.raceName}`)}
+                fullLabels={progression.rounds.map((r) => `${r.round}. ${gpName(r.raceName, locale)}`)}
                 series={[
                   { id: aId, label: `${A.givenName} ${A.familyName}`, color: pair.a, values: rowA.cumulative },
                   { id: bId, label: `${B.givenName} ${B.familyName}`, color: pair.b, dashed: pair.bDashed, values: rowB.cumulative },
@@ -232,7 +235,7 @@ export default async function ComparePage({ params, searchParams }: PageProps<"/
                       <tr key={r.round}>
                         <td>
                           <Link href={`/races/${season}/${r.round}`} className="text-ink-2 hover:text-ink">
-                            {r.round}. {r.raceName}
+                            {r.round}. {gpName(r.raceName, locale)}
                           </Link>
                         </td>
                         <td className={`text-right ${aAhead ? "font-semibold text-ink" : "text-ink-3"}`}>

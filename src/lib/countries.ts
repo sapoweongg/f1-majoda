@@ -28,3 +28,9 @@ export function nationalityToIso(nationality?: string) {
 export function countryToIso(country?: string) {
   return country ? COUNTRY[country] : undefined;
 }
+
+/** Nombre del país en el idioma de la página ("UK" → "Reino Unido"); si no se conoce, el original. */
+export function countryName(country: string, locale: string) {
+  const iso = countryToIso(country);
+  return (iso && new Intl.DisplayNames([locale], { type: "region" }).of(iso.toUpperCase())) || country;
+}

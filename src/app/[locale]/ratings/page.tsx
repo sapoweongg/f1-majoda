@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
+import { gpName } from "@/lib/gp-names";
 import { countryToIso } from "@/lib/countries";
 import { clampSeason } from "@/lib/format";
 import { getSeasonSummaries, ratingsEnabled } from "@/lib/ratings";
@@ -51,7 +52,7 @@ export default async function RatingsPage({ params, searchParams }: PageProps<"/
                   <span className="display w-10 text-center text-3xl text-ink-3">{i + 1}</span>
                   <Flag iso={countryToIso(race.Circuit.Location.country)} className="text-2xl" />
                   <div className="min-w-0 flex-1">
-                    <p className="display truncate text-xl">{race.raceName}</p>
+                    <p className="display truncate text-xl">{gpName(race.raceName, locale)}</p>
                     <p className="text-xs text-ink-3">{t("votes", { n: s!.votes })}</p>
                   </div>
                   <div className="text-right">

@@ -6,6 +6,7 @@ import radios from "@/data/max2023-radios.json";
 import { Link } from "@/i18n/navigation";
 import { LAPS_LED_2023, MAX_2023, PHOTOS, type RecordId } from "@/content/max2023";
 import { getCommonsFiles } from "@/lib/api/wikimedia";
+import { gpName, gpPlace } from "@/lib/gp-names";
 import { trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
 import { cn } from "@/lib/format";
@@ -296,7 +297,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
                     {i + 1}
                   </p>
                   <p className="flex items-center justify-center gap-1 text-[11px] text-ink-3">
-                    <Flag iso={countryToIso(r.country)} /> {r.raceName.replace(/ Grand Prix/i, "")}
+                    <Flag iso={countryToIso(r.country)} /> {gpPlace(r.raceName, locale)}
                   </p>
                 </Link>
               );
@@ -342,7 +343,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
                 <p className="display relative mt-6 text-4xl" style={{ color: win ? YELLOW : undefined }}>
                   {r.position ? `P${r.position}` : r.positionText}
                 </p>
-                <p className="relative mt-1 truncate text-xs font-semibold">{r.raceName.replace(/ Grand Prix/i, "")}</p>
+                <p className="relative mt-1 truncate text-xs font-semibold">{gpPlace(r.raceName, locale)}</p>
                 <p className="relative text-[11px] text-ink-3">{r.grid > 0 ? c.started(r.grid) : c.pitLane}</p>
                 <div className="relative mt-2 flex gap-1.5">
                   {r.pole && (
@@ -374,7 +375,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
           <div className="glass p-5">
             <LineSeriesChart
               labels={data.progression.rounds.map((r) => String(r.round))}
-              fullLabels={data.progression.rounds.map((r) => `${r.round}. ${r.raceName}`)}
+              fullLabels={data.progression.rounds.map((r) => `${r.round}. ${gpName(r.raceName, locale)}`)}
               series={series}
               height={380}
               tableLabel={lang === "en" ? "Table" : "Tabla"}
@@ -398,7 +399,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
               />
               <Link href={`/races/2023/${r.round}`} className="group block">
                 <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-3">
-                  <span className="num">R{r.round}</span> <Flag iso={countryToIso(r.country)} /> {r.raceName}
+                  <span className="num">R{r.round}</span> <Flag iso={countryToIso(r.country)} /> {gpName(r.raceName, locale)}
                   <span className="display ml-1 text-sm normal-case" style={{ color: r.position === 1 ? YELLOW : undefined }}>
                     {r.position ? `P${r.position}` : r.positionText}
                   </span>

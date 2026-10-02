@@ -1,4 +1,5 @@
 import { serverNow } from "@/lib/clock";
+import { gpName } from "@/lib/gp-names";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -84,7 +85,7 @@ export default async function SeasonRacesPage({ params }: PageProps<"/[locale]/r
                   </p>
                   <h3 className="display mt-2 flex items-center gap-2 text-2xl">
                     <Flag iso={countryToIso(race.Circuit.Location.country)} />
-                    {race.raceName.replace(/Grand Prix/i, "GP")}
+                    {gpName(race.raceName, locale, true)}
                   </h3>
                   <p className="mt-1 text-xs text-ink-3">
                     {race.Circuit.Location.locality} ·{" "}

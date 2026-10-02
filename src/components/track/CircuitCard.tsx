@@ -1,13 +1,15 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { circuitFacts, trackShape } from "@/lib/circuits";
-import { countryToIso } from "@/lib/countries";
+import { countryName, countryToIso } from "@/lib/countries";
+import { num } from "@/lib/format";
 import type { Circuit } from "@/lib/api/jolpica";
 import { Flag, GlassCard } from "@/components/ui/primitives";
 import { TrackOutline } from "./TrackOutline";
 
 export async function CircuitCard({ circuit, season }: { circuit: Circuit; season: number }) {
   const t = await getTranslations("circuit");
+  const locale = await getLocale();
   const shape = trackShape(circuit.circuitId, season);
   const facts = circuitFacts(circuit.circuitId);
   return (
@@ -22,14 +24,14 @@ export async function CircuitCard({ circuit, season }: { circuit: Circuit; seaso
             {circuit.circuitName}
           </p>
           <p className="text-xs text-ink-3">
-            {circuit.Location.locality}, {circuit.Location.country}
+            {circuit.Location.locality}, {countryName(circuit.Location.country, locale)}
           </p>
           {facts && (
             <dl className="mt-4 grid grid-cols-3 gap-3">
               <div>
                 <dt className="eyebrow">{t("length")}</dt>
                 <dd className="display text-2xl">
-                  {facts.km.toFixed(3)} <span className="text-xs text-ink-3">km</span>
+                  {num(facts.km, locale, 3, true)} <span className="text-xs text-ink-3">km</span>
                 </dd>
               </div>
               <div>

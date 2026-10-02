@@ -1,4 +1,5 @@
 import { serverNow } from "@/lib/clock";
+import { gpName } from "@/lib/gp-names";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
@@ -60,7 +61,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
     sessions.find((s) => s.session_name === "Qualifying") ??
     sessions.at(-1);
 
-  const raceOptions = [...schedule].reverse().map((r) => ({ value: r.round, label: `${r.round}. ${r.raceName}` }));
+  const raceOptions = [...schedule].reverse().map((r) => ({ value: r.round, label: `${r.round}. ${gpName(r.raceName, locale)}` }));
   const sessionLabel = (name: string) => {
     const key = { Race: "Race", Qualifying: "Qualifying", Sprint: "Sprint", "Sprint Qualifying": "SprintQualifying", "Sprint Shootout": "SprintShootout" }[name];
     return key ? ts(key) : name;
