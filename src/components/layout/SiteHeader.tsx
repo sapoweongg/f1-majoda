@@ -12,6 +12,7 @@ const ITEMS = [
   { href: "/live", key: "live" },
   { href: "/standings", key: "standings" },
   { href: "/races", key: "races" },
+  { href: "/drivers", key: "drivers" },
   { href: "/compare", key: "compare" },
   { href: "/telemetry", key: "telemetry" },
   { href: "/calendar", key: "calendar" },
@@ -57,7 +58,7 @@ export function SiteHeader() {
           <Logo />
         </Link>
 
-        <nav className="ml-4 hidden flex-1 items-center gap-1 lg:flex" aria-label="Principal">
+        <nav className="ml-4 hidden flex-1 items-center gap-1 xl:flex" aria-label="Principal">
           {ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -93,7 +94,7 @@ export function SiteHeader() {
           </div>
           <button
             type="button"
-            className="rounded-full p-2 text-ink-2 hover:bg-white/5 lg:hidden"
+            className="rounded-full p-2 text-ink-2 hover:bg-white/5 xl:hidden"
             aria-label={t("menu")}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
@@ -104,8 +105,8 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="border-t border-line px-4 pb-4 pt-2 lg:hidden" aria-label="Principal">
-          <ul className="grid grid-cols-2 gap-1">
+        <nav className="border-t border-line px-4 pb-4 pt-2 xl:hidden" aria-label="Principal">
+          <ul className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-5">
             {ITEMS.map((item) => (
               <li key={item.href}>
                 <Link

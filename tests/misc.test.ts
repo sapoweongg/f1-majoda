@@ -3,7 +3,8 @@ import { circuitInfo, trackShape } from "@/lib/circuits";
 import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { lapTime, parseLapTime } from "@/lib/format";
-import { mergeRacePages, type Race } from "@/lib/api/jolpica";
+import { mergeRacePages, type DriverStanding, type Race } from "@/lib/api/jolpica";
+import { addSeason, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { validateVote, voterHash } from "@/lib/ratings";
@@ -130,5 +131,33 @@ describe("fotos oficiales", () => {
     expect(f1DriverCode(null, "Andrea Kimi", "Antonelli")).toBe("andant01");
     expect(f1DriverCode(null, "Nico", "Hülkenberg")).toBe("nichul01");
     expect(f1DriverCode(null)).toBeUndefined();
+  });
+});
+
+describe("índice de pilotos", () => {
+  const standing = (driverId: string, position: string, wins: string) =>
+    ({
+      position,
+      positionText: position,
+      points: "0",
+      wins,
+      Driver: { driverId, givenName: driverId, familyName: driverId, nationality: "Italian" },
+      Constructors: [],
+    }) as unknown as DriverStanding;
+  const base: DriverIndexEntry[] = [
+    { id: "max", given: "Max", family: "Verstappen", nationality: "Dutch", from: 2015, to: 2025, seasons: 11, wins: 71, titles: 4, best: 1 },
+  ];
+
+  it("suma la temporada en curso sin darle el título al líder", () => {
+    const list = addSeason(base, 2026, [standing("antonelli", "1", "8"), standing("max", "6", "0")], false);
+    const ant = list.find((d) => d.id === "antonelli")!;
+    expect(ant).toMatchObject({ from: 2026, to: 2026, seasons: 1, wins: 8, titles: 0 });
+    expect(list.find((d) => d.id === "max")).toMatchObject({ to: 2026, seasons: 12, wins: 71, titles: 4 });
+  });
+
+  it("cuenta el título de una temporada terminada y no repite temporadas", () => {
+    const once = addSeason(base, 2026, [standing("max", "1", "10")], true);
+    expect(once[0]).toMatchObject({ seasons: 12, wins: 81, titles: 5 });
+    expect(addSeason(once, 2026, [standing("max", "1", "10")], true)[0]).toMatchObject({ seasons: 12, titles: 5 });
   });
 });

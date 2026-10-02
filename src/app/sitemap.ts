@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/site";
 import { routing } from "@/i18n/routing";
 
-const PAGES = ["", "/live", "/standings", "/races", "/compare", "/telemetry", "/calendar", "/history", "/ratings"];
+const PAGES = ["", "/live", "/standings", "/races", "/drivers", "/compare", "/telemetry", "/calendar", "/history", "/ratings"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
