@@ -172,7 +172,13 @@
     "positionsGained": "Posiciones ganadas",
     "noLaps": "No hay datos de vueltas para esta carrera (existen desde 1996).",
     "selectDrivers": "Elige pilotos para comparar",
-    "circuit": "Circuito"
+    "circuit": "Circuito",
+    "season": "Temporada {season}",
+    "schedule": "Horarios del fin de semana",
+    "nextSession": "Próxima sesión",
+    "pastWinners": "Ganadores anteriores en este circuito",
+    "telemetryLink": "Telemetría",
+    "compareLink": "Comparar pilotos de {season}"
   },
   "circuit": {
     "length": "Longitud",

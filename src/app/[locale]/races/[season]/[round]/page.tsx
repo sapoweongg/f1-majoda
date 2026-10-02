@@ -2,7 +2,7 @@ import { serverNow } from "@/lib/clock";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { CloudRain, Droplets, Thermometer, Wind } from "lucide-react";
+import { ChevronLeft, ChevronRight, CloudRain, Droplets, Gauge, Thermometer, Users, Wind } from "lucide-react";
 import {
   getCurrentSeason,
   getRace,
@@ -16,15 +16,19 @@ import {
 import { getRaceControl, getStints, getWeather } from "@/lib/api/openf1";
 import { countryToIso } from "@/lib/countries";
 import { parseLapTime } from "@/lib/format";
+import { gpName } from "@/lib/gp-names";
 import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
 import { getDriverPhotos, teamsOf } from "@/lib/photos";
+import { ratingsEnabled } from "@/lib/ratings";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
 import { LineSeriesChart, type Series } from "@/components/charts/LineSeriesChart";
 import { DriverToggles } from "@/components/races/DriverToggles";
+import { RacePreview } from "@/components/races/RacePreview";
 import { QualifyingTable, ResultsTable } from "@/components/races/ResultsTable";
 import { TyreStints, type StintRow } from "@/components/races/TyreStints";
 import { CircuitCard } from "@/components/track/CircuitCard";
+import { Link } from "@/i18n/navigation";
 import { EmptyState, Flag, GlassCard, PageTitle, SectionHeader, TabLinks } from "@/components/ui/primitives";
 import { RatingWidget } from "@/components/ui/Rating";
 import { LocalTime } from "@/components/ui/time";
@@ -41,8 +45,9 @@ async function load(p: Params) {
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  const data = await load(await params);
-  return { title: data ? `${data.race.raceName} ${data.season}` : undefined };
+  const p = await params;
+  const data = await load(p);
+  return { title: data ? `${gpName(data.race.raceName, p.locale)} ${data.season}` : undefined };
 }
 
 /** Pilotos elegidos en ?d=a,b,c o los primeros `n` clasificados. */
@@ -81,7 +86,7 @@ export default async function RacePage({
   setRequestLocale(p.locale);
   const data = await load(p);
   if (!data) notFound();
-  const { season, round, race } = data;
+  const { season, round, race, schedule } = data;
   const sp = await searchParams;
   const t = await getTranslations("races");
   const tc = await getTranslations("common");
@@ -105,7 +110,9 @@ export default async function RacePage({
 
   if (tab === "results") {
     const photos = await safe(getDriverPhotos(allDrivers, season, teamsOf(results)), {});
-    body = results.length ? (
+    body = !started ? (
+      <RacePreview race={race} now={serverNow()} />
+    ) : results.length ? (
       <ResultsTable
         results={results}
         photos={photos}
@@ -118,6 +125,7 @@ export default async function RacePage({
           points: tc("pts"),
           fastest: t("fastestLap"),
         }}
+        locale={p.locale}
       />
     ) : (
       <EmptyState>{t("notRun")}</EmptyState>
@@ -126,7 +134,7 @@ export default async function RacePage({
     const quali = await safe(getRaceQualifying(season, round), []);
     const photos = await safe(getDriverPhotos(quali.map((q) => q.Driver), season, teamsOf(quali)), {});
     body = quali.length ? (
-      <QualifyingTable results={quali} photos={photos} labels={{ pos: tc("pos"), driver: tc("driver") }} />
+      <QualifyingTable results={quali} photos={photos} labels={{ pos: tc("pos"), driver: tc("driver"), time: tc("time") }} />
     ) : (
       <EmptyState>{t("notRun")}</EmptyState>
     );
@@ -146,6 +154,7 @@ export default async function RacePage({
           points: tc("pts"),
           fastest: t("fastestLap"),
         }}
+        locale={p.locale}
       />
     ) : (
       <EmptyState>{t("notRun")}</EmptyState>
@@ -372,18 +381,20 @@ export default async function RacePage({
   }
 
   const winner = results[0];
+  const prev = schedule.find((r) => Number(r.round) === round - 1);
+  const next = schedule.find((r) => Number(r.round) === round + 1);
   return (
     <div>
       <PageTitle
         eyebrow={
-          <span className="flex items-center gap-2">
-            {tc("round")} {round} · {season}
-          </span>
+          <Link href={`/races/${season}`} className="transition-colors hover:text-ink">
+            {tc("round")} {round} · {t("season", { season })}
+          </Link>
         }
         title={
           <span className="flex items-center gap-4">
             <Flag iso={countryToIso(race.Circuit.Location.country)} className="text-3xl sm:text-5xl" />
-            {race.raceName}
+            {gpName(race.raceName, p.locale)}
           </span>
         }
       >
@@ -396,6 +407,28 @@ export default async function RacePage({
           </span>
         )}
       </PageTitle>
+
+      <nav className="-mt-4 mb-6 flex flex-wrap items-center gap-2" aria-label={t("season", { season })}>
+        {prev && (
+          <Link href={`/races/${season}/${prev.round}`} className="chip transition-colors hover:text-ink">
+            <ChevronLeft size={14} aria-hidden /> {gpName(prev.raceName, p.locale, true)}
+          </Link>
+        )}
+        {next && (
+          <Link href={`/races/${season}/${next.round}`} className="chip transition-colors hover:text-ink">
+            {gpName(next.raceName, p.locale, true)} <ChevronRight size={14} aria-hidden />
+          </Link>
+        )}
+        <span className="mx-1 hidden h-4 w-px bg-line sm:block" aria-hidden />
+        {started && season >= OPENF1_FIRST_SEASON && (
+          <Link href={`/telemetry?season=${season}&round=${round}`} className="chip transition-colors hover:text-ink">
+            <Gauge size={13} aria-hidden /> {t("telemetryLink")}
+          </Link>
+        )}
+        <Link href={`/compare?season=${season}`} className="chip transition-colors hover:text-ink">
+          <Users size={13} aria-hidden /> {t("compareLink", { season })}
+        </Link>
+      </nav>
 
       <TabLinks
         active={tab}
@@ -412,7 +445,7 @@ export default async function RacePage({
         <div className="min-w-0">{body}</div>
         <aside className="space-y-6">
           <CircuitCard circuit={race.Circuit} season={season} />
-          {season >= current - 1 && (
+          {season >= current - 1 && ratingsEnabled() && (
             <GlassCard>
               <p className="eyebrow mb-3">{ts("Race")}</p>
               <RatingWidget season={season} round={round} open={finished} />

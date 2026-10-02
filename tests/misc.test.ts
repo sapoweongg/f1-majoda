@@ -10,6 +10,7 @@ import { addSeason, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { gpName } from "@/lib/gp-names";
+import { statusLabel } from "@/lib/status";
 import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
 import racesData from "@/data/races.json";
 import { validateVote, voterHash } from "@/lib/ratings";
@@ -276,5 +277,16 @@ describe("buscador general", () => {
     expect(r.drivers.map(hitHref)).toEqual(["/drivers/senna"]);
     expect(r.teams.map(hitHref)).toEqual(["/teams/mclaren"]);
     expect(searchIndex(index, "  ").drivers).toEqual([]);
+  });
+});
+
+describe("estado final", () => {
+  it("traduce y calcula las vueltas perdidas", () => {
+    expect(statusLabel("Retired", "es")).toBe("Abandono");
+    expect(statusLabel("+1 Lap", "es")).toBe("+1 vuelta");
+    expect(statusLabel("+3 Laps", "en")).toBe("+3 laps");
+    expect(statusLabel("Lapped", "es", 49, 51)).toBe("+2 vueltas");
+    expect(statusLabel("Gearbox", "en")).toBe("Gearbox");
+    expect(statusLabel("Estado raro", "es")).toBe("Estado raro");
   });
 });

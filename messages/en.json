@@ -172,7 +172,13 @@
     "positionsGained": "Positions gained",
     "noLaps": "No lap data for this race (available from 1996).",
     "selectDrivers": "Pick drivers to compare",
-    "circuit": "Circuit"
+    "circuit": "Circuit",
+    "season": "{season} season",
+    "schedule": "Weekend schedule",
+    "nextSession": "Next session",
+    "pastWinners": "Previous winners at this circuit",
+    "telemetryLink": "Telemetry",
+    "compareLink": "Compare {season} drivers"
   },
   "circuit": {
     "length": "Length",
