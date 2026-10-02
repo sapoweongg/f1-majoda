@@ -7,6 +7,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/format";
+import { SearchPalette } from "./SearchPalette";
 
 type Item = { href: string; key: string; match?: string[] };
 
@@ -151,6 +152,7 @@ export function SiteHeader({ ratingsEnabled }: { ratingsEnabled: boolean }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <SearchPalette />
           <div className="flex rounded-full border border-line p-0.5 text-xs font-semibold" aria-label={t("language")}>
             {routing.locales.map((l) => (
               <Link

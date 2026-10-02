@@ -22,6 +22,22 @@
     "compareHint": "Two drivers head-to-head in a season",
     "telemetryHint": "Fastest laps metre by metre (2023 onwards)"
   },
+  "search": {
+    "button": "Search",
+    "placeholder": "Drivers, teams, circuits or a GP (e.g. Monaco 1988)",
+    "drivers": "Drivers",
+    "teams": "Teams",
+    "circuits": "Circuits",
+    "races": "Grands Prix",
+    "empty": "No results for “{query}”.",
+    "hint": "Type a name, a country or a year. Try “senna”, “ferrari” or “japan 2005”.",
+    "loading": "Loading…",
+    "close": "Close",
+    "keys": "↑ ↓ to move · Enter to open · Esc to close",
+    "round": "Round {n}",
+    "titles": "{n, plural, one {# title} other {# titles}}",
+    "wins": "{n, plural, one {# win} other {# wins}}"
+  },
   "footer": {
     "unofficial": "Unofficial, non-commercial fan site. Not affiliated with Formula 1, the FIA or any team.",
     "rights": "F1, FORMULA 1 and the official driver, car and logo images belong to their respective owners.",

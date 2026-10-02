@@ -22,6 +22,22 @@
     "compareHint": "Dos pilotos cara a cara en una temporada",
     "telemetryHint": "Vueltas rápidas metro a metro (desde 2023)"
   },
+  "search": {
+    "button": "Buscar",
+    "placeholder": "Pilotos, equipos, circuitos o un GP (p. ej. Mónaco 1988)",
+    "drivers": "Pilotos",
+    "teams": "Equipos",
+    "circuits": "Circuitos",
+    "races": "Grandes Premios",
+    "empty": "Sin resultados para «{query}».",
+    "hint": "Escribe un nombre, un país o un año. Prueba con «senna», «ferrari» o «japón 2005».",
+    "loading": "Cargando…",
+    "close": "Cerrar",
+    "keys": "↑ ↓ para moverte · Enter para abrir · Esc para cerrar",
+    "round": "Ronda {n}",
+    "titles": "{n, plural, one {# título} other {# títulos}}",
+    "wins": "{n, plural, one {# victoria} other {# victorias}}"
+  },
   "footer": {
     "unofficial": "Sitio de fans no oficial y sin fines comerciales. No está afiliado a Formula 1, la FIA ni a ningún equipo.",
     "rights": "F1, FORMULA 1 y las imágenes oficiales de pilotos, coches y logos pertenecen a sus respectivos dueños.",

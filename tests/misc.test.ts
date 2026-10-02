@@ -9,6 +9,9 @@ import { buildCircuitIndex } from "@/lib/races-index";
 import { addSeason, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
+import { gpName } from "@/lib/gp-names";
+import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
+import racesData from "@/data/races.json";
 import { validateVote, voterHash } from "@/lib/ratings";
 import { teamColor, teamStyle } from "@/lib/teams";
 import { qualifying, results, sprints } from "./fixtures";
@@ -215,5 +218,63 @@ describe("índice de circuitos", () => {
     // Madrid aún no se ha corrido: está en el calendario pero sin carreras
     expect(index.find((c) => c.id === "madring")).toMatchObject({ from: 2026, to: 2026, races: 0 });
     expect(index.find((c) => c.id === "aintree")).toMatchObject({ from: 1962, to: 1962, races: 1 });
+  });
+});
+
+describe("nombres de los GP", () => {
+  it("traduce al español y deja el inglés en /en", () => {
+    expect(gpName("Monaco Grand Prix", "es")).toBe("Gran Premio de Mónaco");
+    expect(gpName("Monaco Grand Prix", "es", true)).toBe("GP de Mónaco");
+    expect(gpName("United States Grand Prix West", "es")).toBe("Gran Premio de Estados Unidos Oeste");
+    expect(gpName("Indianapolis 500", "es")).toBe("500 Millas de Indianápolis");
+    expect(gpName("Monaco Grand Prix", "en", true)).toBe("Monaco GP");
+    // Un nombre desconocido se queda como viene
+    expect(gpName("Bahrain Grand Prix in Malaysia", "es", true)).toBe("Bahrain GP in Malaysia");
+  });
+
+  it("cubre todos los nombres de la historia", () => {
+    const names = new Set((racesData.races as [number, number, string][]).map((r) => r[2]));
+    const missing = [...names].filter((n) => gpName(n, "es") === n);
+    expect(missing).toEqual([]);
+  });
+});
+
+describe("buscador general", () => {
+  const index = prepareIndex({
+    current: 2026,
+    drivers: [
+      ["senna", "Ayrton", "Senna", 1984, 1994, 3, 41],
+      ["bruno_senna", "Bruno", "Senna", 2010, 2012, 0, 0],
+      ["perez", "Sergio", "Pérez", 2011, 2026, 0, 6],
+    ],
+    teams: [["mclaren", "McLaren", 1966, 2026, 10, 199]],
+    circuits: [["monaco", "Circuit de Monaco", "Monte Carlo", "Mónaco", "mc"]],
+    races: [
+      [1988, 4, "Gran Premio de Mónaco", "monaco"],
+      [1989, 4, "Gran Premio de Mónaco", "monaco"],
+      [2026, 6, "Gran Premio de Mónaco", "monaco"],
+    ],
+  });
+
+  it("encuentra un GP concreto por nombre y año", () => {
+    const r = searchIndex(index, "monaco 1988");
+    expect(r.races.map(hitHref)).toEqual(["/races/1988/4"]);
+    // El circuito también sale: los circuitos se buscan solo por texto
+    expect(r.circuits.map(hitHref)).toEqual(["/circuits/monaco"]);
+  });
+
+  it("ignora tildes y ordena por relevancia", () => {
+    expect(searchIndex(index, "perez").drivers.map(hitHref)).toEqual(["/drivers/perez"]);
+    // Ayrton (3 títulos) antes que Bruno
+    expect(searchIndex(index, "senna").drivers.map(hitHref)).toEqual(["/drivers/senna", "/drivers/bruno_senna"]);
+    // Sin año, las carreras más recientes primero
+    expect(searchIndex(index, "monaco").races.map(hitHref)[0]).toBe("/races/2026/6");
+  });
+
+  it("un año solo filtra a quienes estaban en activo", () => {
+    const r = searchIndex(index, "1990");
+    expect(r.drivers.map(hitHref)).toEqual(["/drivers/senna"]);
+    expect(r.teams.map(hitHref)).toEqual(["/teams/mclaren"]);
+    expect(searchIndex(index, "  ").drivers).toEqual([]);
   });
 });
