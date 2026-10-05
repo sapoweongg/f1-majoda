@@ -148,6 +148,8 @@
     "winner": "Winner",
     "fastestLap": "Fastest lap",
     "notRun": "Not run yet.",
+    "pending": "The session has just finished: data will be published shortly.",
+    "noQualiData": "No qualifying data for this race (available from 1994, with gaps until 2003). The starting grid is in Results.",
     "lapTimes": "Lap times",
     "positions": "Lap-by-lap positions",
     "tyres": "Tyres per driver",

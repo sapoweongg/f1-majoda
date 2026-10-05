@@ -7,18 +7,21 @@ import champions from "@/data/champions.json";
 import {
   getConstructor,
   getConstructorDrivers,
-  getConstructorSeasons,
+  getConstructorSeasonList,
+  getConstructorSeasonStanding,
   getConstructorWinCount,
   getCurrentSeason,
   type Driver,
 } from "@/lib/api/jolpica";
 import { serverNow } from "@/lib/clock";
 import { familyExtras } from "@/lib/constructors";
+import { num, yearSpan } from "@/lib/format";
 import { nationalityToIso } from "@/lib/countries";
 import { currentGrid } from "@/lib/grid";
 import { carImage, teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
+import { STANDINGS_THROUGH, teamFinals } from "@/lib/standings";
 import { teamFamily, teamStyle } from "@/lib/teams";
 import { DriverHero, TeamCar, TeamLogo } from "@/components/ui/media";
 import { BackLink, EmptyState, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
@@ -39,11 +42,21 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
   const t = await getTranslations("team");
   const tc = await getTranslations("common");
 
-  const [seasons, apiWins, current] = await Promise.all([
-    safe(getConstructorSeasons(constructorId), []),
+  const [seasonList, apiWins, current] = await Promise.all([
+    safe(getConstructorSeasonList(constructorId), []),
     safe(getConstructorWinCount(constructorId), 0),
     safe(getCurrentSeason(), new Date().getUTCFullYear()),
   ]);
+  // Clasificación de constructores (existe desde 1958): las temporadas cerradas salen del archivo y
+  // las posteriores, de la API
+  const finals = teamFinals(constructorId);
+  const recent = seasonList.filter((s) => s > STANDINGS_THROUGH);
+  const fetched = await Promise.all(recent.map((s) => safe(getConstructorSeasonStanding(constructorId, s), undefined)));
+  recent.forEach((season, i) => {
+    const st = fetched[i];
+    if (st) finals.set(season, { position: st.positionText, points: Number(st.points), wins: Number(st.wins) });
+  });
+  const seasons = seasonList.map((season) => ({ season, standing: finals.get(season) }));
   const lastSeason = seasons.at(-1)?.season ?? current;
   // En la temporada en curso, los pilotos de la última carrera: la lista de Jolpica incluye a los
   // que solo hicieron libres
@@ -64,8 +77,10 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
   const wins = apiWins + familyExtras(constructorId).wins;
   const iso = nationalityToIso(team.nationality);
   const country = iso ? new Intl.DisplayNames([locale], { type: "region" }).of(iso.toUpperCase()) : team.nationality;
-  const best = titles.length ? 1 : Math.min(...seasons.map((s) => Number(s.standing?.position ?? 99)));
-  const maxPts = Math.max(1, ...seasons.map((s) => Number(s.standing?.points ?? 0)));
+  // "-" (sin clasificar) no es una posición
+  const positions = seasons.map((s) => Number(s.standing?.position)).filter((n) => Number.isInteger(n) && n > 0);
+  const best = titles.length ? 1 : Math.min(99, ...positions);
+  const maxPts = Math.max(1, ...seasons.map((s) => s.standing?.points ?? 0));
 
   return (
     <div className="space-y-10">
@@ -80,7 +95,7 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
             <h1 className="display text-5xl sm:text-7xl">{team.name}</h1>
             <p className="flex items-center gap-2 text-sm text-white/70">
               <Flag iso={iso} />
-              {country} · {seasons[0]?.season}–{lastSeason}
+              {country}{seasons.length > 0 && ` · ${yearSpan(seasons[0].season, lastSeason)}`}
             </p>
           </div>
           <TeamCar
@@ -203,7 +218,8 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
                 </thead>
                 <tbody>
                   {[...seasons].reverse().filter((x) => x.standing).map(({ season, standing }) => {
-                    const pts = Number(standing?.points ?? 0);
+                    const pts = standing?.points ?? 0;
+                    const pos = standing?.position ?? "";
                     return (
                       <tr key={season}>
                         <td>
@@ -211,14 +227,14 @@ export default async function TeamPage({ params }: PageProps<"/[locale]/teams/[c
                             {season}
                           </Link>
                         </td>
-                        <td className="display num text-right text-lg">{standing?.positionText ?? "—"}</td>
+                        <td className="display num text-right text-lg">{pos === "E" ? "EX" : /^\d+$/.test(pos) ? pos : "—"}</td>
                         <td className="num text-right text-ink-2">{standing?.wins}</td>
                         <td className="hidden md:table-cell">
                           <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
                             <div className="h-full rounded-full" style={{ width: `${(pts / maxPts) * 100}%`, background: style.color }} />
                           </div>
                         </td>
-                        <td className="num text-right">{standing?.points}</td>
+                        <td className="num text-right">{num(pts, locale, 1)}</td>
                       </tr>
                     );
                   })}

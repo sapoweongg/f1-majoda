@@ -4,7 +4,7 @@ import { useDeferredValue, useMemo, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Search, Trophy, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { cn } from "@/lib/format";
+import { activeIn, cn } from "@/lib/format";
 import { EmptyState, Flag } from "@/components/ui/primitives";
 
 /** Una fila del buscador. Los textos llegan ya formateados desde el servidor. */
@@ -23,6 +23,8 @@ export type DirectoryItem = {
   search: string;
   from: number;
   to: number;
+  /** Temporadas exactas, solo si hay huecos entre `from` y `to`. */
+  years?: number[];
   wins: number;
   titles: number;
   /** Cantidad propia de cada índice (carreras de un circuito). */
@@ -58,7 +60,6 @@ const KEY = {
  */
 export function Directory({
   items,
-  current,
   namespace,
   filters,
   sorts,
@@ -66,7 +67,6 @@ export function Directory({
   children,
 }: {
   items: DirectoryItem[];
-  current: number;
   namespace: "drivers" | "teams" | "circuits";
   filters: DirectoryFilter[];
   sorts: DirectorySort[];
@@ -81,6 +81,9 @@ export function Directory({
   const [sort, setSort] = useState<DirectorySort>(sorts[0]);
   const [limit, setLimit] = useState(PAGE);
   const deferred = useDeferredValue(query);
+  // "En activo" = presente en la última temporada con datos. No se usa el año en curso: en
+  // pretemporada nadie lo ha corrido todavía y el filtro saldría vacío
+  const latest = useMemo(() => Math.max(0, ...items.map((d) => d.to)), [items]);
 
   const indexed = useMemo(
     () =>
@@ -100,9 +103,9 @@ export function Directory({
     const list = indexed.filter((d) => {
       if (filter === "champions" && !d.titles) return false;
       if (filter === "winners" && !d.wins) return false;
-      if (filter === "active" && d.to < current) return false;
+      if (filter === "active" && d.to < latest) return false;
       // Un año (p. ej. "1988") busca a quienes estaban en activo esa temporada
-      return tokens.every((tok) => (isYear(tok) ? d.from <= +tok && +tok <= d.to : d.hay.includes(tok)));
+      return tokens.every((tok) => (isYear(tok) ? activeIn(+tok, d.from, d.to, d.years) : d.hay.includes(tok)));
     });
     type Row = (typeof list)[number];
     const order = (a: Row, b: Row) => {
@@ -116,7 +119,7 @@ export function Directory({
     const first = tokens.find((tok) => !isYear(tok));
     const starts = (d: Row) => (first && (d.name_.startsWith(first) || d.given_.startsWith(first)) ? 0 : 1);
     return list.sort((a, b) => starts(a) - starts(b) || order(a, b));
-  }, [indexed, tokens, filter, sort, current, locale]);
+  }, [indexed, tokens, filter, sort, latest, locale]);
 
   const searching = tokens.length > 0;
   const update = (value: string) => {
@@ -208,7 +211,7 @@ export function Directory({
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5 font-semibold">
-                      {d.to >= current && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-green" title={t("filterActive")} />}
+                      {d.to >= latest && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-green" title={t("filterActive")} />}
                       <span className="truncate">
                         {d.given && `${d.given} `}
                         <span className={cn(upperName && "uppercase")}>{d.name}</span>

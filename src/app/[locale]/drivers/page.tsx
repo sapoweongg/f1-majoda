@@ -4,8 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { getCurrentSeason } from "@/lib/api/jolpica";
 import { serverNow } from "@/lib/clock";
 import { nationalityToIso } from "@/lib/countries";
-import { getDriverIndex } from "@/lib/drivers";
-import { yearSpan } from "@/lib/format";
+import { driverYears, getDriverIndex } from "@/lib/drivers";
+import { gapYears, yearSpan } from "@/lib/format";
 import { currentGrid } from "@/lib/grid";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos, teamsOf, type Photo } from "@/lib/photos";
@@ -51,6 +51,7 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
       search: `${iso ? (regions.of(iso.toUpperCase()) ?? "") : ""} ${d.nationality}`,
       from: d.from,
       to: d.to,
+      years: gapYears(driverYears(d), d.from, d.to),
       wins: d.wins,
       titles: d.titles,
       count: d.seasons,
@@ -62,7 +63,6 @@ export default async function DriversPage({ params }: PageProps<"/[locale]/drive
       <PageTitle eyebrow={t("subtitle")} title={t("title")} />
       <Directory
         items={items}
-        current={current}
         namespace="drivers"
         filters={["champions", "winners", "active"]}
         sorts={["recent", "wins", "titles", "name"]}

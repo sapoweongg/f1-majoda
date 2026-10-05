@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
@@ -15,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/ratings">): Promise<Metadata> {
   const { locale } = await params;
+  if (!ratingsEnabled()) return {};
   const t = await getTranslations({ locale, namespace: "ratings" });
   return { title: t("title") };
 }
@@ -22,6 +24,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/ratings"
 export default async function RatingsPage({ params, searchParams }: PageProps<"/[locale]/ratings">) {
   const { locale } = await params;
   setRequestLocale(locale);
+  // Sin Supabase no hay valoraciones: la página no existe (tampoco está en el menú ni en el sitemap)
+  if (!ratingsEnabled()) notFound();
   const sp = await searchParams;
   const t = await getTranslations("ratings");
 

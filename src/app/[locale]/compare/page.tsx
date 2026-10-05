@@ -123,8 +123,8 @@ export default async function ComparePage({ params, searchParams }: PageProps<"/
   const same = aId === bId;
   const photos = await safe(getDriverPhotos([A, B], season), {});
   const pair = distinctPair(teamColor(teamOf.get(aId)), teamColor(teamOf.get(bId)));
-  const sa = seasonStats(aId, results, sprints, qualifying);
-  const sb = seasonStats(bId, results, sprints, qualifying);
+  const sa = seasonStats(aId, results, sprints);
+  const sb = seasonStats(bId, results, sprints);
   const h2h = headToHead(aId, bId, results, qualifying);
   const rbr = roundByRound([aId, bId], results);
   const rowA = progression.rows.find((r) => r.id === aId);

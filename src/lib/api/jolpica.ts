@@ -241,29 +241,16 @@ export async function getSeasonDrivers(season: number): Promise<Driver[]> {
 
 type SeasonTable = { SeasonTable: { Seasons: { season: string }[] } };
 
-/** Temporadas en las que corrió un piloto. */
-export async function getDriverSeasonList(driverId: string): Promise<number[]> {
-  const data = await get<SeasonTable>(`/drivers/${driverId}/seasons.json?limit=100`, DAY);
-  return data.MRData.SeasonTable.Seasons.map((x) => Number(x.season));
-}
-
 /**
- * Posición final del piloto por temporada. Jolpica exige la temporada en la URL, así que pedimos
- * una por una solo las `recent` más recientes (las temporadas cerradas quedan en caché 30 días).
+ * Posición de un piloto en el campeonato de una temporada. Las temporadas cerradas están en
+ * src/data/standings.json: esto es para las posteriores.
  */
-export async function getDriverSeasons(driverId: string, recent = 15) {
-  const seasons = await getDriverSeasonList(driverId);
-  const wanted = new Set(seasons.slice(-recent));
-  return Promise.all(
-    seasons.map(async (season) => {
-      if (!wanted.has(season)) return { season, standing: undefined };
-      const data = await get<StandingsTable<"DriverStandings", DriverStanding>>(
-        `/${season}/drivers/${driverId}/driverstandings.json`,
-        ttl(season),
-      ).catch(() => null);
-      return { season, standing: data?.MRData.StandingsTable.StandingsLists[0]?.DriverStandings[0] };
-    }),
+export async function getDriverSeasonStanding(driverId: string, season: number): Promise<DriverStanding | undefined> {
+  const data = await get<StandingsTable<"DriverStandings", DriverStanding>>(
+    `/${season}/drivers/${driverId}/driverstandings.json`,
+    ttl(season),
   );
+  return data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings[0];
 }
 
 export const getDriverCareerSprints = (driverId: string) => allRaces(`/drivers/${driverId}/sprint`, DAY);
@@ -278,21 +265,19 @@ export async function getConstructor(constructorId: string): Promise<Constructor
   return data.MRData.ConstructorTable.Constructors[0];
 }
 
-/** Temporadas de un equipo; posición final solo de las `recent` más recientes. */
-export async function getConstructorSeasons(constructorId: string, recent = 12) {
-  const list = await get<SeasonTable>(`/constructors/${constructorId}/seasons.json?limit=100`, DAY);
-  const seasons = list.MRData.SeasonTable.Seasons.map((x) => Number(x.season));
-  const wanted = new Set(seasons.slice(-recent));
-  return Promise.all(
-    seasons.map(async (season) => {
-      if (!wanted.has(season) || season < 1958) return { season, standing: undefined };
-      const data = await get<StandingsTable<"ConstructorStandings", ConstructorStanding>>(
-        `/${season}/constructors/${constructorId}/constructorstandings.json`,
-        ttl(season),
-      ).catch(() => null);
-      return { season, standing: data?.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings[0] };
-    }),
+/** Temporadas en las que corrió un equipo. */
+export async function getConstructorSeasonList(constructorId: string): Promise<number[]> {
+  const data = await get<SeasonTable>(`/constructors/${constructorId}/seasons.json?limit=100`, DAY);
+  return data.MRData.SeasonTable.Seasons.map((x) => Number(x.season));
+}
+
+/** Posición de un equipo en el campeonato de una temporada (las cerradas están en standings.json). */
+export async function getConstructorSeasonStanding(constructorId: string, season: number): Promise<ConstructorStanding | undefined> {
+  const data = await get<StandingsTable<"ConstructorStandings", ConstructorStanding>>(
+    `/${season}/constructors/${constructorId}/constructorstandings.json`,
+    ttl(season),
   );
+  return data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings[0];
 }
 
 /** Victorias totales de un equipo (solo leemos el total). */
@@ -317,12 +302,6 @@ export const getCircuitWinners = (circuitId: string) => allRaces(`/circuits/${ci
 
 /** Ganador de cada carrera de la temporada (una sola petición). */
 export const getSeasonWinners = (season: number) => allRaces(`/${season}/results/1`, ttl(season));
-
-/** Número total de poles de un piloto (solo leemos el total de la respuesta). */
-export async function getDriverPoleCount(driverId: string): Promise<number> {
-  const data = await get<RaceTable>(`/drivers/${driverId}/qualifying/1.json?limit=1`, DAY);
-  return Number(data.MRData.total);
-}
 
 /** Pilotos que corrieron para un equipo en una temporada. */
 export async function getConstructorDrivers(constructorId: string, season: number): Promise<Driver[]> {

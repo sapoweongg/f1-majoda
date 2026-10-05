@@ -15,6 +15,8 @@ export type CircuitIndexEntry = {
   country: string;
   from: number;
   to: number;
+  /** Temporadas con carrera (incluida la actual si está en el calendario). */
+  years: number[];
   /** Carreras ya disputadas. */
   races: number;
 };
@@ -42,11 +44,12 @@ export async function getAllRaces(current: number): Promise<{ rows: RaceRow[]; s
  * cuentan para "en activo" pero no para el total.
  */
 export function buildCircuitIndex(circuits: Circuit[], past: RaceRow[], schedules: Race[], now: number): CircuitIndexEntry[] {
-  const stats = new Map<string, { from: number; to: number; races: number }>();
+  const stats = new Map<string, { from: number; to: number; years: number[]; races: number }>();
   const add = (id: string, season: number, held: boolean) => {
-    const e = stats.get(id) ?? { from: season, to: season, races: 0 };
+    const e = stats.get(id) ?? { from: season, to: season, years: [], races: 0 };
     e.from = Math.min(e.from, season);
     e.to = Math.max(e.to, season);
+    if (!e.years.includes(season)) e.years.push(season);
     if (held) e.races++;
     stats.set(id, e);
   };

@@ -148,6 +148,8 @@
     "winner": "Ganador",
     "fastestLap": "Vuelta rápida",
     "notRun": "Aún no se ha disputado.",
+    "pending": "La sesión acaba de terminar: los datos se publicarán en breve.",
+    "noQualiData": "No hay datos de la clasificación de esta carrera (existen desde 1994, con huecos hasta 2003). La parrilla de salida está en Resultados.",
     "lapTimes": "Tiempos por vuelta",
     "positions": "Posiciones vuelta a vuelta",
     "tyres": "Neumáticos por piloto",

@@ -4,6 +4,7 @@ import { Radio } from "lucide-react";
 import { hasLiveCredentials } from "@/lib/api/openf1";
 import { countryToIso } from "@/lib/countries";
 import { buildLiveSnapshot, buildReplay, getLiveSession, isLiveWindow, latestFinishedRace } from "@/lib/live";
+import { SESSION_MESSAGE_KEY } from "@/lib/mapping";
 import { safe } from "@/lib/safe";
 import { LiveTiming } from "@/components/live/LiveTiming";
 import { ReplayPlayer } from "@/components/live/ReplayPlayer";
@@ -26,17 +27,7 @@ export default async function LivePage({ params }: PageProps<"/[locale]/live">) 
   const tc = await getTranslations("common");
   const tr = await getTranslations("races");
   const ts = await getTranslations("sessions");
-  const sessionKeys: Record<string, string> = {
-    Race: "Race",
-    Qualifying: "Qualifying",
-    Sprint: "Sprint",
-    "Sprint Qualifying": "SprintQualifying",
-    "Sprint Shootout": "SprintShootout",
-    "Practice 1": "FirstPractice",
-    "Practice 2": "SecondPractice",
-    "Practice 3": "ThirdPractice",
-  };
-  const sessionLabel = (name: string) => (sessionKeys[name] ? ts(sessionKeys[name]) : name);
+  const sessionLabel = (name: string) => (SESSION_MESSAGE_KEY[name] ? ts(SESSION_MESSAGE_KEY[name]) : name);
 
   const labels: TowerLabels = {
     pos: tc("pos"),

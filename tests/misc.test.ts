@@ -2,16 +2,17 @@ import { describe, expect, it } from "vitest";
 import { circuitInfo, trackShape } from "@/lib/circuits";
 import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
-import { lapTime, parseLapTime } from "@/lib/format";
+import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
+import { driverFinals, teamFinals } from "@/lib/standings";
 import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
 import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
 import { buildCircuitIndex } from "@/lib/races-index";
-import { addSeason, type DriverIndexEntry } from "@/lib/drivers";
+import { addSeason, driverYears, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { gpName } from "@/lib/gp-names";
 import { statusLabel } from "@/lib/status";
-import { translateRaceControl } from "@/lib/race-control";
+import { isKeyMessage, translateRaceControl } from "@/lib/race-control";
 import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
 import racesData from "@/data/races.json";
 import { validateVote, voterHash } from "@/lib/ratings";
@@ -41,8 +42,16 @@ describe("comparativa", () => {
     expect(h.quali).toEqual({ a: 1, b: 1 });
   });
 
+  it("sin clasificación compara la parrilla", () => {
+    // Ronda 1: HAM sale 1.º y ANT 2.º; ronda 2: HAM 2.º y ANT 3.º
+    expect(headToHead("hamilton", "antonelli", results, []).quali).toEqual({ a: 2, b: 0 });
+    // Con clasificación manda la clasificación (ronda 2: HAM 2.º, ANT 3.º; ronda 1: HAM 1.º)
+    expect(headToHead("hamilton", "antonelli", results, qualifying).quali).toEqual({ a: 2, b: 0 });
+    expect(headToHead("antonelli", "russell", results, []).quali).toEqual({ a: 1, b: 1 });
+  });
+
   it("calcula estadísticas de temporada", () => {
-    const s = seasonStats("hamilton", results, sprints, qualifying);
+    const s = seasonStats("hamilton", results, sprints);
     expect(s.points).toBe(18 + 15 + 8);
     expect(s.dnfs).toBe(1);
     expect(s.poles).toBe(1);
@@ -230,8 +239,11 @@ describe("nombres de los GP", () => {
     expect(gpName("United States Grand Prix West", "es")).toBe("Gran Premio de Estados Unidos Oeste");
     expect(gpName("Indianapolis 500", "es")).toBe("500 Millas de Indianápolis");
     expect(gpName("Monaco Grand Prix", "en", true)).toBe("Monaco GP");
-    // Un nombre desconocido se queda como viene
-    expect(gpName("Bahrain Grand Prix in Malaysia", "es", true)).toBe("Bahrain GP in Malaysia");
+    // Un GP trasladado a otro país se traduce por partes; un nombre desconocido se queda como viene
+    expect(gpName("Bahrain Grand Prix in Malaysia", "es")).toBe("Gran Premio de Baréin en Malasia");
+    expect(gpName("Bahrain Grand Prix in Malaysia", "es", true)).toBe("GP de Baréin en Malasia");
+    expect(gpName("Bahrain Grand Prix in Malaysia", "en", true)).toBe("Bahrain GP in Malaysia");
+    expect(gpName("Atlantis Grand Prix", "es", true)).toBe("Atlantis GP");
   });
 
   it("cubre todos los nombres de la historia", () => {
@@ -273,6 +285,18 @@ describe("buscador general", () => {
     expect(searchIndex(index, "monaco").races.map(hitHref)[0]).toBe("/races/2026/6");
   });
 
+  it("respeta los huecos de una trayectoria", () => {
+    const withGap = prepareIndex({
+      current: 2026,
+      drivers: [["kubica", "Robert", "Kubica", 2006, 2021, 0, 1, driverYears({ id: "kubica", to: 2021 })]],
+      teams: [],
+      circuits: [],
+      races: [],
+    });
+    expect(searchIndex(withGap, "kubica 2008").drivers).toHaveLength(1);
+    expect(searchIndex(withGap, "kubica 2015").drivers).toHaveLength(0);
+  });
+
   it("un año solo filtra a quienes estaban en activo", () => {
     const r = searchIndex(index, "1990");
     expect(r.drivers.map(hitHref)).toEqual(["/drivers/senna"]);
@@ -289,6 +313,26 @@ describe("estado final", () => {
     expect(statusLabel("Lapped", "es", 49, 51)).toBe("+2 vueltas");
     expect(statusLabel("Gearbox", "en")).toBe("Gearbox");
     expect(statusLabel("Estado raro", "es")).toBe("Estado raro");
+  });
+});
+
+describe("clasificaciones finales del archivo", () => {
+  it("tiene todas las temporadas cerradas, también las antiguas", () => {
+    const alonso = driverFinals("alonso");
+    expect(alonso.get(2007)).toEqual({ position: "3", points: 109, wins: undefined });
+    expect(alonso.get(2005)?.position).toBe("1");
+    expect(driverFinals("michael_schumacher").get(1997)?.position).toBe("D");
+    expect(teamFinals("ligier").get(1980)).toEqual({ position: "2", points: 66, wins: 2 });
+    expect(driverFinals("no_existe").size).toBe(0);
+  });
+
+  it("detecta los huecos de una trayectoria", () => {
+    const kubica = driverYears({ id: "kubica", to: 2021 });
+    expect(gapYears(kubica, 2006, 2021)).toEqual([2006, 2007, 2008, 2009, 2010, 2019, 2021]);
+    // Sin huecos no hace falta la lista
+    expect(gapYears([2019, 2020, 2021], 2019, 2021)).toBeUndefined();
+    expect(activeIn(2015, 2006, 2021, kubica)).toBe(false);
+    expect(activeIn(2015, 2006, 2021)).toBe(true);
   });
 });
 
@@ -316,5 +360,19 @@ describe("dirección de carrera", () => {
   it("deja igual lo desconocido y el inglés", () => {
     expect(es("SOMETHING NEW")).toBe("SOMETHING NEW");
     expect(translateRaceControl("TRACK CLEAR", "en")).toBe("TRACK CLEAR");
+  });
+
+  it("se queda con lo importante y descarta el ruido", () => {
+    const m = (category: string, message: string, flag: string | null = null, scope: string | null = null) => ({ category, message, flag, scope });
+    expect(isKeyMessage(m("SafetyCar", "SAFETY CAR DEPLOYED"))).toBe(true);
+    expect(isKeyMessage(m("Flag", "RED FLAG", "RED", "Track"))).toBe(true);
+    expect(isKeyMessage(m("Flag", "TRACK CLEAR", "CLEAR", "Track"))).toBe(true);
+    expect(isKeyMessage(m("Flag", "BLACK AND WHITE FLAG FOR CAR 87 (BEA) - TRACK LIMITS", "BLACK AND WHITE", "Driver"))).toBe(true);
+    expect(isKeyMessage(m("Other", "FIA STEWARDS: 10 SECOND TIME PENALTY FOR CAR 5 (BOR) - CAUSING A COLLISION (17:01:01)"))).toBe(true);
+    expect(isKeyMessage(m("Flag", "YELLOW IN TRACK SECTOR 9", "YELLOW", "Sector"))).toBe(false);
+    expect(isKeyMessage(m("Flag", "CLEAR IN TRACK SECTOR 9", "CLEAR", "Sector"))).toBe(false);
+    expect(isKeyMessage(m("Flag", "WAVED BLUE FLAG FOR CAR 11 (PER)", "BLUE", "Driver"))).toBe(false);
+    expect(isKeyMessage(m("Other", "CAR 10 (GAS) TIME 2:21.833 DELETED - TRACK LIMITS AT TURN 12 LAP 3 16:41:19"))).toBe(false);
+    expect(isKeyMessage(m("Other", "MARSHALS ON TRACK AT TURN 11"))).toBe(false);
   });
 });

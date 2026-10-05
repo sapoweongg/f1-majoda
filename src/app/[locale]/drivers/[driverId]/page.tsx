@@ -4,18 +4,13 @@ import { Users } from "lucide-react";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import champions from "@/data/champions.json";
 import { Link } from "@/i18n/navigation";
-import {
-  getDriver,
-  getDriverCareerResults,
-  getDriverCareerSprints,
-  getDriverPoleCount,
-  getDriverSeasons,
-} from "@/lib/api/jolpica";
+import { getDriver, getDriverCareerResults, getDriverCareerSprints, getDriverSeasonStanding } from "@/lib/api/jolpica";
 import { nationalityToIso } from "@/lib/countries";
 import { age, num } from "@/lib/format";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
+import { driverFinals, STANDINGS_THROUGH } from "@/lib/standings";
 import { teamStyle } from "@/lib/teams";
 import { DriverHero, TeamLogo } from "@/components/ui/media";
 import { BackLink, EmptyState, Flag, GlassCard, SectionHeader, StatNumber } from "@/components/ui/primitives";
@@ -47,12 +42,13 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
   const tc = await getTranslations("common");
   const format = await getFormatter();
 
-  const [standings, results, sprints, poles] = await Promise.all([
-    safe(getDriverSeasons(driverId), []),
+  const [results, sprints] = await Promise.all([
     safe(getDriverCareerResults(driverId), []),
     safe(getDriverCareerSprints(driverId), []),
-    safe(getDriverPoleCount(driverId), 0),
   ]);
+  // Pole = salir primero. Jolpica solo tiene clasificaciones desde 1994 (con huecos hasta 2002) y la
+  // parrilla coincide con las cifras oficiales (Senna 65, Schumacher 68, Hamilton 104)
+  const poles = results.filter((race) => race.Results?.[0]?.grid === "1").length;
 
   // Estadísticas por temporada a partir de los resultados de su carrera
   const bySeason = new Map<number, SeasonRow>();
@@ -80,13 +76,19 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
     const res = race.SprintResults?.[0];
     if (res) row(Number(race.season)).points += Number(res.points) || 0;
   }
-  for (const s of standings) {
-    if (s.standing) {
-      const r = row(s.season);
-      r.position = s.standing.positionText;
-      // La clasificación oficial manda (descartes de resultados en temporadas antiguas)
-      r.points = Number(s.standing.points);
-    }
+  // Clasificación final: las temporadas cerradas salen del archivo; las posteriores, de la API
+  const finals = driverFinals(driverId);
+  const recent = [...bySeason.keys()].filter((s) => s > STANDINGS_THROUGH);
+  const fetched = await Promise.all(recent.map((s) => safe(getDriverSeasonStanding(driverId, s), undefined)));
+  recent.forEach((season, i) => {
+    const st = fetched[i];
+    if (st) finals.set(season, { position: st.positionText, points: Number(st.points) });
+  });
+  for (const [season, f] of finals) {
+    const r = row(season);
+    r.position = f.position;
+    // La clasificación oficial manda (descartes de resultados en temporadas antiguas)
+    r.points = f.points;
   }
   const seasons = [...bySeason.values()].sort((a, b) => b.season - a.season);
 
@@ -238,7 +240,8 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                           </span>
                         </td>
                         <td className="display num text-right text-lg">
-                          {s.position ?? (titles.includes(s.season) ? "1" : "—")}
+                          {/* "-" = sin clasificar (0 puntos); "D" = descalificado (Schumacher 1997) */}
+                          {s.position === "D" ? "DSQ" : s.position && /^\d+$/.test(s.position) ? s.position : titles.includes(s.season) ? "1" : "—"}
                           {titles.includes(s.season) && <span className="ml-1 text-sm">🏆</span>}
                         </td>
                         <td className="num text-right text-ink-2">{s.wins}</td>

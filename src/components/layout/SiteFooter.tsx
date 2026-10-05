@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { ratingsEnabled } from "@/lib/ratings";
 
 export async function SiteFooter() {
   const t = await getTranslations("footer");
@@ -30,7 +31,8 @@ export async function SiteFooter() {
           </a>{" "}
           (CC BY 4.0). {t("photos")}
         </p>
-        <p>{t("privacy")}</p>
+        {/* Aviso de privacidad de las valoraciones: solo si están activadas */}
+        {ratingsEnabled() && <p>{t("privacy")}</p>}
         <p className="pt-2 text-[11px] italic text-ink-3/80">{t("dedication")}</p>
       </div>
     </footer>

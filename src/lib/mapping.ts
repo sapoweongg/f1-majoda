@@ -5,6 +5,18 @@ import { getSessions, type OFDriver, type Session } from "./api/openf1";
 /** OpenF1 solo tiene datos desde 2023. */
 export const OPENF1_FIRST_SEASON = 2023;
 
+/** Clave de los mensajes "sessions" para cada nombre de sesión de OpenF1 ("Practice 1" → "FirstPractice"). */
+export const SESSION_MESSAGE_KEY: Record<string, string> = {
+  Race: "Race",
+  Qualifying: "Qualifying",
+  Sprint: "Sprint",
+  "Sprint Qualifying": "SprintQualifying",
+  "Sprint Shootout": "SprintShootout",
+  "Practice 1": "FirstPractice",
+  "Practice 2": "SecondPractice",
+  "Practice 3": "ThirdPractice",
+};
+
 export function raceStart(race: Pick<Race, "date" | "time">) {
   return new Date(`${race.date}T${race.time ?? "12:00:00Z"}`);
 }

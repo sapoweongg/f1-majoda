@@ -1,3 +1,5 @@
+import { countryName } from "./countries";
+
 // Nombres de los Grandes Premios en español. Jolpica los da en inglés ("Monaco Grand Prix");
 // aquí está el complemento para cada uno de los 54 nombres que ha habido desde 1950.
 const ES: Record<string, string> = {
@@ -59,16 +61,20 @@ const ES: Record<string, string> = {
 
 /**
  * Nombre del GP en el idioma de la página. `short` usa "GP" en lugar de "Gran Premio"/"Grand Prix".
- * Si un nombre no está en la tabla (un GP nuevo), se deja en inglés.
+ * Si un nombre no está en la tabla (un GP nuevo), se deja en inglés. Un GP trasladado a otro país
+ * ("Bahrain Grand Prix in Malaysia") se traduce por partes.
  */
 export function gpName(raceName: string, locale: string, short = false): string {
   const shorten = (name: string) => (short ? name.replace(/Grand Prix/, "GP") : name);
   if (locale !== "es") return shorten(raceName);
   if (raceName === "Indianapolis 500") return "500 Millas de Indianápolis";
+  const prefix = short ? "GP" : "Gran Premio";
+  const moved = raceName.match(/^(.+) Grand Prix in (.+)$/);
+  if (moved && ES[moved[1]]) return `${prefix} ${ES[moved[1]]} en ${countryName(moved[2], "es")}`;
   const suffix = " Grand Prix";
   const place = ES[raceName] ?? (raceName.endsWith(suffix) ? ES[raceName.slice(0, -suffix.length)] : undefined);
   if (!place) return shorten(raceName);
-  return `${short ? "GP" : "Gran Premio"} ${place}`;
+  return `${prefix} ${place}`;
 }
 
 /** Solo el lugar ("Mónaco", "Bahrain"): para tarjetas pequeñas. */

@@ -15,7 +15,7 @@ export type DriverSeasonStats = {
 
 const classified = (text: string) => /^\d+$/.test(text);
 
-export function seasonStats(driverId: string, results: Race[], sprints: Race[], qualifying: Race[]): DriverSeasonStats {
+export function seasonStats(driverId: string, results: Race[], sprints: Race[]): DriverSeasonStats {
   let points = 0,
     wins = 0,
     podiums = 0,
@@ -46,7 +46,9 @@ export function seasonStats(driverId: string, results: Race[], sprints: Race[], 
     const r = race.SprintResults?.find((x) => x.Driver.driverId === driverId);
     if (r) points += Number(r.points) || 0;
   }
-  const poles = qualifying.filter((q) => q.QualifyingResults?.find((x) => x.Driver.driverId === driverId)?.position === "1").length;
+  // Pole = salir primero: Jolpica solo tiene clasificaciones desde 1994 (con huecos hasta 2002) y la
+  // parrilla coincide con las cifras oficiales de pole
+  const poles = results.filter((race) => race.Results?.find((x) => x.Driver.driverId === driverId)?.grid === "1").length;
   const avg = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
   return {
     points,
@@ -64,7 +66,10 @@ export function seasonStats(driverId: string, results: Race[], sprints: Race[], 
 
 export type HeadToHead = { a: number; b: number };
 
-/** Quién terminó por delante en carrera y en clasificación cuando ambos participaron. */
+/**
+ * Quién terminó por delante en carrera y en clasificación cuando ambos participaron. Si falta la
+ * clasificación de una ronda (antes de 1994 y con huecos hasta 2002) se compara la parrilla.
+ */
 export function headToHead(aId: string, bId: string, results: Race[], qualifying: Race[]) {
   const race: HeadToHead = { a: 0, b: 0 };
   const quali: HeadToHead = { a: 0, b: 0 };
@@ -76,11 +81,21 @@ export function headToHead(aId: string, bId: string, results: Race[], qualifying
     if (Number(a.position) < Number(b.position)) race.a++;
     else race.b++;
   }
-  for (const q of qualifying) {
-    const a = q.QualifyingResults?.find((x) => x.Driver.driverId === aId);
-    const b = q.QualifyingResults?.find((x) => x.Driver.driverId === bId);
-    if (!a || !b) continue;
-    if (Number(a.position) < Number(b.position)) quali.a++;
+  const byRound = new Map<string, { quali?: Race; race?: Race }>();
+  for (const q of qualifying) byRound.set(q.round, { quali: q });
+  for (const r of results) byRound.set(r.round, { ...byRound.get(r.round), race: r });
+  for (const { quali: q, race: r } of byRound.values()) {
+    const qa = q?.QualifyingResults?.find((x) => x.Driver.driverId === aId);
+    const qb = q?.QualifyingResults?.find((x) => x.Driver.driverId === bId);
+    let pa = Number(qa?.position);
+    let pb = Number(qb?.position);
+    if (!qa || !qb) {
+      pa = Number(r?.Results?.find((x) => x.Driver.driverId === aId)?.grid);
+      pb = Number(r?.Results?.find((x) => x.Driver.driverId === bId)?.grid);
+      // 0 = salió desde el pit lane: no dice nada de la clasificación
+      if (!(pa > 0 && pb > 0)) continue;
+    }
+    if (pa < pb) quali.a++;
     else quali.b++;
   }
   return { race, quali };

@@ -17,7 +17,9 @@ import { isLiveWindow } from "@/lib/live";
 import { buildProgression } from "@/lib/championship";
 import { circuitInfo, trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
-import { raceStart } from "@/lib/mapping";
+import { raceStart, SESSION_MESSAGE_KEY } from "@/lib/mapping";
+import { ratingsEnabled } from "@/lib/ratings";
+import { statusLabel } from "@/lib/status";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
@@ -73,6 +75,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   ]);
 
   const podium = lastResult?.Results?.slice(0, 3) ?? [];
+  const winnerLaps = Number(podium[0]?.laps ?? 0);
   const photoDrivers = [...ds.standings.slice(0, 6).map((s) => s.Driver), ...podium.map((p) => p.Driver)];
   const photos = await safe(getDriverPhotos(photoDrivers, standingsSeason), {});
 
@@ -107,7 +110,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <span className="live-dot h-2.5 w-2.5 rounded-full bg-accent" />
             <span className="display text-lg">{t("liveNow")}</span>
             <span className="text-sm text-ink-2">
-              {latestSession.country_name} · {latestSession.session_name}
+              {latestSession.country_name} ·{" "}
+              {SESSION_MESSAGE_KEY[latestSession.session_name] ? ts(SESSION_MESSAGE_KEY[latestSession.session_name]) : latestSession.session_name}
             </span>
           </span>
           <span className="flex items-center gap-2 text-sm font-semibold">
@@ -242,7 +246,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                     </p>
                     <p className="truncate text-xs text-ink-3">{p.Constructor.name}</p>
                   </Link>
-                  <span className="num text-sm text-ink-2">{p.Time?.time ?? p.status}</span>
+                  <span className="num text-sm text-ink-2">
+                    {p.Time?.time || statusLabel(Number(p.laps) < winnerLaps ? "Lapped" : p.status, locale, Number(p.laps), winnerLaps)}
+                  </span>
                 </li>
               ))}
             </ol>
@@ -252,10 +258,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             >
               {t("fullResults")} →
             </Link>
-            <div className="mt-6 border-t border-line pt-5">
-              <p className="eyebrow mb-3">{t("rateIt")}</p>
-              <RatingWidget season={season} round={Number(last.round)} open />
-            </div>
+            {ratingsEnabled() && (
+              <div className="mt-6 border-t border-line pt-5">
+                <p className="eyebrow mb-3">{t("rateIt")}</p>
+                <RatingWidget season={season} round={Number(last.round)} open />
+              </div>
+            )}
           </GlassCard>
         ) : (
           <div />

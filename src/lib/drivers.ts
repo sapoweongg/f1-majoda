@@ -2,6 +2,7 @@ import "server-only";
 import data from "@/data/drivers.json";
 import { getDriverStandings, type DriverStanding } from "./api/jolpica";
 import { safe } from "./safe";
+import { driverFinals, STANDINGS_THROUGH } from "./standings";
 
 /** Un piloto en el buscador de /drivers. */
 export type DriverIndexEntry = {
@@ -56,6 +57,16 @@ export function addSeason(
     byId.set(d.driverId, e);
   }
   return [...byId.values()];
+}
+
+/**
+ * Temporadas de un piloto: las cerradas, del archivo de clasificaciones; las posteriores se dan por
+ * corridas hasta la última en la que aparece.
+ */
+export function driverYears(d: Pick<DriverIndexEntry, "id" | "to">): number[] {
+  const years = [...driverFinals(d.id).keys()];
+  for (let s = STANDINGS_THROUGH + 1; s <= d.to; s++) years.push(s);
+  return years;
 }
 
 /**

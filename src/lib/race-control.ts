@@ -61,6 +61,8 @@ const PATTERNS: Rule[] = [
     "COCHE $1 ($2): VUELTA ANULADA POR LÍMITES DE PISTA EN LA CURVA $3 · VUELTA $4 · $5",
   ],
   [/^RISK OF RAIN FOR (?:THE )?F1 RACE IS (\d+)%$/, "RIESGO DE LLUVIA PARA LA CARRERA DE F1: $1%"],
+  [/^LAPPED CARS MAY NOW OVERTAKE THE SAFETY CAR: ([\d, ]+)$/, "LOS DOBLADOS YA PUEDEN ADELANTAR AL SAFETY CAR: $1"],
+  [/^ALL LAPPED CARS MAY NOW OVERTAKE THE SAFETY CAR$/, "TODOS LOS DOBLADOS YA PUEDEN ADELANTAR AL SAFETY CAR"],
   [/^MARSHALS ON TRACK AT TURN (\d+)$/, "COMISARIOS EN PISTA EN LA CURVA $1"],
   [/^RECOVERY VEHICLE ON TRACK AT TURN (\d+)$/, "GRÚA EN PISTA EN LA CURVA $1"],
   [/^FORMATION LAP WILL START AT ([\d:]+)$/, "LA VUELTA DE FORMACIÓN EMPEZARÁ A LAS $1"],
@@ -91,6 +93,7 @@ const PHRASES: Rule[] = [
   [/FALSE START - MOVING BEFORE SIGNAL/g, "SALIDA EN FALSO: SE MOVIÓ ANTES DE TIEMPO"],
   [/DRIVING ERRATICALLY/g, "CONDUCCIÓN ERRÁTICA"],
   [/UNSAFE RELEASE/g, "LIBERACIÓN INSEGURA"],
+  [/REJOINING (?:THE TRACK )?UNSAFELY/g, "REINCORPORACIÓN INSEGURA A LA PISTA"],
   [/LEAVING THE TRACK AND GAINING AN ADVANTAGE/g, "SALIR DE LA PISTA Y GANAR VENTAJA"],
   [/FORCING ANOTHER DRIVER OFF THE TRACK/g, "SACAR A OTRO PILOTO DE LA PISTA"],
   [/PIT LANE SPEEDING/g, "EXCESO DE VELOCIDAD EN BOXES"],
@@ -102,6 +105,22 @@ const PHRASES: Rule[] = [
   [/\bTURN (\d+)\b/g, "CURVA $1"],
   [/\bLAP (\d+)\b/g, "VUELTA $1"],
 ];
+
+// Avisos rutinarios que, por cientos, tapan lo importante: tiempos anulados, comisarios en pista,
+// pista resbaladiza, DRS y modo adelantamiento, luces del safety car…
+const NOISE =
+  /DELETED - TRACK LIMITS|TRACK SURFACE SLIPPERY|MARSHALS ON TRACK|RECOVERY VEHICLE|SAFETY CAR LIGHTS|AWNINGS|WEATHER RADAR|PASS HOLDERS|GRIP (?:CONDITIONS|DELTA)|PIT (?:EXIT|ENTRY)|(?:OVERTAKE|DRS) (?:ENABLED|DISABLED)/;
+
+/**
+ * Mensajes que vale la pena enseñar: safety car, inicio y fin de sesión, banderas de toda la pista
+ * (roja, verde, a cuadros), avisos a un piloto (blanca y negra) y lo que dicen los comisarios. Las
+ * amarillas y verdes de un sector y las azules se descartan: son la mayoría y no cuentan la carrera.
+ */
+export function isKeyMessage(m: { category: string; flag: string | null; scope?: string | null; message: string }) {
+  if (m.category === "Flag") return m.scope === "Track" || /BLACK/.test(m.flag ?? "");
+  if (m.category === "SafetyCar" || m.category === "SessionStatus") return true;
+  return !NOISE.test(m.message);
+}
 
 export function translateRaceControl(message: string, locale: string): string {
   if (locale !== "es") return message;

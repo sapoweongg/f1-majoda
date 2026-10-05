@@ -22,6 +22,7 @@ import {
 import { unstable_cache } from "next/cache";
 import type { ControlMessage, LiveSnapshot, ReplayData, ReplayFrame, SessionInfo, TowerRow } from "./live-types";
 import { largeHeadshot } from "./media";
+import { isKeyMessage } from "./race-control";
 import { fitToBox } from "./telemetry";
 
 export function sessionInfo(s: Session): SessionInfo {
@@ -41,8 +42,9 @@ export function isLiveWindow(s: Pick<Session, "date_start" | "date_end">, now = 
   return new Date(s.date_start).getTime() - 10 * 60_000 < now && now < new Date(s.date_end).getTime() + 15 * 60_000;
 }
 
+/** Solo los mensajes importantes: el estado de pista sale de ellos y la lista no se llena de ruido. */
 function toMessages(rc: RaceControl[]): ControlMessage[] {
-  return rc.map((m) => ({ date: m.date, lap: m.lap_number, message: m.message, flag: m.flag, category: m.category }));
+  return rc.filter(isKeyMessage).map((m) => ({ date: m.date, lap: m.lap_number, message: m.message, flag: m.flag, category: m.category }));
 }
 
 /** Estado de pista a partir de los mensajes de dirección de carrera (en orden cronológico). */
@@ -103,13 +105,12 @@ export async function latestFinishedRace(): Promise<Session | undefined> {
  * es el inicio de su vuelta N+1 (o inicio + duración en la última).
  */
 export async function buildReplay(session: Session): Promise<ReplayData | null> {
-  const key = session.session_key;
   const [drivers, laps, stints, pits, rc] = await Promise.all([
-    getDrivers(key),
-    getLaps(key),
-    getStints(key),
-    getPits(key),
-    getRaceControl(key),
+    getDrivers(session),
+    getLaps(session),
+    getStints(session),
+    getPits(session),
+    getRaceControl(session),
   ]);
   if (!laps.length) return null;
   const meta = driverMeta(drivers);

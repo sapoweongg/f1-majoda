@@ -177,10 +177,18 @@ function url(endpoint: string, query: Query) {
   return `${BASE}/${endpoint}${qs ? `?${qs}` : ""}`;
 }
 
-/** Sesión terminada hace más de un día: sus datos ya no cambian. */
-function ttlForSession(sessionKey: number | "latest", finished?: boolean) {
-  if (sessionKey === "latest") return 60;
-  return finished === false ? 60 : 86400;
+/** Lo que hace falta de una sesión para pedir sus datos: la clave y cuándo terminó. */
+export type SessionRef = Pick<Session, "session_key" | "date_end">;
+
+/**
+ * Durante una sesión y hasta 3 h después OpenF1 sigue completando los datos: se piden de nuevo cada
+ * 2 minutos. Después ya no cambian y se guardan un día. Van en entradas de caché distintas porque
+ * Next decide si una entrada caducó con el tiempo de quien la pide: si compartieran entrada, lo
+ * guardado a mitad de carrera pasaría por definitivo.
+ */
+function sessionCache(s: SessionRef): { revalidate: number; variant: string } {
+  const settled = new Date(s.date_end).getTime() + 3 * 3600_000 < Date.now();
+  return settled ? { revalidate: 86400, variant: "final" } : { revalidate: 120, variant: "provisional" };
 }
 
 /** OpenF1 responde 404 cuando una consulta no tiene resultados: lo tratamos como lista vacía. */
@@ -193,10 +201,11 @@ async function emptyOn404<T>(promise: Promise<T>): Promise<T> {
   }
 }
 
-function get<T>(endpoint: string, query: Query, revalidate: number) {
+function get<T>(endpoint: string, query: Query, revalidate: number, variant?: string) {
   return emptyOn404(
     cachedJson<T>(url(endpoint, query), {
       revalidate,
+      variant,
       throttle,
       headers: authHeaders,
       tags: ["openf1"],
@@ -216,43 +225,25 @@ export async function getLatestSession(): Promise<Session | undefined> {
   return s;
 }
 
-export const getDrivers = (sessionKey: number | "latest") =>
-  get<OFDriver[]>("drivers", { session_key: sessionKey }, ttlForSession(sessionKey));
+/** Datos de una sesión, con la caché que corresponde a si ya terminó. */
+function sessionGet<T>(endpoint: string, s: SessionRef, query: Query = {}) {
+  const { revalidate, variant } = sessionCache(s);
+  return get<T>(endpoint, { session_key: s.session_key, ...query }, revalidate, variant);
+}
 
-export const getLaps = (sessionKey: number, driverNumber?: number) =>
-  get<OFLap[]>("laps", { session_key: sessionKey, driver_number: driverNumber }, ttlForSession(sessionKey));
-
-export const getStints = (sessionKey: number) =>
-  get<Stint[]>("stints", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getPits = (sessionKey: number) => get<Pit[]>("pit", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getRaceControl = (sessionKey: number) =>
-  get<RaceControl[]>("race_control", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getWeather = (sessionKey: number) =>
-  get<Weather[]>("weather", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getSessionResult = (sessionKey: number) =>
-  get<SessionResult[]>("session_result", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getOvertakes = (sessionKey: number) =>
-  get<Overtake[]>("overtakes", { session_key: sessionKey }, ttlForSession(sessionKey));
-
-export const getPositions = (sessionKey: number) =>
-  get<Position[]>("position", { session_key: sessionKey }, ttlForSession(sessionKey));
+export const getDrivers = (s: SessionRef) => sessionGet<OFDriver[]>("drivers", s);
+export const getLaps = (s: SessionRef, driverNumber?: number) => sessionGet<OFLap[]>("laps", s, { driver_number: driverNumber });
+export const getStints = (s: SessionRef) => sessionGet<Stint[]>("stints", s);
+export const getPits = (s: SessionRef) => sessionGet<Pit[]>("pit", s);
+export const getRaceControl = (s: SessionRef) => sessionGet<RaceControl[]>("race_control", s);
+export const getWeather = (s: SessionRef) => sessionGet<Weather[]>("weather", s);
+export const getSessionResult = (s: SessionRef) => sessionGet<SessionResult[]>("session_result", s);
+export const getOvertakes = (s: SessionRef) => sessionGet<Overtake[]>("overtakes", s);
+export const getPositions = (s: SessionRef) => sessionGet<Position[]>("position", s);
 
 /** Telemetría de un piloto en una ventana de tiempo (una vuelta ≈ 300–400 muestras). */
-export const getCarData = (sessionKey: number, driverNumber: number, from: string, to: string) =>
-  get<CarData[]>(
-    "car_data",
-    { session_key: sessionKey, driver_number: driverNumber, "date>": from, "date<": to },
-    86400,
-  );
+export const getCarData = (s: SessionRef, driverNumber: number, from: string, to: string) =>
+  sessionGet<CarData[]>("car_data", s, { driver_number: driverNumber, "date>": from, "date<": to });
 
-export const getLocation = (sessionKey: number, driverNumber: number, from: string, to: string) =>
-  get<Location[]>(
-    "location",
-    { session_key: sessionKey, driver_number: driverNumber, "date>": from, "date<": to },
-    86400,
-  );
+export const getLocation = (s: SessionRef, driverNumber: number, from: string, to: string) =>
+  sessionGet<Location[]>("location", s, { driver_number: driverNumber, "date>": from, "date<": to });

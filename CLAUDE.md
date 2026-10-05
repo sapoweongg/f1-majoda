@@ -30,8 +30,9 @@ Comandos: `npm run dev`, `npm test`, `npm run lint`, `npm run typecheck`, `npm r
 
 ## Datos (src/lib/api)
 
-- **Jolpica-F1** (`jolpica.ts`): calendario, resultados y clasificaciones desde 1950. Límite 4 req/s y 500 req/h. Las clasificaciones históricas exigen la temporada en la URL (no hay "todas a la vez"); los campeones 1950–2025 están en `src/data/champions.json` (`scripts/build-champions.mjs`) y el índice de pilotos del buscador de `/drivers` en `src/data/drivers.json` (`scripts/build-drivers.mjs`; las temporadas posteriores a `through` se suman en tiempo real en `src/lib/drivers.ts`).
-- **OpenF1** (`openf1.ts`): datos desde 2023 (telemetría, neumáticos, clima, radios, fotos de pilotos). Responde **404 cuando no hay resultados** → se trata como lista vacía. El tiempo real es de pago: se activa con `OPENF1_USERNAME/PASSWORD`; sin eso `/live` muestra la repetición de la última carrera.
+- **Jolpica-F1** (`jolpica.ts`): calendario, resultados y clasificaciones desde 1950. Límite 4 req/s y 500 req/h. Las clasificaciones históricas exigen la temporada en la URL (no hay "todas a la vez"); los campeones 1950–2025 están en `src/data/champions.json` (`scripts/build-champions.mjs`) y el índice de pilotos del buscador de `/drivers` en `src/data/drivers.json` (`scripts/build-drivers.mjs`; las temporadas posteriores a `through` se suman en tiempo real en `src/lib/drivers.ts`). Las clasificaciones finales de todas las temporadas cerradas, por piloto y por equipo, están en `src/data/standings.json` (`scripts/build-standings.mjs`, leído con `src/lib/standings.ts`): las fichas solo piden a la API las posteriores.
+  - Las clasificaciones (qualifying) solo existen desde 1994, con huecos hasta 2002, y el filtro `/qualifying/1` devuelve filas que no son P1. Por eso las **poles se cuentan con `grid === "1"`**, que coincide con las cifras oficiales, y el cara a cara en clasificación usa la parrilla cuando falta la clasificación.
+- **OpenF1** (`openf1.ts`): datos desde 2023 (telemetría, neumáticos, clima, radios, fotos de pilotos). Responde **404 cuando no hay resultados** → se trata como lista vacía. Los datos de una sesión se piden con la sesión (`SessionRef`, clave y hora de fin): hasta 3 h después del final se guardan 2 minutos en una entrada "provisional" y luego un día en otra "final". Tienen que ser entradas distintas porque Next decide si una entrada caducó con el tiempo de quien la pide. El tiempo real es de pago: se activa con `OPENF1_USERNAME/PASSWORD`; sin eso `/live` muestra la repetición de la última carrera.
 - **Wikimedia** (`wikimedia.ts`): fotos libres con autor y licencia. Exige User-Agent y consultas agrupadas (si no, 429).
 - **Open-Meteo** (`weather.ts`): pronóstico.
 - Trazados: `src/data/circuits.json` (julesr0y/f1-circuits-svg, CC BY 4.0). Mapa: `public/world.svg`.
@@ -57,6 +58,10 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - Valoraciones: crear proyecto en Supabase, ejecutar `supabase/schema.sql` y cargar `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `RATINGS_SALT` en Vercel.
 - Timing en tiempo real: suscripción de OpenF1 + credenciales en Vercel.
 - Foto de las 10 victorias seguidas en Monza: solo si el usuario aporta una imagen con permiso de uso.
+- Cuando termine 2026, regenerar los archivos de `src/data` con ese año:
+  - `node scripts/build-champions.mjs`
+  - `build-drivers.mjs 2026`, `build-teams.mjs 2026`, `build-races.mjs 2026` y `build-standings.mjs 2026`
+  - Mientras tanto, las temporadas posteriores al archivo se piden a la API.
 
 ### Revisión de navegación y UX (2 oct 2026)
 
@@ -79,30 +84,29 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - La torre de `/live` no muestra fotos (el campo `headshot` existe pero no se pinta), así que no hace falta comprobar recortes ahí.
 - Criterio único de "sesión en vivo": `isLiveWindow` de `src/lib/live.ts`.
 
-### Auditoría de errores (5 oct 2026) — pendiente de arreglar
+### Auditoría de errores (5 oct 2026)
 
-Comprobado en la web publicada. Por prioridad:
+**Arreglado:**
+- Poles (ficha y Comparar) contados con la parrilla.
+- Cara a cara en clasificación: usa la parrilla cuando falta la clasificación.
+- Fichas de piloto y equipo con todas las temporadas y la mejor posición real (`standings.json`).
+- Caché de OpenF1 separada en provisional y final.
+- "Bahrain Grand Prix in Malaysia" → "Gran Premio de Baréin en Malasia" (`gp-names.ts` traduce "X Grand Prix in Y").
+- Sin Supabase:
+  - el inicio ya no muestra "Valora esta carrera";
+  - el pie ya no lleva el aviso de privacidad;
+  - `/ratings` da 404.
+- Página de carrera:
+  - "Sin datos" se distingue de "aún no se ha disputado" y de "se publicarán en breve".
+  - Las paradas con bandera roja salen en minutos y bien ordenadas.
+  - Dirección de carrera solo con lo importante (`isKeyMessage`): safety car, banderas de toda la pista y comisarios. Quedan fuera las amarillas de sector, las azules y los tiempos anulados.
+- Repetición de `/live`: usa el mismo filtro y ya no marca la pista en verde cuando se despeja un solo sector con el safety car en pista.
+- Comparar: un valor que falta ya no cuenta como el mejor.
+- Índices y buscador:
+  - "En activo" usa la última temporada con datos, así que no queda vacío en pretemporada.
+  - La búsqueda por año respeta los huecos de una trayectoria (`gapYears`).
+- Traducciones: la sesión en el aviso de En vivo y el estado en el podio del inicio.
 
-1. **Poles mal contados.** Ficha de piloto (Senna 3 en vez de 65, Hamilton 118 en vez de 104) y Comparar (0 antes de 2003).
-   - Causa: Jolpica solo tiene clasificaciones desde 1994, con huecos en 1996–2002, y `/qualifying/1` devuelve filas que no son P1.
-   - Arreglo: contar `grid === "1"` de los resultados y, para el duelo de clasificación, usar la parrilla cuando falte la clasificación.
-2. **Ficha de piloto:** posición final "—" en temporadas antiguas (solo se piden las 15 últimas; Alonso 2001–2009).
-3. **Ficha de equipo:** la historia muestra solo 12 temporadas y "Mejor posición" sale de ellas (Ligier P5; fue 2.º en 1980).
-   - Arreglo para 2 y 3: archivo estático con todas las clasificaciones finales 1950–2025, como `drivers.json`.
-4. **Caché de OpenF1 de 24 h para cualquier sesión** (`ttlForSession` nunca recibe "terminada"). Lo que se vea durante o justo después de una sesión (estrategia, telemetría, repetición) queda incompleto un día.
-5. **"Bahrain Grand Prix in Malaysia" en inglés** (`gp-names.ts` no conoce "X Grand Prix in Y").
-6. **El inicio muestra "Valora esta carrera"** aunque las valoraciones están apagadas.
-7. **La clasificación de carreras sin datos dice "Aún no se ha disputado"** (Detroit 1988).
-8. **Paradas con bandera roja:** "23:44.659s" y orden roto (Brasil 2024; hay que usar `parseLapTime`).
-9. **Dirección de carrera:** solo los últimos 40 mensajes, casi todos amarillas de sector; se pierden SC, banderas rojas y sanciones.
-10. **Comparar:** un valor `null` cuenta como 0 en "menor es mejor" (un piloto sin llegadas sale como el mejor).
-11. **Las rutas inexistentes responden 200 con `noindex` en vez de 404.** Lo causa el `loading.tsx` global.
-12. **Menores:**
-    - Filtro "En activo" vacío en pretemporada.
-    - La búsqueda por año ignora los huecos de carrera.
-    - El último GP del inicio no usa `statusLabel`.
-    - La sesión del banner En vivo sale en inglés.
-    - El footer menciona las valoraciones aunque estén apagadas.
-    - `/max-2023` tarda unos 3,6 s.
-
-Sin desbordes a 375 px en las 11 páginas revisadas y sin errores de consola.
+**Queda (decidido no tocar por ahora):**
+- Las rutas inexistentes responden 200 con `noindex`, no 404, por el `loading.tsx` global. Google no las indexa, y quitarlo dejaría todas las páginas sin animación de carga.
+- `/max-2023` se genera en cada visita (unos 3,6 s).

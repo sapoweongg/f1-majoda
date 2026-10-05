@@ -6,7 +6,7 @@ import { getCurrentSeason } from "@/lib/api/jolpica";
 import { serverNow } from "@/lib/clock";
 import { getTeamIndex } from "@/lib/constructors";
 import { nationalityToIso } from "@/lib/countries";
-import { yearSpan } from "@/lib/format";
+import { gapYears, yearSpan } from "@/lib/format";
 import { currentGrid } from "@/lib/grid";
 import { carImage, teamLogo } from "@/lib/media";
 import { getDriverPhotos, teamsOf, type Photo } from "@/lib/photos";
@@ -55,6 +55,7 @@ export default async function TeamsPage({ params }: PageProps<"/[locale]/teams">
       search: `${team.id.replace(/[_-]/g, " ")} ${iso ? (regions.of(iso.toUpperCase()) ?? "") : ""} ${team.nationality}`,
       from: team.from,
       to: team.to,
+      years: gapYears(team.years, team.from, team.to),
       wins: team.wins,
       titles: team.titles,
       count: team.years.length,
@@ -66,7 +67,6 @@ export default async function TeamsPage({ params }: PageProps<"/[locale]/teams">
       <PageTitle eyebrow={t("subtitle")} title={t("title")} />
       <Directory
         items={items}
-        current={current}
         namespace="teams"
         filters={["champions", "winners", "active"]}
         sorts={["recent", "titles", "wins", "count", "name"]}

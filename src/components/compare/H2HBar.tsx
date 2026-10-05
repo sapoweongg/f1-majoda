@@ -16,13 +16,21 @@ export function H2HBar({
   format?: (v: number) => string;
   lowerIsBetter?: boolean;
 }) {
-  const va = a ?? 0;
-  const vb = b ?? 0;
-  const total = va + vb;
-  // Para "menor es mejor" (medias de posición) invertimos para que la barra grande sea la buena
-  const shareA = total === 0 ? 50 : lowerIsBetter ? (vb / total) * 100 : (va / total) * 100;
-  const aBetter = lowerIsBetter ? va < vb : va > vb;
-  const bBetter = lowerIsBetter ? vb < va : vb > va;
+  let shareA = 50;
+  let aBetter = false;
+  let bBetter = false;
+  if (a != null && b != null) {
+    const total = a + b;
+    // Para "menor es mejor" (medias de posición) invertimos para que la barra grande sea la buena
+    if (total > 0) shareA = lowerIsBetter ? (b / total) * 100 : (a / total) * 100;
+    aBetter = lowerIsBetter ? a < b : a > b;
+    bBetter = lowerIsBetter ? b < a : b > a;
+  } else if (a != null || b != null) {
+    // Sin dato (p. ej. ninguna llegada a meta) no puede ser lo mejor: la barra es entera del otro
+    shareA = a != null ? 100 : 0;
+    aBetter = a != null;
+    bBetter = b != null;
+  }
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between text-sm">

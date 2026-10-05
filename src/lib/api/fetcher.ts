@@ -26,6 +26,8 @@ type Options = {
   /** Segundos que dura la respuesta en caché (false = para siempre). */
   revalidate: number | false;
   tags?: string[];
+  /** Separa entradas de la misma URL (p. ej. datos provisionales y definitivos de una sesión). */
+  variant?: string;
   throttle?: () => Promise<void>;
   headers?: () => Promise<Record<string, string>> | Record<string, string>;
 };
@@ -55,7 +57,8 @@ async function rawJson<T>(url: string, opts: Options): Promise<T> {
  * El throttle solo se aplica cuando la respuesta no está en caché.
  */
 export function cachedJson<T>(url: string, opts: Options): Promise<T> {
-  return unstable_cache(() => rawJson<T>(url, opts), ["json", url], {
+  const key = opts.variant ? ["json", url, opts.variant] : ["json", url];
+  return unstable_cache(() => rawJson<T>(url, opts), key, {
     revalidate: opts.revalidate,
     tags: opts.tags,
   })();

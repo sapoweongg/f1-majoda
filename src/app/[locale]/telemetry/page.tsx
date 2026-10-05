@@ -6,7 +6,7 @@ import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
 import { getCarData, getDrivers, getLaps, getLocation, type OFDriver, type OFLap } from "@/lib/api/openf1";
 import { distinctPair } from "@/lib/color";
 import { lapTime } from "@/lib/format";
-import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
+import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart, SESSION_MESSAGE_KEY } from "@/lib/mapping";
 import { safe } from "@/lib/safe";
 import { buildTrace, compareLaps, fitToBox, miniSectorWinners, trackWithFraction } from "@/lib/telemetry";
 import { constructorIdFromOpenF1, teamColor } from "@/lib/teams";
@@ -62,10 +62,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
     sessions.at(-1);
 
   const raceOptions = [...schedule].reverse().map((r) => ({ value: r.round, label: `${r.round}. ${gpName(r.raceName, locale)}` }));
-  const sessionLabel = (name: string) => {
-    const key = { Race: "Race", Qualifying: "Qualifying", Sprint: "Sprint", "Sprint Qualifying": "SprintQualifying", "Sprint Shootout": "SprintShootout" }[name];
-    return key ? ts(key) : name;
-  };
+  const sessionLabel = (name: string) => (SESSION_MESSAGE_KEY[name] ? ts(SESSION_MESSAGE_KEY[name]) : name);
 
   if (!session) {
     return header(
@@ -79,7 +76,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
   }
 
   const [drivers, official] = await Promise.all([
-    safe(getDrivers(session.session_key), []),
+    safe(getDrivers(session), []),
     safe(getOfficialHeadshots(season), new Map<string, string>()),
   ]);
   // Recorte comprobado: el que enlaza OpenF1 puede ser la imagen de reserva en blanco del CDN
@@ -87,7 +84,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
     const src = official.get(d.name_acronym) ?? largeHeadshot(d.headshot_url);
     return src ? { src, cutout: true } : undefined;
   };
-  const allLaps = await safe(getLaps(session.session_key), []);
+  const allLaps = await safe(getLaps(session), []);
   // Pilotos ordenados por su vuelta más rápida
   const best = drivers
     .map((d) => ({ d, lap: fastest(allLaps.filter((l) => l.driver_number === d.driver_number)) }))
@@ -132,9 +129,9 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
   };
   const [wa, wb] = [lapWindow(A.lap!), lapWindow(B.lap!)];
   const [carA, carB, locA] = await Promise.all([
-    safe(getCarData(session.session_key, A.d.driver_number, wa[0], wa[1]), []),
-    safe(getCarData(session.session_key, B.d.driver_number, wb[0], wb[1]), []),
-    safe(getLocation(session.session_key, A.d.driver_number, wa[0], wa[1]), []),
+    safe(getCarData(session, A.d.driver_number, wa[0], wa[1]), []),
+    safe(getCarData(session, B.d.driver_number, wb[0], wb[1]), []),
+    safe(getLocation(session, A.d.driver_number, wa[0], wa[1]), []),
   ]);
   const traceA = buildTrace(carA, A.lap!.date_start!);
   const traceB = buildTrace(carB, B.lap!.date_start!);

@@ -5,7 +5,7 @@ import { getCurrentSeason, getSchedule } from "@/lib/api/jolpica";
 import { trackShape } from "@/lib/circuits";
 import { serverNow } from "@/lib/clock";
 import { countryToIso } from "@/lib/countries";
-import { cn, yearSpan } from "@/lib/format";
+import { cn, gapYears, yearSpan } from "@/lib/format";
 import { raceStart } from "@/lib/mapping";
 import { getCircuitIndex } from "@/lib/races-index";
 import { safe } from "@/lib/safe";
@@ -49,6 +49,7 @@ export default async function CircuitsPage({ params }: PageProps<"/[locale]/circ
     search: `${c.locality} ${c.country} ${countryName(c.country)} ${c.id.replace(/_/g, " ")}`,
     from: c.from,
     to: c.to,
+    years: gapYears(c.years, c.from, c.to),
     wins: 0,
     titles: 0,
     count: c.races,
@@ -57,7 +58,7 @@ export default async function CircuitsPage({ params }: PageProps<"/[locale]/circ
   return (
     <div>
       <PageTitle eyebrow={t("subtitle")} title={t("title")} />
-      <Directory items={items} current={current} namespace="circuits" filters={["active"]} sorts={["recent", "count", "name"]}>
+      <Directory items={items} namespace="circuits" filters={["active"]} sorts={["recent", "count", "name"]}>
         {schedule.length > 0 && (
           <section>
             <SectionHeader eyebrow={t("gridHint")} title={t("grid", { season: current })} />

@@ -61,6 +61,20 @@ export function yearSpan(from: number, to: number) {
   return from === to ? String(from) : `${from}–${to}`;
 }
 
+/**
+ * Las temporadas exactas solo si hay huecos entre la primera y la última (Kubica: 2006–2010 y 2019);
+ * si no, basta con desde–hasta y no hace falta mandar la lista.
+ */
+export function gapYears(years: number[], from: number, to: number): number[] | undefined {
+  const unique = [...new Set(years)].sort((a, b) => a - b);
+  return unique.length < to - from + 1 ? unique : undefined;
+}
+
+/** ¿En activo ese año? Con huecos se mira la lista exacta. */
+export function activeIn(year: number, from: number, to: number, years?: number[]) {
+  return years ? years.includes(year) : from <= year && year <= to;
+}
+
 /** Número con el formato del idioma: 3.337 → "3,337" en español. `fixed` fuerza los decimales. */
 export function num(n: number, locale: string, digits = 0, fixed = false) {
   return new Intl.NumberFormat(locale, { maximumFractionDigits: digits, minimumFractionDigits: fixed ? digits : 0 }).format(n);

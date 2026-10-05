@@ -1,8 +1,9 @@
+import { activeIn } from "./format";
 import type { SearchIndex } from "./search-index";
 
 export type SearchHit =
-  | { kind: "driver"; id: string; given: string; family: string; from: number; to: number; titles: number; wins: number }
-  | { kind: "team"; id: string; name: string; from: number; to: number; titles: number; wins: number }
+  | { kind: "driver"; id: string; given: string; family: string; from: number; to: number; titles: number; wins: number; years?: number[] }
+  | { kind: "team"; id: string; name: string; from: number; to: number; titles: number; wins: number; years?: number[] }
   | { kind: "circuit"; id: string; name: string; locality: string; country: string; iso: string }
   | { kind: "race"; season: number; round: number; name: string; circuit: string; iso: string };
 
@@ -17,13 +18,13 @@ export function normalize(s: string) {
 export function prepareIndex(index: SearchIndex) {
   const circuits = new Map(index.circuits.map(([id, name, locality, country, iso]) => [id, { name, locality, country, iso }]));
   return {
-    drivers: index.drivers.map(([id, given, family, from, to, titles, wins]) => ({
-      hit: { kind: "driver" as const, id, given, family, from, to, titles, wins },
+    drivers: index.drivers.map(([id, given, family, from, to, titles, wins, years]) => ({
+      hit: { kind: "driver" as const, id, given, family, from, to, titles, wins, years },
       hay: normalize(`${given} ${family}`),
       starts: [normalize(given), normalize(family)],
     })),
-    teams: index.teams.map(([id, name, from, to, titles, wins]) => ({
-      hit: { kind: "team" as const, id, name, from, to, titles, wins },
+    teams: index.teams.map(([id, name, from, to, titles, wins, years]) => ({
+      hit: { kind: "team" as const, id, name, from, to, titles, wins, years },
       hay: normalize(`${name} ${id.replace(/[_-]/g, " ")}`),
       starts: [normalize(name)],
     })),
@@ -58,15 +59,15 @@ export function searchIndex(index: PreparedIndex, query: string): SearchGroups {
   if (!tokens.length) return empty;
 
   const hasWords = (hay: string) => words.every((w) => hay.includes(w));
-  const activeIn = (from: number, to: number) => years.every((y) => from <= y && y <= to);
+  const active = (h: { from: number; to: number; years?: number[] }) => years.every((y) => activeIn(y, h.from, h.to, h.years));
   // Primero los que empiezan por lo escrito
   const startScore = (starts: string[]) => (words[0] && starts.some((s) => s.startsWith(words[0])) ? 0 : 1);
 
   const drivers = index.drivers
-    .filter((d) => hasWords(d.hay) && activeIn(d.hit.from, d.hit.to))
+    .filter((d) => hasWords(d.hay) && active(d.hit))
     .sort((a, b) => startScore(a.starts) - startScore(b.starts) || b.hit.titles - a.hit.titles || b.hit.wins - a.hit.wins || b.hit.to - a.hit.to);
   const teams = index.teams
-    .filter((t) => hasWords(t.hay) && activeIn(t.hit.from, t.hit.to))
+    .filter((t) => hasWords(t.hay) && active(t.hit))
     .sort((a, b) => startScore(a.starts) - startScore(b.starts) || b.hit.titles - a.hit.titles || b.hit.wins - a.hit.wins || b.hit.to - a.hit.to);
   // Los circuitos no tienen años en el índice: solo se buscan por texto
   const circuits = words.length

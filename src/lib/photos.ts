@@ -1,7 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import type { Driver } from "./api/jolpica";
-import { getDrivers, getSessions, type OFDriver } from "./api/openf1";
+import { getDrivers, getSessions, type OFDriver, type Session } from "./api/openf1";
 import { getWikiImages } from "./api/wikimedia";
 import { driverHeadshot, largeHeadshot, OFFICIAL_MEDIA } from "./media";
 import { OPENF1_FIRST_SEASON } from "./mapping";
@@ -22,8 +22,9 @@ async function openf1Drivers(season: number): Promise<OFDriver[]> {
     const races = (await getSessions({ year: season, session_name: "Race" }))
       .filter((s) => new Date(s.date_start) < new Date())
       .sort((a, b) => a.date_start.localeCompare(b.date_start));
-    const keys = [...new Set([races[0]?.session_key, races.at(-1)?.session_key].filter(Boolean))] as number[];
-    const lists = await Promise.all(keys.map((k) => getDrivers(k)));
+    const pick = [races[0], races.at(-1)].filter((s): s is Session => Boolean(s));
+    const unique = [...new Map(pick.map((s) => [s.session_key, s])).values()];
+    const lists = await Promise.all(unique.map((s) => getDrivers(s)));
     // La última sesión manda (equipo y foto más recientes)
     return lists.flat().reverse();
   } catch {

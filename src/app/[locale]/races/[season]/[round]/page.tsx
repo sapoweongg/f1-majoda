@@ -12,14 +12,15 @@ import {
   getRaceSprint,
   getSchedule,
   type Result,
+  type SessionTime,
 } from "@/lib/api/jolpica";
 import { getRaceControl, getStints, getWeather } from "@/lib/api/openf1";
 import { countryToIso } from "@/lib/countries";
-import { parseLapTime } from "@/lib/format";
+import { lapTime, parseLapTime } from "@/lib/format";
 import { gpName } from "@/lib/gp-names";
 import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
 import { getDriverPhotos, teamsOf } from "@/lib/photos";
-import { translateRaceControl } from "@/lib/race-control";
+import { isKeyMessage, translateRaceControl } from "@/lib/race-control";
 import { ratingsEnabled } from "@/lib/ratings";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
@@ -105,6 +106,14 @@ export default async function RacePage({
   const base = `/races/${season}/${round}`;
   const tabHref = (k: string) => (k === "results" ? base : `${base}?tab=${k}`);
 
+  // Sesión sin datos: si no se ha corrido lo decimos; justo después, los datos están por publicarse; y
+  // si pasó hace tiempo es que no existen (las clasificaciones de Jolpica empiezan en 1994)
+  const now = serverNow();
+  const sessionAt = (s?: SessionTime) => (s ? new Date(`${s.date}T${s.time ?? "00:00:00Z"}`).getTime() : raceStart(race).getTime());
+  const empty = (at: number, missing = tc("noData")) => (
+    <EmptyState>{at > now ? t("notRun") : at + 6 * 3600_000 > now ? t("pending") : missing}</EmptyState>
+  );
+
   // Solo pedimos los datos de la pestaña abierta
   let body: React.ReactNode = null;
   const allDrivers = results.map((r) => r.Driver);
@@ -129,7 +138,7 @@ export default async function RacePage({
         locale={p.locale}
       />
     ) : (
-      <EmptyState>{t("notRun")}</EmptyState>
+      empty(raceStart(race).getTime())
     );
   } else if (tab === "qualifying") {
     const quali = await safe(getRaceQualifying(season, round), []);
@@ -137,7 +146,7 @@ export default async function RacePage({
     body = quali.length ? (
       <QualifyingTable results={quali} photos={photos} labels={{ pos: tc("pos"), driver: tc("driver"), time: tc("time") }} />
     ) : (
-      <EmptyState>{t("notRun")}</EmptyState>
+      empty(sessionAt(race.Qualifying), t("noQualiData"))
     );
   } else if (tab === "sprint") {
     const sprint = await safe(getRaceSprint(season, round), []);
@@ -158,7 +167,7 @@ export default async function RacePage({
         locale={p.locale}
       />
     ) : (
-      <EmptyState>{t("notRun")}</EmptyState>
+      empty(sessionAt(race.Sprint))
     );
   } else if (tab === "laps") {
     const laps = results.length ? await safe(getRaceLaps(season, round), []) : [];
@@ -237,12 +246,12 @@ export default async function RacePage({
   } else if (tab === "strategy") {
     const pits = results.length ? await safe(getRacePitStops(season, round), []) : [];
     const weekend = season >= OPENF1_FIRST_SEASON && results.length ? await safe(findWeekendSessions(race), null) : null;
-    const sessionKey = weekend?.race?.session_key;
-    const [stints, control, weather] = sessionKey
+    const raceSession = weekend?.race;
+    const [stints, control, weather] = raceSession
       ? await Promise.all([
-          safe(getStints(sessionKey), []),
-          safe(getRaceControl(sessionKey), []),
-          safe(getWeather(sessionKey), []),
+          safe(getStints(raceSession), []),
+          safe(getRaceControl(raceSession), []),
+          safe(getWeather(raceSession), []),
         ])
       : [[], [], []];
 
@@ -272,7 +281,9 @@ export default async function RacePage({
       const r = results.find((x) => x.Driver.driverId === id);
       return r ? `${r.Driver.givenName} ${r.Driver.familyName}` : id;
     };
-    const sortedPits = [...pits].sort((a, b) => Number(a.duration) - Number(b.duration));
+    // Con bandera roja la "parada" dura minutos ("23:44.659"): se ordena por segundos
+    const pitSeconds = (d: string) => parseLapTime(d) ?? Infinity;
+    const sortedPits = [...pits].sort((a, b) => pitSeconds(a.duration) - pitSeconds(b.duration));
     const temps = weather.length
       ? {
           air: [Math.min(...weather.map((w) => w.air_temperature)), Math.max(...weather.map((w) => w.air_temperature))],
@@ -282,7 +293,7 @@ export default async function RacePage({
           rain: weather.some((w) => w.rainfall > 0),
         }
       : null;
-    const flags = control.filter((c) => c.flag || c.category === "SafetyCar").slice(-40).reverse();
+    const flags = control.filter(isKeyMessage).reverse();
 
     body = (
       <div className="space-y-6">
@@ -327,7 +338,7 @@ export default async function RacePage({
                         <td className={i === 0 ? "font-semibold text-purple" : ""}>{driverName(ps.driverId)}</td>
                         <td className="text-right text-ink-2">{ps.lap}</td>
                         <td className="text-right text-ink-2">{ps.stop}</td>
-                        <td className="text-right">{ps.duration}s</td>
+                        <td className="text-right">{pitSeconds(ps.duration) >= 60 ? lapTime(pitSeconds(ps.duration)) : `${ps.duration}s`}</td>
                       </tr>
                     ))}
                   </tbody>
