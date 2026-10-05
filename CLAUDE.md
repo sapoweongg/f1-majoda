@@ -78,3 +78,31 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 **Notas:**
 - La torre de `/live` no muestra fotos (el campo `headshot` existe pero no se pinta), así que no hace falta comprobar recortes ahí.
 - Criterio único de "sesión en vivo": `isLiveWindow` de `src/lib/live.ts`.
+
+### Auditoría de errores (5 oct 2026) — pendiente de arreglar
+
+Comprobado en la web publicada. Por prioridad:
+
+1. **Poles mal contados.** Ficha de piloto (Senna 3 en vez de 65, Hamilton 118 en vez de 104) y Comparar (0 antes de 2003).
+   - Causa: Jolpica solo tiene clasificaciones desde 1994, con huecos en 1996–2002, y `/qualifying/1` devuelve filas que no son P1.
+   - Arreglo: contar `grid === "1"` de los resultados y, para el duelo de clasificación, usar la parrilla cuando falte la clasificación.
+2. **Ficha de piloto:** posición final "—" en temporadas antiguas (solo se piden las 15 últimas; Alonso 2001–2009).
+3. **Ficha de equipo:** la historia muestra solo 12 temporadas y "Mejor posición" sale de ellas (Ligier P5; fue 2.º en 1980).
+   - Arreglo para 2 y 3: archivo estático con todas las clasificaciones finales 1950–2025, como `drivers.json`.
+4. **Caché de OpenF1 de 24 h para cualquier sesión** (`ttlForSession` nunca recibe "terminada"). Lo que se vea durante o justo después de una sesión (estrategia, telemetría, repetición) queda incompleto un día.
+5. **"Bahrain Grand Prix in Malaysia" en inglés** (`gp-names.ts` no conoce "X Grand Prix in Y").
+6. **El inicio muestra "Valora esta carrera"** aunque las valoraciones están apagadas.
+7. **La clasificación de carreras sin datos dice "Aún no se ha disputado"** (Detroit 1988).
+8. **Paradas con bandera roja:** "23:44.659s" y orden roto (Brasil 2024; hay que usar `parseLapTime`).
+9. **Dirección de carrera:** solo los últimos 40 mensajes, casi todos amarillas de sector; se pierden SC, banderas rojas y sanciones.
+10. **Comparar:** un valor `null` cuenta como 0 en "menor es mejor" (un piloto sin llegadas sale como el mejor).
+11. **Las rutas inexistentes responden 200 con `noindex` en vez de 404.** Lo causa el `loading.tsx` global.
+12. **Menores:**
+    - Filtro "En activo" vacío en pretemporada.
+    - La búsqueda por año ignora los huecos de carrera.
+    - El último GP del inicio no usa `statusLabel`.
+    - La sesión del banner En vivo sale en inglés.
+    - El footer menciona las valoraciones aunque estén apagadas.
+    - `/max-2023` tarda unos 3,6 s.
+
+Sin desbordes a 375 px en las 11 páginas revisadas y sin errores de consola.
