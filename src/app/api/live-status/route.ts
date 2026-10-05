@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLatestSession } from "@/lib/api/openf1";
-import { isSessionLive } from "@/lib/live-types";
+import { isLiveWindow } from "@/lib/live";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getLatestSession();
-    const live = session ? isSessionLive(session.date_start, session.date_end, Date.now()) : false;
+    const live = session ? isLiveWindow(session) : false;
     return NextResponse.json(
       { live, session: live && session ? `${session.country_name} · ${session.session_name}` : null },
       { headers: { "cache-control": "public, s-maxage=60, stale-while-revalidate=60" } },

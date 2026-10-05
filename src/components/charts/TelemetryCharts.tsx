@@ -31,7 +31,7 @@ export function TelemetryCharts({
   data: ComparedPoint[];
   a: Driver;
   b: Driver;
-  labels: { speed: string; throttle: string; brake: string; gear: string; delta: string; distance: string; deltaHelp: string };
+  labels: { speed: string; throttle: string; brake: string; gear: string; delta: string; distance: string; deltaHelp: string; loading: string };
 }) {
   const panels: Panel[] = [
     { key: "speed", title: labels.speed, a: "aSpeed", b: "bSpeed", height: 220, unit: " km/h" },
@@ -59,7 +59,14 @@ export function TelemetryCharts({
             {p.title}
             {p.key === "delta" && <span className="ml-2 normal-case tracking-normal text-ink-3">{labels.deltaHelp}</span>}
           </p>
-          <div style={{ height: p.height }}>
+          {/* El servidor envía el panel vacío: el esqueleto se ve hasta que Recharts dibuja la gráfica */}
+          <div className="chart-panel relative" style={{ height: p.height }}>
+            <div
+              className="chart-skeleton pointer-events-none absolute inset-0 flex animate-pulse items-center justify-center rounded-lg bg-white/[0.04] text-xs text-ink-3"
+              aria-hidden
+            >
+              {i === 0 && labels.loading}
+            </div>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} syncId="telemetry" margin={{ top: 4, right: 12, bottom: 0, left: -8 }}>
                 <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />

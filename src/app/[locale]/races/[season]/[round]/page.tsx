@@ -19,6 +19,7 @@ import { parseLapTime } from "@/lib/format";
 import { gpName } from "@/lib/gp-names";
 import { findWeekendSessions, OPENF1_FIRST_SEASON, raceStart } from "@/lib/mapping";
 import { getDriverPhotos, teamsOf } from "@/lib/photos";
+import { translateRaceControl } from "@/lib/race-control";
 import { ratingsEnabled } from "@/lib/ratings";
 import { safe } from "@/lib/safe";
 import { teamColor } from "@/lib/teams";
@@ -367,7 +368,7 @@ export default async function RacePage({
                   {flags.map((c, i) => (
                     <li key={i} className="flex gap-3 border-b border-line pb-2">
                       <span className="num w-10 shrink-0 text-xs text-ink-3">{c.lap_number ? `L${c.lap_number}` : ""}</span>
-                      <span className="text-ink-2">{c.message}</span>
+                      <span className="text-ink-2">{translateRaceControl(c.message, p.locale)}</span>
                     </li>
                   ))}
                 </ul>

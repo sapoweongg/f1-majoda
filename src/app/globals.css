@@ -184,3 +184,9 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Esqueleto de una gráfica: se oculta en cuanto Recharts dibuja el SVG. Fuera de las capas para
+   ganar a la utilidad "flex" del propio esqueleto. */
+.chart-panel:has(.recharts-surface) .chart-skeleton {
+  display: none;
+}

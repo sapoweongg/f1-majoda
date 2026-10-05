@@ -72,7 +72,9 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - Nombres de GP en español (`src/lib/gp-names.ts`) y números y países con el formato del idioma.
 - Enlaces entre fichas (piloto → equipo y comparar).
 
-**Pendiente:**
-- Telemetría: indicador de carga mientras las gráficas están vacías.
-- `/live`: `live.ts` usa el recorte de OpenF1 sin comprobarlo (Lindblad saldría vacío); usar `getOfficialHeadshots`.
-- Mensajes de dirección de carrera en inglés (vienen así de OpenF1).
+- Telemetría: esqueleto "Cargando…" hasta que Recharts dibuja (regla `.chart-panel` en `globals.css`, fuera de las capas para ganar a las utilidades).
+- Mensajes de dirección de carrera traducidos (`src/lib/race-control.ts`): patrones para los fijos y frases para los de comisarios; lo desconocido queda en inglés.
+
+**Notas:**
+- La torre de `/live` no muestra fotos (el campo `headshot` existe pero no se pinta), así que no hace falta comprobar recortes ahí.
+- Criterio único de "sesión en vivo": `isLiveWindow` de `src/lib/live.ts`.

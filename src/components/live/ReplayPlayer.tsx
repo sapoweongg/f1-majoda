@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Pause, Play } from "lucide-react";
 import type { ReplayData } from "@/lib/live-types";
+import { translateRaceControl } from "@/lib/race-control";
 import { TimingTower, TrackStatusBadge, type TowerLabels } from "./TimingTower";
 
 /** Repetición vuelta a vuelta de una carrera terminada, con barra de tiempo y reproducción. */
 export function ReplayPlayer({ data, labels }: { data: ReplayData; labels: TowerLabels }) {
   const t = useTranslations("live");
+  const locale = useLocale();
   const [lap, setLap] = useState(1);
   const [playing, setPlaying] = useState(false);
 
@@ -73,7 +75,7 @@ export function ReplayPlayer({ data, labels }: { data: ReplayData; labels: Tower
           {messages.map((m, i) => (
             <li key={`${m.date}-${i}`} className="flex gap-3 border-b border-line pb-2">
               <span className="num w-10 shrink-0 text-xs text-ink-3">L{m.lap}</span>
-              <span className="text-ink-2">{m.message}</span>
+              <span className="text-ink-2">{translateRaceControl(m.message, locale)}</span>
             </li>
           ))}
         </ul>

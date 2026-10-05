@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useLocale, useTranslations } from "next-intl";
 import type { LiveSnapshot } from "@/lib/live-types";
 import { cn } from "@/lib/format";
+import { translateRaceControl } from "@/lib/race-control";
 import { TimingTower, TrackStatusBadge, type TowerLabels } from "./TimingTower";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<LiveSnapshot>);
@@ -79,7 +80,7 @@ export function LiveTiming({ initial, labels }: { initial: LiveSnapshot; labels:
               {snap.messages.map((m, i) => (
                 <li key={i} className="flex gap-3 border-b border-line pb-2">
                   <span className="num w-10 shrink-0 text-xs text-ink-3">{m.lap ? `L${m.lap}` : ""}</span>
-                  <span className="text-ink-2">{m.message}</span>
+                  <span className="text-ink-2">{translateRaceControl(m.message, locale)}</span>
                 </li>
               ))}
             </ul>

@@ -182,6 +182,7 @@ export default async function TelemetryPage({ params, searchParams }: PageProps<
                 delta: t("delta"),
                 distance: t("distance"),
                 deltaHelp: t("deltaHelp", { a: A.d.name_acronym }),
+                loading: tc("loading"),
               }}
             />
           </GlassCard>

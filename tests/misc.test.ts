@@ -11,6 +11,7 @@ import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { gpName } from "@/lib/gp-names";
 import { statusLabel } from "@/lib/status";
+import { translateRaceControl } from "@/lib/race-control";
 import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
 import racesData from "@/data/races.json";
 import { validateVote, voterHash } from "@/lib/ratings";
@@ -288,5 +289,32 @@ describe("estado final", () => {
     expect(statusLabel("Lapped", "es", 49, 51)).toBe("+2 vueltas");
     expect(statusLabel("Gearbox", "en")).toBe("Gearbox");
     expect(statusLabel("Estado raro", "es")).toBe("Estado raro");
+  });
+});
+
+describe("dirección de carrera", () => {
+  const es = (m: string) => translateRaceControl(m, "es");
+  it("traduce los mensajes fijos y con datos", () => {
+    expect(es("TRACK CLEAR")).toBe("PISTA DESPEJADA");
+    expect(es("DOUBLE YELLOW IN TRACK SECTOR 7")).toBe("DOBLE AMARILLA EN EL SECTOR 7");
+    expect(es("WAVED BLUE FLAG FOR CAR 11 (PER) TIMED AT 17:17:46")).toBe("BANDERA AZUL PARA EL COCHE 11 (PER) A LAS 17:17:46");
+    expect(es("CAR 10 (GAS) TIME 2:21.833 DELETED - TRACK LIMITS AT TURN 12 LAP 3 16:41:19")).toBe(
+      "COCHE 10 (GAS): TIEMPO 2:21.833 ANULADO POR LÍMITES DE PISTA EN LA CURVA 12 · VUELTA 3 · 16:41:19",
+    );
+    expect(es("RISK OF RAIN FOR THE F1 RACE IS 90%")).toBe("RIESGO DE LLUVIA PARA LA CARRERA DE F1: 90%");
+  });
+
+  it("traduce los avisos de los comisarios por frases", () => {
+    expect(es("TURN 9 INCIDENT INVOLVING CARS 16 (LEC) AND 27 (HUL) NOTED - CAUSING A COLLISION (16:40:50)")).toBe(
+      "INCIDENTE EN LA CURVA 9 ENTRE LOS COCHES 16 (LEC) Y 27 (HUL) ANOTADO - PROVOCAR UNA COLISIÓN (16:40:50)",
+    );
+    expect(es("FIA STEWARDS: 10 SECOND TIME PENALTY FOR CAR 5 (BOR) - CAUSING A COLLISION (17:01:01)")).toBe(
+      "COMISARIOS DE LA FIA: 10 SEGUNDOS DE PENALIZACIÓN PARA EL COCHE 5 (BOR) - PROVOCAR UNA COLISIÓN (17:01:01)",
+    );
+  });
+
+  it("deja igual lo desconocido y el inglés", () => {
+    expect(es("SOMETHING NEW")).toBe("SOMETHING NEW");
+    expect(translateRaceControl("TRACK CLEAR", "en")).toBe("TRACK CLEAR");
   });
 });

@@ -55,8 +55,3 @@ export type ReplayData = {
   frames: ReplayFrame[];
   messages: ControlMessage[];
 };
-
-/** Una sesión cuenta como "en vivo" desde 10 minutos antes de empezar hasta 15 después de acabar. */
-export function isSessionLive(start: string, end: string, now: number) {
-  return new Date(start).getTime() - 10 * 60 * 1000 < now && now < new Date(end).getTime() + 15 * 60 * 1000;
-}
