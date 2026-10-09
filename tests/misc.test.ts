@@ -11,6 +11,7 @@ import { addSeason, driverYears, type DriverIndexEntry } from "@/lib/drivers";
 import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { gpName } from "@/lib/gp-names";
+import { driverStory } from "@/content/drivers";
 import { statusLabel } from "@/lib/status";
 import { isKeyMessage, translateRaceControl } from "@/lib/race-control";
 import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
@@ -374,5 +375,24 @@ describe("dirección de carrera", () => {
     expect(isKeyMessage(m("Flag", "WAVED BLUE FLAG FOR CAR 11 (PER)", "BLUE", "Driver"))).toBe(false);
     expect(isKeyMessage(m("Other", "CAR 10 (GAS) TIME 2:21.833 DELETED - TRACK LIMITS AT TURN 12 LAP 3 16:41:19"))).toBe(false);
     expect(isKeyMessage(m("Other", "MARSHALS ON TRACK AT TURN 11"))).toBe(false);
+  });
+});
+
+describe("perfiles de pilotos", () => {
+  const grid2026 = [
+    "max_verstappen", "hadjar", "lawson", "arvid_lindblad", "leclerc", "hamilton", "russell", "antonelli",
+    "norris", "piastri", "alonso", "stroll", "albon", "sainz", "gasly", "colapinto",
+    "ocon", "bearman", "hulkenberg", "bortoleto", "perez", "bottas",
+  ];
+
+  it("toda la parrilla de 2026 tiene perfil en los dos idiomas", () => {
+    for (const id of grid2026) {
+      const es = driverStory(id, "es");
+      const en = driverStory(id, "en");
+      expect(es?.text.length, id).toBeGreaterThan(0);
+      expect(en?.text.length, id).toBe(es?.text.length);
+      expect(en?.born === undefined, id).toBe(es?.born === undefined);
+    }
+    expect(driverStory("fangio", "es")).toBeUndefined();
   });
 });

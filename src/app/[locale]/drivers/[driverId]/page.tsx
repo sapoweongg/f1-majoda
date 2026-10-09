@@ -4,9 +4,11 @@ import { Users } from "lucide-react";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import champions from "@/data/champions.json";
 import { Link } from "@/i18n/navigation";
-import { getDriver, getDriverCareerResults, getDriverCareerSprints, getDriverSeasonStanding } from "@/lib/api/jolpica";
+import { driverStory } from "@/content/drivers";
+import { getDriver, getDriverCareerResults, getDriverCareerSprints, getDriverSeasonStanding, type Race } from "@/lib/api/jolpica";
 import { nationalityToIso } from "@/lib/countries";
-import { age, num } from "@/lib/format";
+import { age, cn, num } from "@/lib/format";
+import { gpName } from "@/lib/gp-names";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { safe } from "@/lib/safe";
@@ -102,6 +104,22 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
     { races: 0, wins: 0, podiums: 0, points: 0 },
   );
 
+  // Hitos de su carrera: la lista de resultados va en orden cronológico
+  const result = (race: Race) => race.Results?.[0];
+  const milestones = [
+    { key: "debut", race: results[0] },
+    {
+      key: "firstPodium",
+      race: results.find((race) => {
+        const r = result(race);
+        return r && /^\d+$/.test(r.positionText) && Number(r.position) <= 3;
+      }),
+    },
+    { key: "firstWin", race: results.find((race) => result(race)?.position === "1") },
+    { key: "firstPole", race: results.find((race) => result(race)?.grid === "1") },
+  ] as const;
+  const story = driverStory(driverId, locale);
+
   const lastTeam = seasons[0]?.teams.at(-1);
   const style = teamStyle(lastTeam?.id);
   const maxPts = Math.max(1, ...seasons.map((s) => s.points));
@@ -176,6 +194,48 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
             </span>
           ))}
         </p>
+      )}
+
+      {(story || results.length > 0) && (
+        <section className={story ? "grid gap-6 lg:grid-cols-[1.7fr_1fr]" : undefined}>
+          {story && (
+            <GlassCard className="p-6 sm:p-8">
+              <p className="eyebrow mb-2">{t("about")}</p>
+              <p className="display text-2xl leading-tight sm:text-3xl">{story.tagline}</p>
+              <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-ink-2">
+                {story.text.map((paragraph) => (
+                  <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+                ))}
+              </div>
+            </GlassCard>
+          )}
+          {results.length > 0 && (
+            <GlassCard className="p-6">
+              <dl className={cn("grid grid-cols-2 gap-x-4 gap-y-5", story ? "lg:grid-cols-1" : "sm:grid-cols-4")}>
+                {story?.born && (
+                  <div className="col-span-2 lg:col-span-1">
+                    <dt className="eyebrow mb-1">{t("birthplace")}</dt>
+                    <dd className="font-semibold">{story.born}</dd>
+                  </div>
+                )}
+                {milestones.map(({ key, race }) => (
+                  <div key={key}>
+                    <dt className="eyebrow mb-1">{t(key)}</dt>
+                    <dd className="font-semibold">
+                      {race ? (
+                        <Link href={`/races/${race.season}/${race.round}`} className="transition-colors hover:text-accent">
+                          {gpName(race.raceName, locale, true)} {race.season}
+                        </Link>
+                      ) : (
+                        <span className="text-ink-3">—</span>
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </GlassCard>
+          )}
+        </section>
       )}
 
       <section>

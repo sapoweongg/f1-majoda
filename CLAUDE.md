@@ -58,6 +58,9 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - Valoraciones: crear proyecto en Supabase, ejecutar `supabase/schema.sql` y cargar `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `RATINGS_SALT` en Vercel.
 - Timing en tiempo real: suscripción de OpenF1 + credenciales en Vercel.
 - Foto de las 10 victorias seguidas en Monza: solo si el usuario aporta una imagen con permiso de uso.
+- Perfiles de pilotos (`src/content/drivers.ts`, es/en): hechos los 22 de la parrilla de 2026 (9 oct 2026). Siguiente paso posible: los campeones históricos y otros pilotos destacados.
+  - La ficha muestra el perfil y una tarjeta de hitos (lugar de nacimiento, debut, primer podio, primera victoria y primera pole). Los hitos se calculan de los resultados, así que salen para cualquier piloto aunque no tenga perfil.
+  - Como en los equipos, solo hechos cerrados, comprobados con la API: nada de cifras que caduquen.
 - Cuando termine 2026, regenerar los archivos de `src/data` con ese año:
   - `node scripts/build-champions.mjs`
   - `build-drivers.mjs 2026`, `build-teams.mjs 2026`, `build-races.mjs 2026` y `build-standings.mjs 2026`

@@ -229,7 +229,13 @@
     "finalPosition": "Final position",
     "team": "Team",
     "allDrivers": "All drivers",
-    "compareWith": "Compare in {season}"
+    "compareWith": "Compare in {season}",
+    "about": "Profile",
+    "birthplace": "Birthplace",
+    "debut": "Debut",
+    "firstPodium": "First podium",
+    "firstWin": "First win",
+    "firstPole": "First pole"
   },
   "drivers": {
     "title": "Drivers",

@@ -229,7 +229,13 @@
     "finalPosition": "Posición final",
     "team": "Equipo",
     "allDrivers": "Todos los pilotos",
-    "compareWith": "Comparar en {season}"
+    "compareWith": "Comparar en {season}",
+    "about": "Perfil",
+    "birthplace": "Lugar de nacimiento",
+    "debut": "Debut",
+    "firstPodium": "Primer podio",
+    "firstWin": "Primera victoria",
+    "firstPole": "Primera pole"
   },
   "drivers": {
     "title": "Pilotos",
