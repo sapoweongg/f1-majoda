@@ -12,6 +12,7 @@ import { matchDriver } from "@/lib/mapping";
 import { f1DriverCode } from "@/lib/photos";
 import { gpName } from "@/lib/gp-names";
 import { driverStory } from "@/content/drivers";
+import champions from "@/data/champions.json";
 import { statusLabel } from "@/lib/status";
 import { isKeyMessage, translateRaceControl } from "@/lib/race-control";
 import { hitHref, prepareIndex, searchIndex } from "@/lib/search";
@@ -393,6 +394,8 @@ describe("perfiles de pilotos", () => {
       expect(en?.text.length, id).toBe(es?.text.length);
       expect(en?.born === undefined, id).toBe(es?.born === undefined);
     }
-    expect(driverStory("fangio", "es")).toBeUndefined();
+    expect(driverStory("fangio", "es")?.born).toBe("Balcarce, Argentina");
+    // Todos los campeones del mundo tienen perfil
+    for (const c of champions) if (c.driver) expect(driverStory(c.driver.driverId, "en")?.text.length, c.driver.driverId).toBeGreaterThan(0);
   });
 });
