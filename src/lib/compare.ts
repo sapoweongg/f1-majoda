@@ -1,4 +1,5 @@
 import type { Race } from "./api/jolpica";
+import { isPole } from "./poles";
 
 export type DriverSeasonStats = {
   points: number;
@@ -46,9 +47,7 @@ export function seasonStats(driverId: string, results: Race[], sprints: Race[]):
     const r = race.SprintResults?.find((x) => x.Driver.driverId === driverId);
     if (r) points += Number(r.points) || 0;
   }
-  // Pole = salir primero: Jolpica solo tiene clasificaciones desde 1994 (con huecos hasta 2002) y la
-  // parrilla coincide con las cifras oficiales de pole
-  const poles = results.filter((race) => race.Results?.find((x) => x.Driver.driverId === driverId)?.grid === "1").length;
+  const poles = results.filter((race) => isPole(race, driverId)).length;
   const avg = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
   return {
     points,

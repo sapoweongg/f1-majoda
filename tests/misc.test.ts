@@ -3,6 +3,7 @@ import { circuitInfo, trackShape } from "@/lib/circuits";
 import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
+import { isPole } from "@/lib/poles";
 import { driverFinals, teamFinals } from "@/lib/standings";
 import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
 import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
@@ -60,6 +61,18 @@ describe("comparativa", () => {
     expect(s.avgGrid).toBe(1.5);
     const rbr = roundByRound(["hamilton"], results);
     expect(rbr[1].positions[0]?.label).toBe("DNF");
+  });
+
+  it("cuenta las poles de los coches compartidos una sola vez y sin herencias", () => {
+    const race = (season: string, round: string, rows: [string, string][]) =>
+      ({ season, round, Results: rows.map(([driverId, grid]) => ({ Driver: { driverId }, grid })) }) as unknown as Race;
+    // Francia 1951: Fangio salió de la pole y ganó con el coche de Fagioli
+    const reims = race("1951", "4", [["fangio", "7"], ["fangio", "1"], ["fagioli", "1"]]);
+    expect(isPole(reims, "fangio")).toBe(true);
+    expect(isPole(reims, "fagioli")).toBe(false);
+    // Monza 1952: Moss aparece en la pole por error
+    expect(isPole(race("1952", "8", [["moss", "1"]]), "moss")).toBe(false);
+    expect(isPole(race("2026", "1", [["moss", "1"]]), "moss")).toBe(true);
   });
 });
 
@@ -397,5 +410,22 @@ describe("perfiles de pilotos", () => {
     expect(driverStory("fangio", "es")?.born).toBe("Balcarce, Argentina");
     // Todos los campeones del mundo tienen perfil
     for (const c of champions) if (c.driver) expect(driverStory(c.driver.driverId, "en")?.text.length, c.driver.driverId).toBeGreaterThan(0);
+  });
+
+  it("los pilotos destacados sin título tienen perfil completo", () => {
+    const notable = [
+      "moss", "collins", "brooks", "gurney", "mclaren", "amon", "ickx", "regazzoni", "peterson", "cevert", "reutemann",
+      "gilles_villeneuve", "laffite", "pironi", "patrese", "alboreto", "berger", "alesi", "coulthard", "irvine", "frentzen",
+      "barrichello", "montoya", "ralf_schumacher", "webber", "massa", "kubica", "ricciardo", "grosjean", "kevin_magnussen",
+      "tsunoda", "zhou", "mick_schumacher",
+    ];
+    for (const id of notable) {
+      const es = driverStory(id, "es");
+      const en = driverStory(id, "en");
+      expect(es?.born, id).toBeTruthy();
+      expect(en?.born, id).toBeTruthy();
+      expect(en?.text.length, id).toBe(es?.text.length);
+    }
+    expect(driverStory("gilles_villeneuve", "en")?.born).toBe("Saint-Jean-sur-Richelieu, Canada");
   });
 });

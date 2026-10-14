@@ -11,6 +11,7 @@ import { age, cn, num } from "@/lib/format";
 import { gpName } from "@/lib/gp-names";
 import { teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
+import { isPole } from "@/lib/poles";
 import { safe } from "@/lib/safe";
 import { driverFinals, STANDINGS_THROUGH } from "@/lib/standings";
 import { teamStyle } from "@/lib/teams";
@@ -48,9 +49,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
     safe(getDriverCareerResults(driverId), []),
     safe(getDriverCareerSprints(driverId), []),
   ]);
-  // Pole = salir primero. Jolpica solo tiene clasificaciones desde 1994 (con huecos hasta 2002) y la
-  // parrilla coincide con las cifras oficiales (Senna 65, Schumacher 68, Hamilton 104)
-  const poles = results.filter((race) => race.Results?.[0]?.grid === "1").length;
+  const poles = results.filter((race) => isPole(race, driverId)).length;
 
   // Estadísticas por temporada a partir de los resultados de su carrera
   const bySeason = new Map<number, SeasonRow>();
@@ -116,7 +115,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
       }),
     },
     { key: "firstWin", race: results.find((race) => result(race)?.position === "1") },
-    { key: "firstPole", race: results.find((race) => result(race)?.grid === "1") },
+    { key: "firstPole", race: results.find((race) => isPole(race, driverId)) },
   ] as const;
   const story = driverStory(driverId, locale);
 
