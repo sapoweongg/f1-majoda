@@ -36,6 +36,11 @@ type Copy = {
   sprintWin: string;
   momentsTitle: string;
   moments: Partial<Record<number, string>>;
+  radiosTitle: string;
+  radiosIntro: string;
+  radios: Partial<Record<number, string>>;
+  play: string;
+  pause: string;
   finalEyebrow: string;
   finalTitle: string;
   finalText: string[];
@@ -132,6 +137,21 @@ export const HAMILTON_2021: Record<"es" | "en", Copy> = {
       14: "El Red Bull de Max acaba encima de su coche en la primera chicane. El halo le protegió la cabeza.",
       15: "Victoria número 100 de su carrera, la primera de la historia, en Sochi y bajo la lluvia.",
     },
+    radiosTitle: "Radios para el recuerdo",
+    radiosIntro:
+      "Radios oficiales del equipo, grabadas justo después de cruzar la meta en algunas de las carreras clave de su año. Las de Brasil y Catar no se conservan en el archivo de la F1.",
+    radios: {
+      1: "Bahréin · tras la primera victoria del año",
+      2: "Imola · tras remontar del 9.º al 2.º",
+      3: "Portugal · tras ganar adelantando en pista",
+      4: "Barcelona · tras ganar el fin de semana de su pole número 100",
+      10: "Silverstone · tras su octava victoria en casa",
+      15: "Sochi · tras su victoria número 100",
+      21: "Arabia Saudí · tras la victoria que igualaba el campeonato",
+      22: "Abu Dabi · tras la última carrera",
+    },
+    play: "Reproducir",
+    pause: "Pausa",
     finalEyebrow: "Abu Dabi · 12 de diciembre de 2021",
     finalTitle: "Con la cabeza alta",
     finalText: [
@@ -158,6 +178,7 @@ export const HAMILTON_2021: Record<"es" | "en", Copy> = {
     creditsTitle: "Créditos",
     credits: [
       "Estadísticas calculadas con datos de Jolpica-F1. Las poles cuentan las salidas desde la primera posición.",
+      "Radios: grabaciones oficiales de Formula 1 Live Timing. © Formula 1.",
       "Fotos de Wikimedia Commons: Jen Ross (CC BY 2.0) y Lukas Raich (CC BY-SA 4.0). Cada foto enlaza a su ficha con autor y licencia.",
     ],
     back: "Volver a Lewis Hamilton",
@@ -242,6 +263,21 @@ export const HAMILTON_2021: Record<"es" | "en", Copy> = {
       14: "Max's Red Bull ends up on top of his car at the first chicane. The halo protected his head.",
       15: "The 100th win of his career, the first in history, in Sochi and in the rain.",
     },
+    radiosTitle: "Radios to remember",
+    radiosIntro:
+      "Official team radio recorded right after crossing the line at some of the key races of his year. Those from Brazil and Qatar are not kept in F1's archive.",
+    radios: {
+      1: "Bahrain · after the first win of the year",
+      2: "Imola · after fighting back from 9th to 2nd",
+      3: "Portugal · after winning with passes on track",
+      4: "Barcelona · after winning on the weekend of his 100th pole",
+      10: "Silverstone · after his eighth home win",
+      15: "Sochi · after his 100th win",
+      21: "Saudi Arabia · after the win that levelled the championship",
+      22: "Abu Dhabi · after the final race",
+    },
+    play: "Play",
+    pause: "Pause",
     finalEyebrow: "Abu Dhabi · 12 December 2021",
     finalTitle: "Head held high",
     finalText: [
@@ -268,6 +304,7 @@ export const HAMILTON_2021: Record<"es" | "en", Copy> = {
     creditsTitle: "Credits",
     credits: [
       "Statistics computed from Jolpica-F1 data. Poles count starts from first place on the grid.",
+      "Radio: official Formula 1 Live Timing recordings. © Formula 1.",
       "Photos from Wikimedia Commons: Jen Ross (CC BY 2.0) and Lukas Raich (CC BY-SA 4.0). Each photo links to its page with author and licence.",
     ],
     back: "Back to Lewis Hamilton",

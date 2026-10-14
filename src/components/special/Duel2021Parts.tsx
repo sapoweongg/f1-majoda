@@ -7,6 +7,8 @@ import type { DuelRound, DuelSide } from "@/lib/duel2021";
 import { gpName, gpPlace } from "@/lib/gp-names";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { Flag } from "@/components/ui/primitives";
+import radios from "@/data/duel2021-radios.json";
+import { RadioCard } from "./RadioCard";
 
 // Piezas de las páginas del duelo de 2021 (Max y Hamilton). Cada página elige su lado (`me`), su color
 // de acento y su fondo; los colores van en hexadecimal de 6 cifras para poder añadirles transparencia.
@@ -158,6 +160,40 @@ export function HonourCards({ cards, theme, icon }: { cards: { title: string; te
           <p className="display mt-4 text-3xl">{card.title}</p>
           <p className="mt-2 text-sm leading-relaxed text-ink-2">{card.text}</p>
         </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Radios oficiales del protagonista (src/data/duel2021-radios.json), agrupadas por carrera. Solo salen
+ * las rondas con título en los textos de la página.
+ */
+export function DuelRadios({
+  titles,
+  theme,
+  labels,
+}: {
+  titles: Partial<Record<number, string>>;
+  theme: DuelTheme;
+  labels: { play: string; pause: string };
+}) {
+  const groups = Object.entries(titles)
+    .map(([round, title]) => ({
+      title: title ?? "",
+      clips: radios.filter((x) => x.driver === theme.me && x.round === Number(round)).map((x) => x.url),
+    }))
+    .filter((g) => g.title && g.clips.length);
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {groups.map((g) => (
+        <RadioCard
+          key={g.title}
+          title={g.title}
+          clips={g.clips}
+          labels={labels}
+          colors={{ accent: theme.accent, ink: theme.surface, iconBg: `${theme.accent}26` }}
+        />
       ))}
     </div>
   );

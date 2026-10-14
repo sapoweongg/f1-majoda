@@ -12,7 +12,7 @@ import { cn } from "@/lib/format";
 import { gpName } from "@/lib/gp-names";
 import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
-import { DuelMoments, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
+import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
 import { GapChart } from "@/components/special/GapChart";
 import { PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
@@ -235,6 +235,12 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
           locale={locale}
           retired={c.retired}
         />
+      </section>
+
+      {/* ---------- RADIOS ---------- */}
+      <section>
+        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
+        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- LA ÚLTIMA VUELTA ---------- */}

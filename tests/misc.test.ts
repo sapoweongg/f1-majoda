@@ -5,6 +5,7 @@ import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
 import { isPole } from "@/lib/poles";
 import { buildDuel } from "@/lib/duel2021";
+import radios2021 from "@/data/duel2021-radios.json";
 import { driverFinals, teamFinals } from "@/lib/standings";
 import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
 import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
@@ -114,6 +115,15 @@ describe("duelo de 2021", () => {
     const tie = buildDuel([results[0], race("2", [["max_verstappen", "1", "25"], ["hamilton", "3", "18"]])], []);
     expect(tie.rounds.map((r) => r.gap)).toEqual([-7, 0]);
     expect(tie.leadChanges).toBe(0);
+  });
+
+  it("cada radio es del piloto y la temporada que dice", () => {
+    for (const r of radios2021) {
+      expect(r.url, r.url).toMatch(/^https:\/\/livetiming\.formula1\.com\/static\/2021\/.+\.mp3$/);
+      expect(r.url, r.url).toContain(r.driver === "ver" ? "/MAXVER01_33_" : "/LEWHAM01_44_");
+      expect(r.round).toBeGreaterThanOrEqual(1);
+      expect(r.round).toBeLessThanOrEqual(22);
+    }
   });
 });
 

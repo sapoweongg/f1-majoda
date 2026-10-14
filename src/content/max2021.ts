@@ -28,6 +28,11 @@ type Copy = {
   setbacks: Partial<Record<number, Card>>;
   momentsTitle: string;
   moments: Partial<Record<number, string>>;
+  radiosTitle: string;
+  radiosIntro: string;
+  radios: Partial<Record<number, string>>;
+  play: string;
+  pause: string;
   finalEyebrow: string;
   finalTitle: string;
   finalText: string[];
@@ -123,6 +128,21 @@ export const MAX_2021: Record<"es" | "en", Copy> = {
       18: "En la salida pasa por fuera a los dos Mercedes en la primera curva y gana con autoridad en México.",
       21: "Una carrera caótica, con dos banderas rojas. Los dos llegan a la última cita empatados a puntos, algo que no pasaba desde 1974.",
     },
+    radiosTitle: "Radios para el recuerdo",
+    radiosIntro:
+      "Radios oficiales del equipo, grabadas justo después de cruzar la meta en algunas de las carreras clave del año. La de Bakú es la de justo después del reventón.",
+    radios: {
+      2: "Imola · tras ganar con la pista mojada",
+      5: "Mónaco · tras su primera victoria en el Principado",
+      6: "Bakú · nada más reventar el neumático",
+      7: "Francia · tras cazar a Hamilton en la penúltima vuelta",
+      13: "Zandvoort · tras ganar en casa",
+      17: "Austin · tras aguantar a Hamilton hasta el final",
+      18: "México · tras ganar pasando por fuera a los dos Mercedes",
+      22: "Abu Dabi · al convertirse en campeón del mundo",
+    },
+    play: "Reproducir",
+    pause: "Pausa",
     finalEyebrow: "Abu Dabi · 12 de diciembre de 2021",
     finalTitle: "Vuelta 58",
     finalText: [
@@ -154,6 +174,7 @@ export const MAX_2021: Record<"es" | "en", Copy> = {
     creditsTitle: "Créditos",
     credits: [
       "Estadísticas calculadas con datos de Jolpica-F1. Las poles cuentan las salidas desde la primera posición.",
+      "Radios: grabaciones oficiales de Formula 1 Live Timing. © Formula 1.",
       "Fotos de Wikimedia Commons: Lukas Raich (CC BY-SA 4.0), rsyphotography (CC BY 2.0), Grahampurse (CC BY-SA 4.0) y Jen Ross (CC BY 2.0). Cada foto enlaza a su ficha con autor y licencia.",
     ],
     back: "Volver a Max Verstappen",
@@ -236,6 +257,21 @@ export const MAX_2021: Record<"es" | "en", Copy> = {
       18: "At the start he goes around the outside of both Mercedes at the first corner and wins commandingly in Mexico.",
       21: "A chaotic race with two red flags. The two arrive at the final round level on points, something that had not happened since 1974.",
     },
+    radiosTitle: "Radios to remember",
+    radiosIntro:
+      "Official team radio recorded right after crossing the line at some of the key races of the year. The Baku one is from just after the tyre failure.",
+    radios: {
+      2: "Imola · after winning on a wet track",
+      5: "Monaco · after his first win in the Principality",
+      6: "Baku · moments after the tyre failure",
+      7: "France · after hunting Hamilton down on the penultimate lap",
+      13: "Zandvoort · after winning at home",
+      17: "Austin · after holding off Hamilton to the end",
+      18: "Mexico · after winning around the outside of both Mercedes",
+      22: "Abu Dhabi · becoming world champion",
+    },
+    play: "Play",
+    pause: "Pause",
     finalEyebrow: "Abu Dhabi · 12 December 2021",
     finalTitle: "Lap 58",
     finalText: [
@@ -267,6 +303,7 @@ export const MAX_2021: Record<"es" | "en", Copy> = {
     creditsTitle: "Credits",
     credits: [
       "Statistics computed from Jolpica-F1 data. Poles count starts from first place on the grid.",
+      "Radio: official Formula 1 Live Timing recordings. © Formula 1.",
       "Photos from Wikimedia Commons: Lukas Raich (CC BY-SA 4.0), rsyphotography (CC BY 2.0), Grahampurse (CC BY-SA 4.0) and Jen Ross (CC BY 2.0). Each photo links to its page with author and licence.",
     ],
     back: "Back to Max Verstappen",

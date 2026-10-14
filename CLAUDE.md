@@ -55,7 +55,11 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
   - Secciones propias: "100 y 100" (su pole y su victoria número 100), "La remontada" (de Brasil a Abu Dabi) y "Con la cabeza alta" (Abu Dabi desde su lado, el relevo del director de carrera y su nombramiento como caballero).
   - En la balanza, hacia arriba es Hamilton. Los colores de datos son los mismos que en la de Max: el color sigue al piloto.
   - Textos en `src/content/hamilton2021.ts`.
-- Las dos páginas de 2021 comparten `src/components/special/Duel2021Parts.tsx`: parrilla carrera a carrera, momentos y tarjetas. Cada página elige su lado (`me`), su acento y su fondo.
+- Radios de 2021 en `src/data/duel2021-radios.json`: 10 de Max y 8 de Hamilton, del archivo oficial de live timing (`livetiming.formula1.com/static/2021/...`).
+  - Se eligieron por hora: la primera radio tras la bandera a cuadros de cada carrera clave, y la de Max justo después del reventón de Bakú. No se escucharon, por eso los títulos describen el momento y no lo que dicen.
+  - Ojo: la hora del nombre del archivo va en hora de Reino Unido (verano, de abril a octubre, = UTC+1). La fiable es el campo `Utc` del stream, unos 40 s posterior a la grabación.
+  - En Brasil y Catar el archivo se corta antes del final de carrera: no hay radios de después de la meta.
+- Las dos páginas de 2021 comparten `src/components/special/Duel2021Parts.tsx`: parrilla carrera a carrera, momentos, tarjetas y radios. Cada página elige su lado (`me`), su acento y su fondo.
 - Las páginas especiales se enlazan desde la ficha del piloto con `SPECIAL_SEASONS` (`src/lib/special-pages.ts`), que pone la etiqueta "Histórico" en ese año.
 - Piezas comunes de las páginas especiales en `src/components/special/` (`SectionTitle`, `PhotoBanner`, `CountUp`, `RevealOnView`, `RadioCard`, `GapChart`).
 - **`/parc-ferme`**: easter egg **secreto**. Carta romántica para María José ("Mi campeonato más importante"), solo enlazada desde el **2025** de la ficha de Max, que se ve igual que los demás años. Incluye el recuerdo del martes 29 de septiembre en el noveno piso, la firma "Tu foquita 🦭 / tu corazón, siempre" (así le dice ella) y una posdata de F1. Ella le dice a él "mi corazón" o "foquita"; él a ella "pollito". Reglas: no aparece en el sitemap, `noindex`, y **los commits que la toquen llevan mensajes neutros** (p. ej. "Pequeñas mejoras de estilo").

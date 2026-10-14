@@ -5,7 +5,11 @@ import { Pause, Play, Radio } from "lucide-react";
 import { cn } from "@/lib/format";
 
 // Solo suena una radio a la vez: al empezar una, las demás se pausan.
-const STOP_OTHERS = "max2023:radio-play";
+const STOP_OTHERS = "special:radio-play";
+
+/** Colores de la tarjeta: los de la página de 2023 por defecto. */
+type Colors = { accent: string; ink: string; iconBg: string };
+const DEFAULT_COLORS: Colors = { accent: "#ffcc00", ink: "#0b1530", iconBg: "rgb(30 58 138 / 0.6)" };
 
 function fmt(s: number) {
   if (!Number.isFinite(s)) return "0:00";
@@ -17,21 +21,26 @@ export function RadioCard({
   clips,
   tag,
   labels,
+  colors = DEFAULT_COLORS,
 }: {
   title: string;
   clips: string[];
   tag?: string;
   labels: { play: string; pause: string };
+  colors?: Colors;
 }) {
   return (
     <div className="glass relative overflow-hidden p-5">
       <div
         className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-30 blur-2xl"
-        style={{ background: "radial-gradient(circle, #ffcc00, transparent 70%)" }}
+        style={{ background: `radial-gradient(circle, ${colors.accent}, transparent 70%)` }}
         aria-hidden
       />
       <div className="mb-4 flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a]/60 text-[#ffcc00]">
+        <span
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+          style={{ background: colors.iconBg, color: colors.accent }}
+        >
           <Radio size={18} aria-hidden />
         </span>
         <div className="min-w-0">
@@ -41,14 +50,14 @@ export function RadioCard({
       </div>
       <div className="space-y-2">
         {clips.map((src, i) => (
-          <Clip key={src} src={src} index={clips.length > 1 ? i + 1 : undefined} labels={labels} />
+          <Clip key={src} src={src} index={clips.length > 1 ? i + 1 : undefined} labels={labels} colors={colors} />
         ))}
       </div>
     </div>
   );
 }
 
-function Clip({ src, index, labels }: { src: string; index?: number; labels: { play: string; pause: string } }) {
+function Clip({ src, index, labels, colors }: { src: string; index?: number; labels: { play: string; pause: string }; colors: Colors }) {
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
@@ -81,7 +90,8 @@ function Clip({ src, index, labels }: { src: string; index?: number; labels: { p
         type="button"
         onClick={toggle}
         aria-label={playing ? labels.pause : labels.play}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffcc00] text-[#0b1530] transition-transform hover:scale-105"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-105"
+        style={{ background: colors.accent, color: colors.ink }}
       >
         {playing ? <Pause size={18} /> : <Play size={18} className="translate-x-px" />}
       </button>
@@ -91,8 +101,8 @@ function Clip({ src, index, labels }: { src: string; index?: number; labels: { p
         {[0, 1, 2, 3, 4].map((b) => (
           <span
             key={b}
-            className={cn("w-[3px] rounded-full bg-[#ffcc00]/80", playing ? "eq-bar" : "h-1.5")}
-            style={playing ? { animationDelay: `${b * 0.12}s` } : undefined}
+            className={cn("w-[3px] rounded-full opacity-80", playing ? "eq-bar" : "h-1.5")}
+            style={{ background: colors.accent, ...(playing ? { animationDelay: `${b * 0.12}s` } : {}) }}
           />
         ))}
       </div>
@@ -108,8 +118,11 @@ function Clip({ src, index, labels }: { src: string; index?: number; labels: { p
             if (audio.current) audio.current.currentTime = v;
             setTime(v);
           }}
-          className="h-1 w-full accent-[#ffcc00]"
-          style={{ background: `linear-gradient(to right, #ffcc00 ${progress}%, rgba(255,255,255,0.15) ${progress}%)` }}
+          className="h-1 w-full"
+          style={{
+            accentColor: colors.accent,
+            background: `linear-gradient(to right, ${colors.accent} ${progress}%, rgba(255,255,255,0.15) ${progress}%)`,
+          }}
           aria-label={labels.play}
         />
       </div>
