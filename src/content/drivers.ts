@@ -1,7 +1,7 @@
 // Descripciones de los pilotos (es / en) para sus fichas. Como las de los equipos, son textos de
 // historia: las cifras que cambian (victorias, poles, puntos) y los hitos (debut, primer podio, primera
 // victoria) los calcula la ficha con datos de Jolpica, así que aquí solo van hechos cerrados.
-// Por ahora: la parrilla de 2026, todos los campeones del mundo y 33 pilotos destacados sin título.
+// Por ahora: la parrilla de 2026, todos los campeones del mundo y 65 pilotos destacados sin título.
 
 export type DriverStory = {
   /** Una línea que resume al piloto. */
@@ -1581,6 +1581,586 @@ Object.assign(STORIES, {
       text: [
         "The son of Michael Schumacher, he started karting under his mother's maiden name to keep a low profile. He was European Formula 3 champion in 2018 and Formula 2 champion in 2020.",
         "He made his debut with Haas in 2021 and scored his first points at Silverstone in 2022. After losing his seat at the end of that year he became Mercedes' reserve driver and then moved to endurance racing with Alpine.",
+      ],
+    },
+  },
+} satisfies Record<string, Record<"es" | "en", DriverStory>>);
+
+Object.assign(STORIES, {
+  // ---------- Más pilotos destacados sin título (por orden de debut) ----------
+  gonzalez: {
+    es: {
+      tagline: "«El Cabezón», autor de la primera victoria de Ferrari en el Mundial.",
+      born: "Arrecifes, Argentina",
+      text: [
+        "Compatriota y amigo de Juan Manuel Fangio, debutó en el Mundial en 1950. En Silverstone 1951 hizo la pole y ganó con Ferrari por delante del Alfa Romeo de Fangio: la primera victoria de la Scuderia en el Mundial.",
+        "En 1954 volvió a ganar en Silverstone, se llevó las 24 Horas de Le Mans con Maurice Trintignant y fue subcampeón detrás de Fangio. Después solo corrió de vez en cuando, sobre todo en Argentina. Murió en 2013.",
+      ],
+    },
+    en: {
+      tagline: "“The Pampas Bull”, who gave Ferrari its first world championship win.",
+      born: "Arrecifes, Argentina",
+      text: [
+        "A compatriot and friend of Juan Manuel Fangio, he made his world championship debut in 1950. At Silverstone in 1951 he took pole and won for Ferrari ahead of Fangio's Alfa Romeo: the Scuderia's first world championship win.",
+        "In 1954 he won at Silverstone again, took the Le Mans 24 Hours with Maurice Trintignant and was runner-up to Fangio. After that he raced only occasionally, mostly in Argentina. He died in 2013.",
+      ],
+    },
+  },
+  trips: {
+    es: {
+      tagline: "El conde alemán que estuvo a un paso del título de 1961.",
+      born: "Colonia, Alemania",
+      text: [
+        "Aristócrata alemán, debutó con Ferrari en 1956. En 1961, con el nuevo Ferrari de morro de tiburón, ganó en Zandvoort y en Aintree: fue el primer alemán en ganar una carrera del Mundial.",
+        "Llegó a Monza como líder del campeonato y salió desde la pole, pero en la segunda vuelta chocó con Jim Clark y su coche salió despedido hacia el público: murieron él y quince espectadores. Su compañero Phil Hill se proclamó campeón y Von Trips terminó subcampeón por un punto.",
+      ],
+    },
+    en: {
+      tagline: "The German count who came within a step of the 1961 title.",
+      born: "Cologne, Germany",
+      text: [
+        "A German aristocrat, he made his debut with Ferrari in 1956. In 1961, in the new “sharknose” Ferrari, he won at Zandvoort and Aintree: the first German to win a world championship race.",
+        "He arrived at Monza leading the championship and started from pole, but on the second lap he collided with Jim Clark and his car was launched into the crowd, killing him and fifteen spectators. Team-mate Phil Hill became champion and von Trips was runner-up by one point.",
+      ],
+    },
+  },
+  ginther: {
+    es: {
+      tagline: "El piloto que le dio a Honda su primera victoria en la F1.",
+      born: "Hollywood, Estados Unidos",
+      text: [
+        "Mecánico e ingeniero además de piloto, en Ferrari ayudó a introducir el alerón trasero, una idea que se extendió después por todo el automovilismo. Corrió con Ferrari, BRM y Honda y fue tercero en el campeonato de 1963 con BRM.",
+        "En México 1965, la última carrera de la época de los motores de 1,5 litros, ganó con Honda: la primera victoria del fabricante japonés y también de los neumáticos Goodyear. Se retiró en 1967 y murió en 1989.",
+      ],
+    },
+    en: {
+      tagline: "The driver who gave Honda its first F1 win.",
+      born: "Hollywood, United States",
+      text: [
+        "A mechanic and engineer as well as a driver, at Ferrari he helped introduce the rear spoiler, an idea that later spread throughout motor racing. He drove for Ferrari, BRM and Honda and was third in the 1963 championship with BRM.",
+        "In Mexico in 1965, the last race of the 1.5-litre era, he won with Honda: the first victory for the Japanese manufacturer and also for Goodyear tyres. He retired in 1967 and died in 1989.",
+      ],
+    },
+  },
+  bandini: {
+    es: {
+      tagline: "El italiano de Ferrari que ganó en Austria 1964.",
+      born: "Al Marj, Libia",
+      text: [
+        "Nació en la Libia italiana y creció en Italia, donde trabajó como mecánico antes de empezar a correr. Con Ferrari ganó su única carrera en Austria 1964, el año en que su compañero John Surtees fue campeón.",
+        "En 1967 era el primer piloto de Ferrari. En Mónaco, cuando iba segundo, chocó en la chicana del puerto y su coche se incendió; murió tres días después. Su accidente aceleró las mejoras de seguridad en los circuitos.",
+      ],
+    },
+    en: {
+      tagline: "The Ferrari Italian who won in Austria in 1964.",
+      born: "Al Marj, Libya",
+      text: [
+        "Born in Italian Libya, he grew up in Italy, where he worked as a mechanic before he started racing. With Ferrari he won his only race in Austria in 1964, the year team-mate John Surtees became champion.",
+        "In 1967 he was Ferrari's lead driver. At Monaco, while running second, he crashed at the harbour chicane and his car caught fire; he died three days later. His accident sped up safety improvements at circuits.",
+      ],
+    },
+  },
+  siffert: {
+    es: {
+      tagline: "El suizo que ganó con un equipo privado en Brands Hatch 1968.",
+      born: "Friburgo, Suiza",
+      text: [
+        "Empezó en las motos y llegó a la F1 en 1962. En 1968 ganó el Gran Premio de Gran Bretaña con el Lotus privado de Rob Walker, una de las últimas victorias de un equipo privado en el Mundial, y en 1971 volvió a ganar en Austria con BRM, desde la pole.",
+        "Fue también una estrella de los coches deportivos con Porsche. Murió en octubre de 1971 en Brands Hatch, en una carrera fuera del campeonato, cuando su BRM se salió y se incendió.",
+      ],
+    },
+    en: {
+      tagline: "The Swiss driver who won with a private team at Brands Hatch in 1968.",
+      born: "Fribourg, Switzerland",
+      text: [
+        "He started out on motorcycles and reached F1 in 1962. In 1968 he won the British Grand Prix in Rob Walker's privately entered Lotus, one of the last world championship wins for a private team, and in 1971 he won again in Austria with BRM, from pole.",
+        "He was also a sports car star with Porsche. He was killed in October 1971 at Brands Hatch, in a non-championship race, when his BRM went off and caught fire.",
+      ],
+    },
+  },
+  rodriguez: {
+    es: {
+      tagline: "El mexicano que, con su hermano, da nombre al circuito de su país.",
+      born: "Ciudad de México, México",
+      text: [
+        "Él y su hermano Ricardo, que murió en 1962 en una carrera fuera del campeonato en México, fueron los pioneros mexicanos de la F1. Pedro ganó en Sudáfrica 1967 con Cooper y en Spa 1970 con BRM, en una de las carreras más rápidas de su época.",
+        "Ganó las 24 Horas de Le Mans de 1968 y fue un maestro bajo la lluvia y al volante del Porsche 917. Murió en 1971 en una carrera de coches deportivos en el Norisring, en Alemania. El autódromo de Ciudad de México se llama Hermanos Rodríguez en su honor.",
+      ],
+    },
+    en: {
+      tagline: "The Mexican who, with his brother, gave his name to his country's circuit.",
+      born: "Mexico City, Mexico",
+      text: [
+        "He and his brother Ricardo, who was killed in 1962 in a non-championship race in Mexico, were Mexico's F1 pioneers. Pedro won in South Africa in 1967 with Cooper and at Spa in 1970 with BRM, in one of the fastest races of the era.",
+        "He won the 1968 Le Mans 24 Hours and was a master in the wet and at the wheel of the Porsche 917. He was killed in 1971 in a sports car race at the Norisring in Germany. The Mexico City circuit is named Hermanos Rodríguez in honour of the brothers.",
+      ],
+    },
+  },
+  beltoise: {
+    es: {
+      tagline: "El ganador bajo el diluvio de Mónaco 1972.",
+      born: "París, Francia",
+      text: [
+        "Campeón de Francia de motociclismo, en 1964 sufrió un grave accidente en Reims que le dejó el brazo izquierdo con poca movilidad, y aun así llegó a la F1. Con Matra fue segundo en Zandvoort 1968 y quinto en el campeonato de 1969.",
+        "Su gran día llegó en Mónaco 1972: con un BRM, lideró de principio a fin bajo una lluvia torrencial. Fue su única victoria y la última de BRM. Estaba casado con la hermana de François Cevert y murió en 2015.",
+      ],
+    },
+    en: {
+      tagline: "The winner in the deluge at Monaco in 1972.",
+      born: "Paris, France",
+      text: [
+        "A French motorcycle champion, in 1964 he suffered a serious crash at Reims that left his left arm with limited movement, and he still made it to F1. With Matra he was second at Zandvoort in 1968 and fifth in the 1969 championship.",
+        "His great day came at Monaco in 1972: in a BRM, he led from start to finish in torrential rain. It was his only win and BRM's last. He was married to François Cevert's sister and died in 2015.",
+      ],
+    },
+  },
+  depailler: {
+    es: {
+      tagline: "El piloto del Tyrrell de seis ruedas, ganador en Mónaco 1978.",
+      born: "Clermont-Ferrand, Francia",
+      text: [
+        "Llegó a Tyrrell en 1972 y fue uno de los pilotos del famoso P34 de seis ruedas, con el que terminó segundo en Suecia 1976 detrás de su compañero Jody Scheckter. En 1978 ganó por fin, en Mónaco.",
+        "En 1979 ganó en España con Ligier, pero a mitad de temporada un accidente de ala delta le rompió las piernas. Volvió en 1980 con Alfa Romeo y murió en agosto de ese año en unos entrenamientos privados en Hockenheim.",
+      ],
+    },
+    en: {
+      tagline: "The six-wheeled Tyrrell driver who won at Monaco in 1978.",
+      born: "Clermont-Ferrand, France",
+      text: [
+        "He joined Tyrrell in 1972 and was one of the drivers of the famous six-wheeled P34, finishing second in it in Sweden in 1976 behind team-mate Jody Scheckter. In 1978 he finally won, at Monaco.",
+        "In 1979 he won in Spain with Ligier, but midway through the season a hang-gliding accident broke his legs. He returned in 1980 with Alfa Romeo and was killed that August during a private test at Hockenheim.",
+      ],
+    },
+  },
+  watson: {
+    es: {
+      tagline: "Ganó saliendo 22.º en Long Beach 1983.",
+      born: "Belfast, Irlanda del Norte",
+      text: [
+        "Le dio a Penske su única victoria en el Mundial, en Austria 1976, y por una apuesta se afeitó la barba después. En 1979 llegó a McLaren, con la que en 1981 ganó en Silverstone la primera carrera de un coche con chasis de fibra de carbono.",
+        "Era un especialista en remontadas: en Detroit 1982 ganó saliendo 17.º y en Long Beach 1983 lo hizo desde el puesto 22, la victoria desde más atrás en la parrilla de la historia de la F1. En 1982 fue tercero en el campeonato. Después fue comentarista de televisión.",
+      ],
+    },
+    en: {
+      tagline: "He won from 22nd on the grid at Long Beach in 1983.",
+      born: "Belfast, Northern Ireland",
+      text: [
+        "He gave Penske its only world championship win, in Austria in 1976, and shaved off his beard afterwards to settle a bet. In 1979 he joined McLaren, and at Silverstone in 1981 he took the first win for a car with a carbon-fibre chassis.",
+        "He was a master of comebacks: in Detroit in 1982 he won from 17th on the grid and at Long Beach in 1983 from 22nd, the furthest back any winner has started in F1 history. In 1982 he was third in the championship. He later became a TV commentator.",
+      ],
+    },
+  },
+  jabouille: {
+    es: {
+      tagline: "El ingeniero y piloto que ganó la primera carrera con motor turbo.",
+      born: "París, Francia",
+      text: [
+        "Ingeniero además de piloto, fue clave en el desarrollo del motor turbo de Renault, del que muchos se reían al principio por sus averías. En 1979 logró en Sudáfrica la primera pole de un turbo y, en Dijon, la primera victoria de un motor turbo en la F1, en el Gran Premio de su país.",
+        "Ganó otra vez en Austria 1980, pero ese mismo año un accidente en Canadá le rompió las piernas y apenas volvió a correr. Murió en 2023.",
+      ],
+    },
+    en: {
+      tagline: "The engineer-driver who won the first race with a turbo engine.",
+      born: "Paris, France",
+      text: [
+        "An engineer as well as a driver, he was key to developing Renault's turbo engine, which many laughed at in the early days for its failures. In 1979 he took the first pole for a turbo in South Africa and, at Dijon, the first win for a turbo engine in F1, at his home Grand Prix.",
+        "He won again in Austria in 1980, but later that year a crash in Canada broke his legs and he barely raced again. He died in 2023.",
+      ],
+    },
+  },
+  tambay: {
+    es: {
+      tagline: "El amigo de Gilles Villeneuve que ganó con su número en Ferrari.",
+      born: "París, Francia",
+      text: [
+        "Pasó por varios equipos, entre ellos McLaren y Ligier, sin grandes resultados hasta que en 1982 Ferrari lo llamó para sustituir a su amigo Gilles Villeneuve. Ganó en Hockenheim un día después del grave accidente de su compañero Didier Pironi.",
+        "En 1983 ganó en Imola con el número 27 que había llevado Villeneuve y terminó cuarto en el campeonato. Después corrió con Renault y Lola, y murió en 2022.",
+      ],
+    },
+    en: {
+      tagline: "Gilles Villeneuve's friend who won in his number at Ferrari.",
+      born: "Paris, France",
+      text: [
+        "He drove for several teams, including McLaren and Ligier, without much success until in 1982 Ferrari called him up to replace his friend Gilles Villeneuve. He won at Hockenheim the day after team-mate Didier Pironi's serious crash.",
+        "In 1983 he won at Imola in the number 27 that Villeneuve had carried and finished fourth in the championship. He then drove for Renault and Lola, and died in 2022.",
+      ],
+    },
+  },
+  arnoux: {
+    es: {
+      tagline: "Siete victorias y el duelo de Dijon 1979.",
+      born: "Pontcharra, Francia",
+      text: [
+        "Con Renault vivió los años del turbo: en Dijon 1979 protagonizó con Gilles Villeneuve un duelo rueda a rueda por el segundo puesto que es de los más recordados de la F1, y en 1980 ganó sus dos primeras carreras, en Brasil y Sudáfrica. En Francia 1982 ganó desoyendo el acuerdo de dejar pasar a su compañero Alain Prost.",
+        "En 1983 fichó por Ferrari, ganó tres carreras y terminó tercero en el campeonato. Después corrió con Ligier hasta 1989.",
+      ],
+    },
+    en: {
+      tagline: "Seven wins and the duel at Dijon in 1979.",
+      born: "Pontcharra, France",
+      text: [
+        "With Renault he lived through the turbo years: at Dijon in 1979 he fought a wheel-to-wheel duel with Gilles Villeneuve for second place that is among the most famous in F1, and in 1980 he won his first two races, in Brazil and South Africa. In France in 1982 he won after ignoring an agreement to let team-mate Alain Prost through.",
+        "In 1983 he joined Ferrari, won three races and finished third in the championship. He then raced for Ligier until 1989.",
+      ],
+    },
+  },
+  angelis: {
+    es: {
+      tagline: "El elegante romano de Lotus, ganador por cinco centésimas.",
+      born: "Roma, Italia",
+      text: [
+        "Debutó en 1979 con Shadow y con 21 años ya subió al podio en Brasil 1980 con Lotus. En Austria 1982 ganó su primera carrera por cinco centésimas sobre Keke Rosberg, uno de los finales más ajustados de la historia.",
+        "Fue tercero en 1984 y en 1985 ganó en Imola, tras la descalificación de Alain Prost, como compañero de un joven Ayrton Senna. En 1986 fichó por Brabham y murió en mayo de ese año en unos entrenamientos privados en Paul Ricard. También era un gran pianista.",
+      ],
+    },
+    en: {
+      tagline: "Lotus's elegant Roman, winner by five hundredths of a second.",
+      born: "Rome, Italy",
+      text: [
+        "He made his debut in 1979 with Shadow and was on the podium at 21, in Brazil in 1980 with Lotus. In Austria in 1982 he won his first race by five hundredths of a second from Keke Rosberg, one of the closest finishes in history.",
+        "He was third in 1984 and in 1985 won at Imola, after Alain Prost's disqualification, as a young Ayrton Senna's team-mate. In 1986 he joined Brabham and was killed that May during a private test at Paul Ricard. He was also an accomplished pianist.",
+      ],
+    },
+  },
+  cesaris: {
+    es: {
+      tagline: "Más de 200 grandes premios sin ganar ninguno.",
+      born: "Roma, Italia",
+      text: [
+        "Debutó en 1980 y en Long Beach 1982, con Alfa Romeo, se convirtió en el poleman más joven de la historia hasta entonces. Rapidísimo pero propenso a los accidentes, rozó la victoria varias veces, con dos segundos puestos en 1983.",
+        "Corrió 15 temporadas con diez equipos distintos, entre ellos McLaren, Ligier, Jordan y Sauber, y en Spa 1991 fue el compañero de Michael Schumacher en su debut con Jordan. Murió en 2014 en un accidente de moto en Roma.",
+      ],
+    },
+    en: {
+      tagline: "More than 200 Grands Prix without a single win.",
+      born: "Rome, Italy",
+      text: [
+        "He made his debut in 1980 and at Long Beach in 1982, with Alfa Romeo, became the youngest pole-sitter in history at the time. Very fast but accident-prone, he came close to winning several times, with two second places in 1983.",
+        "He raced for 15 seasons with ten different teams, including McLaren, Ligier, Jordan and Sauber, and at Spa in 1991 he was Michael Schumacher's team-mate on his debut with Jordan. He died in a motorcycle accident in Rome in 2014.",
+      ],
+    },
+  },
+  boutsen: {
+    es: {
+      tagline: "El belga que ganó tres carreras con Williams.",
+      born: "Bruselas, Bélgica",
+      text: [
+        "Debutó con Arrows en su carrera de casa, Spa 1983, y con Benetton subió varias veces al podio. En 1989 llegó a Williams y ganó bajo la lluvia en Canadá y en Australia.",
+        "Su mejor día fue Hungría 1990: salió desde la pole y aguantó toda la carrera a Ayrton Senna para ganar por menos de tres décimas. Tras la F1 corrió en resistencia y fundó una empresa de venta de aviones.",
+      ],
+    },
+    en: {
+      tagline: "The Belgian who won three races with Williams.",
+      born: "Brussels, Belgium",
+      text: [
+        "He made his debut with Arrows at his home race, Spa in 1983, and with Benetton he finished on the podium several times. In 1989 he joined Williams and won in the rain in Canada and Australia.",
+        "His best day was Hungary in 1990: he started from pole and held off Ayrton Senna for the whole race to win by less than three tenths. After F1 he raced in endurance events and founded an aircraft sales company.",
+      ],
+    },
+  },
+  bellof: {
+    es: {
+      tagline: "El talento alemán que batió el récord del Nürburgring.",
+      born: "Gießen, Alemania",
+      text: [
+        "En 1983 dio con un Porsche la vuelta más rápida de la historia al Nordschleife del Nürburgring, un récord que aguantó 35 años, y en 1984 fue campeón del mundo de resistencia. Ese mismo año debutó en la F1 con Tyrrell.",
+        "En Mónaco 1984, bajo la lluvia, remontó desde el último puesto hasta el tercero antes de que se detuviera la carrera, pero el resultado se borró cuando Tyrrell fue descalificado de toda la temporada. Murió en septiembre de 1985 en los 1000 km de Spa, con un Porsche.",
+      ],
+    },
+    en: {
+      tagline: "The German talent who set the Nürburgring lap record.",
+      born: "Giessen, Germany",
+      text: [
+        "In 1983 he lapped the Nürburgring Nordschleife in a Porsche faster than anyone ever had, a record that stood for 35 years, and in 1984 he was world endurance champion. That same year he made his F1 debut with Tyrrell.",
+        "At Monaco in 1984, in the rain, he climbed from last on the grid to third before the race was stopped, but the result was erased when Tyrrell was disqualified from the whole season. He was killed in September 1985 in the Spa 1000 km, driving a Porsche.",
+      ],
+    },
+  },
+  brundle: {
+    es: {
+      tagline: "De rival de Senna a la voz más conocida de la F1.",
+      born: "King's Lynn, Inglaterra",
+      text: [
+        "En 1983 le disputó a Ayrton Senna el campeonato británico de F3 hasta la última carrera. En la F1 corrió de 1984 a 1996 y en 1992 fue compañero de Michael Schumacher en Benetton, el año en que más veces subió al podio. En 1990 ganó las 24 Horas de Le Mans con Jaguar.",
+        "En Australia 1996 su Jordan dio varias vueltas de campana; salió por su propio pie y volvió corriendo a boxes para tomar la nueva salida con el coche de reserva. Tras retirarse se convirtió en comentarista de televisión, famoso por sus entrevistas por la parrilla antes de cada carrera.",
+      ],
+    },
+    en: {
+      tagline: "From Senna's rival to the best-known voice in F1.",
+      born: "King's Lynn, England",
+      text: [
+        "In 1983 he took Ayrton Senna all the way to the final round of the British F3 championship. In F1 he raced from 1984 to 1996 and in 1992 he was Michael Schumacher's team-mate at Benetton, his best year for podiums. In 1990 he won the Le Mans 24 Hours with Jaguar.",
+        "In Australia in 1996 his Jordan barrel-rolled several times; he climbed out unaided and ran back to the pits to take the restart in the spare car. After retiring he became a TV commentator, famous for his pre-race grid walks.",
+      ],
+    },
+  },
+  nannini: {
+    es: {
+      tagline: "Ganador con Benetton, apartado de la F1 por un accidente.",
+      born: "Siena, Italia",
+      text: [
+        "De una familia de pasteleros de Siena y hermano de la cantante Gianna Nannini, debutó con Minardi en 1986. Con Benetton subió a su primer podio en Silverstone 1988 y ganó en Japón 1989, tras la descalificación de Ayrton Senna.",
+        "En octubre de 1990, dos semanas después del Gran Premio de España, un accidente de helicóptero le seccionó el antebrazo derecho. Se lo reimplantaron y volvió a competir con éxito en turismos con Alfa Romeo, pero nunca regresó a la F1.",
+      ],
+    },
+    en: {
+      tagline: "A Benetton winner whose F1 career was cut short by an accident.",
+      born: "Siena, Italy",
+      text: [
+        "From a family of Siena confectioners and the brother of singer Gianna Nannini, he made his debut with Minardi in 1986. With Benetton he took his first podium at Silverstone in 1988 and won in Japan in 1989, after Ayrton Senna's disqualification.",
+        "In October 1990, two weeks after the Spanish Grand Prix, a helicopter crash severed his right forearm. It was surgically reattached and he went on to race successfully in touring cars with Alfa Romeo, but he never returned to F1.",
+      ],
+    },
+  },
+  herbert: {
+    es: {
+      tagline: "Tres victorias después de un accidente que casi le cuesta los pies.",
+      born: "Brentwood, Inglaterra",
+      text: [
+        "En 1988, cuando era la gran promesa británica, un accidente en la Fórmula 3000 en Brands Hatch le destrozó los pies. Pocos meses después debutó en Brasil 1989 con Benetton, todavía sin poder caminar bien, y terminó cuarto.",
+        "Con Benetton ganó en 1995 en Silverstone y en Monza, como compañero de Michael Schumacher, y en 1999 le dio a Stewart su única victoria, bajo la lluvia del Nürburgring. Después fue comentarista de televisión.",
+      ],
+    },
+    en: {
+      tagline: "Three wins after a crash that nearly cost him his feet.",
+      born: "Brentwood, England",
+      text: [
+        "In 1988, when he was Britain's brightest prospect, a Formula 3000 crash at Brands Hatch shattered his feet. A few months later he made his debut in Brazil in 1989 with Benetton, still unable to walk properly, and finished fourth.",
+        "With Benetton he won at Silverstone and Monza in 1995, as Michael Schumacher's team-mate, and in 1999 he gave Stewart its only win, in the rain at the Nürburgring. He later became a TV commentator.",
+      ],
+    },
+  },
+  verstappen: {
+    es: {
+      tagline: "El padre y mentor de Max Verstappen.",
+      born: "Montfort, Países Bajos",
+      text: [
+        "Debutó en 1994 con Benetton como compañero de Michael Schumacher y ese año subió dos veces al podio, en Hungría y en Bélgica; también salió casi ileso de un incendio durante una parada en Hockenheim. Después corrió con equipos más modestos, como Arrows o Minardi, hasta 2003.",
+        "En 2008 ganó la categoría LMP2 de las 24 Horas de Le Mans. Su mayor legado es su hijo Max, al que formó desde el karting y que se convirtió en campeón del mundo en 2021.",
+      ],
+    },
+    en: {
+      tagline: "Max Verstappen's father and mentor.",
+      born: "Montfort, Netherlands",
+      text: [
+        "He made his debut in 1994 with Benetton as Michael Schumacher's team-mate and finished on the podium twice that year, in Hungary and Belgium; he also escaped almost unhurt from a pit-stop fire at Hockenheim. He then drove for smaller teams such as Arrows and Minardi until 2003.",
+        "In 2008 he won the LMP2 class at the Le Mans 24 Hours. His greatest legacy is his son Max, whom he coached from karting onwards and who became world champion in 2021.",
+      ],
+    },
+  },
+  panis: {
+    es: {
+      tagline: "El ganador sorpresa de Mónaco 1996.",
+      born: "Lyon, Francia",
+      text: [
+        "Campeón de la Fórmula 3000 en 1993, debutó con Ligier en 1994 y en su primera temporada fue segundo en Hockenheim. En Mónaco 1996, bajo la lluvia, ganó saliendo 14.º en una carrera en la que solo llegaron tres coches a la meta; fue la última victoria de Ligier.",
+        "En 1997, con el equipo Prost, iba tercero en el campeonato cuando un accidente en Canadá le rompió las piernas. Volvió ese mismo año, corrió después con BAR y Toyota y se retiró en 2004.",
+      ],
+    },
+    en: {
+      tagline: "The surprise winner of Monaco 1996.",
+      born: "Lyon, France",
+      text: [
+        "Formula 3000 champion in 1993, he made his debut with Ligier in 1994 and was second at Hockenheim in his first season. At Monaco in 1996, in the rain, he won from 14th on the grid in a race in which only three cars reached the finish; it was Ligier's last win.",
+        "In 1997, with the Prost team, he was third in the championship when a crash in Canada broke his legs. He returned later that year, went on to drive for BAR and Toyota and retired in 2004.",
+      ],
+    },
+  },
+  ratzenberger: {
+    es: {
+      tagline: "Murió en Imola 1994, en su primera temporada en la F1.",
+      born: "Salzburgo, Austria",
+      text: [
+        "Tras años en la Fórmula 3000 japonesa y en los coches deportivos, en los que fue un habitual de Le Mans, llegó a la F1 en 1994, con 33 años, en el modesto equipo Simtek. Disputó una sola carrera, el Gran Premio del Pacífico en Aida, y terminó 11.º.",
+        "En la clasificación de Imola su coche perdió el alerón delantero a más de 300 km/h y se estrelló. Murió el sábado 30 de abril de 1994, un día antes que Ayrton Senna. Era el primer piloto que moría en un fin de semana de gran premio desde 1982.",
+      ],
+    },
+    en: {
+      tagline: "Killed at Imola in 1994, in his first F1 season.",
+      born: "Salzburg, Austria",
+      text: [
+        "After years in Japanese Formula 3000 and sports cars, including regular Le Mans outings, he reached F1 in 1994, aged 33, with the small Simtek team. He started just one race, the Pacific Grand Prix at Aida, and finished 11th.",
+        "In qualifying at Imola his car lost its front wing at more than 300 km/h and crashed. He died on Saturday 30 April 1994, a day before Ayrton Senna. He was the first driver to die at a Grand Prix weekend since 1982.",
+      ],
+    },
+  },
+  fisichella: {
+    es: {
+      tagline: "Tres victorias y la pole histórica de Force India.",
+      born: "Roma, Italia",
+      text: [
+        "Debutó con Minardi en 1996 y con Jordan y Benetton subió varias veces al podio. Su primera victoria, en Brasil 2003 con Jordan, se la dieron días después: la carrera se detuvo por un accidente y, al revisar los datos, la FIA le dio el triunfo que había recibido Kimi Räikkönen.",
+        "Con Renault ganó la primera carrera de 2005, en Australia, y otra en Malasia 2006, como compañero de Fernando Alonso. En 2009 logró en Spa la única pole de Force India y terminó segundo, y ese mismo año corrió con Ferrari las últimas carreras de la temporada.",
+      ],
+    },
+    en: {
+      tagline: "Three wins and Force India's historic pole.",
+      born: "Rome, Italy",
+      text: [
+        "He made his debut with Minardi in 1996 and finished on the podium several times with Jordan and Benetton. His first win, in Brazil in 2003 with Jordan, was awarded days later: the race had been stopped after a crash and, on reviewing the data, the FIA gave him the victory that had gone to Kimi Räikkönen.",
+        "With Renault he won the opening race of 2005, in Australia, and another in Malaysia in 2006, as Fernando Alonso's team-mate. In 2009 he took Force India's only pole at Spa and finished second, and that same year he drove for Ferrari in the final races of the season.",
+      ],
+    },
+  },
+  trulli: {
+    es: {
+      tagline: "El rey de la clasificación que ganó en Mónaco 2004.",
+      born: "Pescara, Italia",
+      text: [
+        "Campeón del mundo de karting, debutó con Minardi en 1997 y ese mismo año llegó a liderar en Austria con Prost. Era tan rápido a una vuelta como difícil de adelantar: la fila de coches atascados detrás de él se conocía como el «tren Trulli».",
+        "Su gran día llegó con Renault en Mónaco 2004: pole y victoria. Después le dio a Toyota su primera pole, en 2005, y se retiró en 2011 tras más de 250 grandes premios. También produce vino en los Abruzos, su región.",
+      ],
+    },
+    en: {
+      tagline: "The qualifying king who won at Monaco in 2004.",
+      born: "Pescara, Italy",
+      text: [
+        "A world karting champion, he made his debut with Minardi in 1997 and that same year led in Austria with Prost. He was as quick over one lap as he was hard to pass: the queue of cars stuck behind him became known as the “Trulli train”.",
+        "His great day came with Renault at Monaco in 2004: pole and victory. He then gave Toyota its first pole, in 2005, and retired in 2011 after more than 250 Grands Prix. He also makes wine in his home region of Abruzzo.",
+      ],
+    },
+  },
+  heidfeld: {
+    es: {
+      tagline: "Trece podios sin ninguna victoria.",
+      born: "Mönchengladbach, Alemania",
+      text: [
+        "Campeón de la Fórmula 3000 en 1999, debutó con Prost en 2000 y se asentó en Sauber, con la que subió a su primer podio en Brasil 2001. En 2005 consiguió con Williams su única pole, en el Nürburgring.",
+        "Con BMW Sauber vivió sus mejores años: en Canadá 2008 fue segundo detrás de su compañero Robert Kubica en el doblete del equipo. Terminó con 13 podios sin ganar ninguna carrera y se retiró en 2011, después de sustituir a Kubica en Renault.",
+      ],
+    },
+    en: {
+      tagline: "Thirteen podiums without a single win.",
+      born: "Mönchengladbach, Germany",
+      text: [
+        "Formula 3000 champion in 1999, he made his debut with Prost in 2000 and settled in at Sauber, taking his first podium in Brazil in 2001. In 2005 he took his only pole, with Williams, at the Nürburgring.",
+        "His best years came with BMW Sauber: in Canada in 2008 he was second behind team-mate Robert Kubica in the team's one-two. He finished with 13 podiums but no wins and retired in 2011, after standing in for Kubica at Renault.",
+      ],
+    },
+  },
+  sato: {
+    es: {
+      tagline: "Podio en la F1 y dos veces ganador de las 500 Millas de Indianápolis.",
+      born: "Tokio, Japón",
+      text: [
+        "Campeón británico de F3 en 2001, debutó con Jordan en 2002 y en 2004, con BAR, fue tercero en Indianápolis: el primer podio de un japonés desde 1990. Después corrió con Super Aguri, con el que adelantó al McLaren de Fernando Alonso en Canadá 2007.",
+        "Cuando Super Aguri cerró en 2008 se pasó a la IndyCar, donde ganó las 500 Millas de Indianápolis en 2017 y en 2020: fue el primer japonés en lograrlo.",
+      ],
+    },
+    en: {
+      tagline: "An F1 podium and two Indianapolis 500 wins.",
+      born: "Tokyo, Japan",
+      text: [
+        "British F3 champion in 2001, he made his debut with Jordan in 2002 and in 2004, with BAR, finished third at Indianapolis: the first podium for a Japanese driver since 1990. He then drove for Super Aguri, passing Fernando Alonso's McLaren in Canada in 2007.",
+        "When Super Aguri folded in 2008 he moved to IndyCar, where he won the Indianapolis 500 in 2017 and 2020: the first Japanese driver to do so.",
+      ],
+    },
+  },
+  kovalainen: {
+    es: {
+      tagline: "El piloto número 100 en ganar una carrera de F1.",
+      born: "Suomussalmi, Finlandia",
+      text: [
+        "Debutó con Renault en 2007, como compañero de Giancarlo Fisichella, y subió al podio bajo la lluvia de Japón. En 2008 sustituyó a Fernando Alonso en McLaren y ganó en Hungría: fue el piloto número 100 en ganar una carrera del Mundial.",
+        "Después pasó por los equipos nuevos de Lotus y Caterham, y en 2013 volvió para las dos últimas carreras con el Lotus de Kimi Räikkönen. En Japón ganó el campeonato Super GT en 2016.",
+      ],
+    },
+    en: {
+      tagline: "The 100th driver to win an F1 race.",
+      born: "Suomussalmi, Finland",
+      text: [
+        "He made his debut with Renault in 2007, as Giancarlo Fisichella's team-mate, and finished on the podium in the rain in Japan. In 2008 he replaced Fernando Alonso at McLaren and won in Hungary: the 100th driver to win a world championship race.",
+        "He then drove for the new Lotus and Caterham teams, and in 2013 came back for the final two races in Kimi Räikkönen's Lotus. In Japan he won the Super GT championship in 2016.",
+      ],
+    },
+  },
+  kobayashi: {
+    es: {
+      tagline: "Podio en casa en Suzuka 2012 y ganador de Le Mans.",
+      born: "Amagasaki, Japón",
+      text: [
+        "Debutó con Toyota a final de 2009 sustituyendo a Timo Glock y llamó la atención enseguida por sus adelantamientos agresivos. Con Sauber fue uno de los pilotos más espectaculares de la parrilla y en 2012 fue tercero en su carrera de casa, en Suzuka.",
+        "Tras un último año con Caterham en 2014 se pasó a la resistencia con Toyota: ganó las 24 Horas de Le Mans en 2021 y después pasó a dirigir el equipo.",
+      ],
+    },
+    en: {
+      tagline: "A home podium at Suzuka in 2012 and a Le Mans winner.",
+      born: "Amagasaki, Japan",
+      text: [
+        "He made his debut with Toyota at the end of 2009, standing in for Timo Glock, and immediately caught the eye with his aggressive overtaking. At Sauber he was one of the most spectacular drivers on the grid and in 2012 he finished third at his home race, Suzuka.",
+        "After a final year with Caterham in 2014 he switched to endurance racing with Toyota: he won the Le Mans 24 Hours in 2021 and then became the team's principal.",
+      ],
+    },
+  },
+  maldonado: {
+    es: {
+      tagline: "El venezolano que ganó en Barcelona 2012.",
+      born: "Maracay, Venezuela",
+      text: [
+        "Campeón de la GP2 en 2010, debutó con Williams en 2011. En el Gran Premio de España de 2012 heredó la pole tras la descalificación de Lewis Hamilton y aguantó a Fernando Alonso para ganar: la primera victoria de Williams desde 2004 y la primera de un venezolano.",
+        "Esa misma tarde un incendio en el garaje de Williams obligó a evacuar el box en plena celebración. Su fama de piloto rápido pero propenso a los accidentes lo acompañó hasta su última temporada, 2015, con Lotus.",
+      ],
+    },
+    en: {
+      tagline: "The Venezuelan who won in Barcelona in 2012.",
+      born: "Maracay, Venezuela",
+      text: [
+        "GP2 champion in 2010, he made his debut with Williams in 2011. At the 2012 Spanish Grand Prix he inherited pole after Lewis Hamilton's exclusion and held off Fernando Alonso to win: Williams' first victory since 2004 and the first for a Venezuelan.",
+        "That same afternoon a fire in the Williams garage forced the team to evacuate in the middle of the celebrations. His reputation as fast but accident-prone stayed with him until his final season, 2015, with Lotus.",
+      ],
+    },
+  },
+  jules_bianchi: {
+    es: {
+      tagline: "El talento de Ferrari que dio a Marussia sus primeros puntos.",
+      born: "Niza, Francia",
+      text: [
+        "Nieto de Mauro Bianchi y sobrino nieto de Lucien Bianchi, ambos pilotos, se formó en la academia de Ferrari y debutó en 2013 con Marussia. En Mónaco 2014 terminó noveno y logró los primeros puntos del equipo.",
+        "En Japón 2014, bajo la lluvia, se salió de la pista y chocó contra una grúa que retiraba otro coche. Murió en julio de 2015. Su accidente llevó a crear el coche de seguridad virtual y aceleró la llegada del halo. Era el padrino de Charles Leclerc.",
+      ],
+    },
+    en: {
+      tagline: "The Ferrari prospect who scored Marussia's first points.",
+      born: "Nice, France",
+      text: [
+        "The grandson of Mauro Bianchi and great-nephew of Lucien Bianchi, both racing drivers, he came through the Ferrari academy and made his debut in 2013 with Marussia. At Monaco in 2014 he finished ninth to score the team's first points.",
+        "In Japan in 2014, in the rain, he slid off the track and hit a recovery vehicle that was removing another car. He died in July 2015. His accident led to the virtual safety car and hastened the arrival of the halo. He was Charles Leclerc's godfather.",
+      ],
+    },
+  },
+  kvyat: {
+    es: {
+      tagline: "Podio con Red Bull antes de cederle su sitio a Verstappen.",
+      born: "Ufá, Rusia",
+      text: [
+        "Debutó con Toro Rosso en 2014 y sumó puntos en su primera carrera, con 19 años. En 2015 subió a Red Bull, terminó el campeonato por delante de su compañero Daniel Ricciardo y fue segundo en Hungría.",
+        "Tras chocar dos veces con Sebastian Vettel en Rusia 2016, Red Bull lo devolvió a Toro Rosso y le dio su sitio a Max Verstappen, que ganó en su primera carrera con el equipo. Kvyat volvió a la F1 en 2019 y fue tercero bajo la lluvia de Hockenheim.",
+      ],
+    },
+    en: {
+      tagline: "A Red Bull podium before giving up his seat to Verstappen.",
+      born: "Ufa, Russia",
+      text: [
+        "He made his debut with Toro Rosso in 2014 and scored points in his first race, aged 19. In 2015 he moved up to Red Bull, finished the championship ahead of team-mate Daniel Ricciardo and was second in Hungary.",
+        "After hitting Sebastian Vettel twice in Russia in 2016, Red Bull sent him back to Toro Rosso and gave his seat to Max Verstappen, who won on his first outing for the team. Kvyat returned to F1 in 2019 and finished third in the rain at Hockenheim.",
+      ],
+    },
+  },
+  de_vries: {
+    es: {
+      tagline: "Campeón de F2 y de Fórmula E, con puntos en su debut en Monza.",
+      born: "Uitwellingerga, Países Bajos",
+      text: [
+        "Campeón de la Fórmula 2 en 2019 y de la Fórmula E en 2021 con Mercedes, debutó en la F1 de un día para otro en Monza 2022, sustituyendo en Williams a Alexander Albon, que tenía apendicitis: terminó noveno y sumó puntos.",
+        "Esa actuación le valió un asiento en AlphaTauri para 2023, pero tras diez carreras sin puntuar el equipo lo sustituyó por Daniel Ricciardo. Después volvió a la Fórmula E y a la resistencia.",
+      ],
+    },
+    en: {
+      tagline: "F2 and Formula E champion, with points on his debut at Monza.",
+      born: "Uitwellingerga, Netherlands",
+      text: [
+        "Formula 2 champion in 2019 and Formula E champion in 2021 with Mercedes, he made his F1 debut at a day's notice at Monza in 2022, standing in at Williams for Alexander Albon, who had appendicitis: he finished ninth and scored points.",
+        "That performance earned him an AlphaTauri seat for 2023, but after ten races without points the team replaced him with Daniel Ricciardo. He then returned to Formula E and endurance racing.",
       ],
     },
   },

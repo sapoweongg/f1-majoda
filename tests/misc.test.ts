@@ -418,6 +418,10 @@ describe("perfiles de pilotos", () => {
       "gilles_villeneuve", "laffite", "pironi", "patrese", "alboreto", "berger", "alesi", "coulthard", "irvine", "frentzen",
       "barrichello", "montoya", "ralf_schumacher", "webber", "massa", "kubica", "ricciardo", "grosjean", "kevin_magnussen",
       "tsunoda", "zhou", "mick_schumacher",
+      "gonzalez", "trips", "ginther", "bandini", "siffert", "rodriguez", "beltoise", "depailler", "watson", "jabouille",
+      "tambay", "arnoux", "angelis", "cesaris", "boutsen", "bellof", "brundle", "nannini", "herbert", "verstappen", "panis",
+      "ratzenberger", "fisichella", "trulli", "heidfeld", "sato", "kovalainen", "kobayashi", "maldonado", "jules_bianchi",
+      "kvyat", "de_vries",
     ];
     for (const id of notable) {
       const es = driverStory(id, "es");

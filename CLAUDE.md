@@ -60,10 +60,10 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - Timing en tiempo real: suscripción de OpenF1 + credenciales en Vercel.
 - Foto de las 10 victorias seguidas en Monza: solo si el usuario aporta una imagen con permiso de uso.
 - Perfiles de pilotos (`src/content/drivers.ts`, es/en):
-  - Hechos: los 22 de la parrilla de 2026, los 31 campeones históricos (9 oct 2026) y 33 pilotos destacados sin título, de Moss a Mick Schumacher (14 oct 2026).
+  - Hechos: los 22 de la parrilla de 2026, los 31 campeones históricos (9 oct 2026) y 65 pilotos destacados sin título (14 oct 2026), de Froilán González a Nyck de Vries. Son 118 perfiles en total.
   - Los lugares de nacimiento se comprobaron con Wikidata.
   - En 2026 Hadjar se perdió tres carreras (rondas 12–14) por lesión: Lawson subió a Red Bull y Tsunoda corrió con Racing Bulls. Está en los perfiles de Lawson y Tsunoda.
-  - Siguiente paso posible: más pilotos (Bellof, De Angelis, Fisichella, Trulli, Heidfeld, Kvyat…).
+  - Siguiente paso posible: pilotos recientes con menos recorrido (Sargeant, Doohan, Mazepin, Latifi, Giovinazzi, Vandoorne…) o perfiles de los equipos que aún no tienen historia.
   - La ficha muestra el perfil y una tarjeta de hitos (lugar de nacimiento, debut, primer podio, primera victoria y primera pole). Los hitos se calculan de los resultados, así que salen para cualquier piloto aunque no tenga perfil.
   - Como en los equipos, solo hechos cerrados, comprobados con la API: nada de cifras que caduquen.
 - Cuando termine 2026, regenerar los archivos de `src/data` con ese año:
