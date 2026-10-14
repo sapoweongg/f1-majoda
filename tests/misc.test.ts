@@ -4,6 +4,7 @@ import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
 import { isPole } from "@/lib/poles";
+import { buildDuel } from "@/lib/duel2021";
 import { driverFinals, teamFinals } from "@/lib/standings";
 import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
 import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
@@ -73,6 +74,44 @@ describe("comparativa", () => {
     // Monza 1952: Moss aparece en la pole por error
     expect(isPole(race("1952", "8", [["moss", "1"]]), "moss")).toBe(false);
     expect(isPole(race("2026", "1", [["moss", "1"]]), "moss")).toBe(true);
+  });
+});
+
+describe("duelo de 2021", () => {
+  const race = (round: string, rows: [string, string, string][], key: "Results" | "SprintResults" = "Results") =>
+    ({
+      season: "2021",
+      round,
+      raceName: "Test Grand Prix",
+      Circuit: { circuitId: "test", Location: { country: "Spain" } },
+      [key]: rows.map(([driverId, position, points]) => ({
+        Driver: { driverId, code: driverId.slice(0, 3).toUpperCase() },
+        position,
+        positionText: position,
+        points,
+        grid: position === "1" ? "1" : "2",
+      })),
+    }) as unknown as Race;
+
+  it("acumula puntos con sprints, cuenta cambios de líder y no cuenta el empate", () => {
+    const results = [
+      race("1", [["hamilton", "1", "25"], ["max_verstappen", "2", "18"]]),
+      race("2", [["max_verstappen", "1", "25"], ["hamilton", "R", "0"]]),
+      race("3", [["hamilton", "1", "26"], ["max_verstappen", "3", "15"]]),
+      race("4", [["max_verstappen", "1", "25"], ["hamilton", "2", "18"]]),
+    ];
+    const sprints = [race("3", [["max_verstappen", "1", "3"], ["hamilton", "2", "2"]], "SprintResults")];
+    const d = buildDuel(results, sprints);
+    expect(d.rounds.map((r) => r.gap)).toEqual([-7, 18, 8, 15]);
+    expect(d.rounds[2].ver.sprintWin).toBe(true);
+    expect(d.rounds[1].ham.position).toBeNull();
+    expect(d.leadChanges).toBe(1);
+    expect(d.ver).toMatchObject({ wins: 2, podiums: 4, points: 86, leadRounds: 3, poles: 2 });
+    expect(d.ham).toMatchObject({ wins: 2, leadRounds: 1 });
+    // Un empate no es un cambio de líder
+    const tie = buildDuel([results[0], race("2", [["max_verstappen", "1", "25"], ["hamilton", "3", "18"]])], []);
+    expect(tie.rounds.map((r) => r.gap)).toEqual([-7, 0]);
+    expect(tie.leadChanges).toBe(0);
   });
 });
 

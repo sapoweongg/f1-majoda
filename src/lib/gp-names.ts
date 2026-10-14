@@ -81,7 +81,8 @@ export function gpName(raceName: string, locale: string, short = false): string 
 export function gpPlace(raceName: string, locale: string): string {
   if (locale === "es") {
     const full = gpName(raceName, locale);
-    return full.startsWith("Gran Premio ") ? full.slice("Gran Premio ".length).replace(/^del? /, "") : full;
+    // "de los Países Bajos" → "Países Bajos", "de la Ciudad de México" → "Ciudad de México"
+    return full.startsWith("Gran Premio ") ? full.slice("Gran Premio ".length).replace(/^(?:del|de(?: la| los| las)?) /, "") : full;
   }
   return raceName.replace(/ Grand Prix/i, "");
 }

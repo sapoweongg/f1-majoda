@@ -13,6 +13,7 @@ import { teamLogo } from "@/lib/media";
 import { getDriverPhotos } from "@/lib/photos";
 import { isPole } from "@/lib/poles";
 import { safe } from "@/lib/safe";
+import { SPECIAL_SEASONS } from "@/lib/special-pages";
 import { driverFinals, STANDINGS_THROUGH } from "@/lib/standings";
 import { teamStyle } from "@/lib/teams";
 import { DriverHero, TeamLogo } from "@/components/ui/media";
@@ -259,6 +260,7 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                 <tbody>
                   {seasons.map((s) => {
                     const color = teamStyle(s.teams.at(-1)?.id).color;
+                    const special = SPECIAL_SEASONS[driverId]?.[s.season];
                     return (
                       <tr key={s.season}>
                         <td>
@@ -266,18 +268,17 @@ export default async function DriverPage({ params }: PageProps<"/[locale]/driver
                             href={
                               driverId === "max_verstappen" && s.season === 2025
                                 ? "/parc-ferme"
-                                : driverId === "max_verstappen" && s.season === 2023
-                                  ? "/max-2023"
-                                  : `/standings?season=${s.season}`
+                                : (special?.href ?? `/standings?season=${s.season}`)
                             }
                             className="display text-lg hover:text-accent"
                           >
                             {s.season}
                           </Link>
-                          {driverId === "max_verstappen" && s.season === 2023 && (
+                          {special && (
                             <Link
-                              href="/max-2023"
-                              className="ml-2 rounded-full border border-[#ffcc00]/40 bg-[#ffcc00]/10 px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wider text-[#ffcc00] hover:bg-[#ffcc00]/20"
+                              href={special.href}
+                              className="ml-2 rounded-full border px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wider transition-opacity hover:opacity-80"
+                              style={{ color: special.color, borderColor: `${special.color}66`, background: `${special.color}1a` }}
                             >
                               ★ {locale === "en" ? "Historic" : "Histórico"}
                             </Link>
