@@ -268,16 +268,16 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
         </div>
       </section>
 
-      {/* ---------- RADIOS ---------- */}
-      <section>
-        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
-        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
-      </section>
-
       {/* ---------- LO QUE SIGNIFICÓ ---------- */}
       <section>
         <SectionTitle title={c.legacyTitle} />
         <HonourCards cards={c.legacy} theme={THEME} icon={<Crown size={18} aria-hidden />} />
+      </section>
+
+      {/* ---------- RADIOS ---------- */}
+      <section>
+        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
+        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- GALERÍA ---------- */}

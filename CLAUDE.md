@@ -46,7 +46,7 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 
 - **`/max-2023`**: homenaje a la temporada 2023 de Max Verstappen (récords, racha, 22 carreras, momentos, galería y 14 radios oficiales postcarrera en `src/data/max2023-radios.json`). Textos en `src/content/max2023.ts`. Se entra desde el 2023 de la ficha de Max (etiqueta "★ Histórico"). Se genera en cada visita (`force-dynamic`) para que un fallo de la API en el build no quede guardado.
 - **`/max-2021`**: el primer título de Max, contado desde su lado (14 oct 2026).
-  - Secciones: marcador final, cifras, "La balanza" (ventaja en puntos sobre Hamilton tras cada carrera), carrera a carrera con el resultado de los dos, "Golpes que no lo frenaron", momentos, "Vuelta 58" (Abu Dabi), radios (siempre después del final de Abu Dabi, que es lo más importante; igual en la de Hamilton), lo que significó y galería.
+  - Secciones: marcador final, cifras, "La balanza" (ventaja en puntos sobre Hamilton tras cada carrera), carrera a carrera con el resultado de los dos, "Golpes que no lo frenaron", momentos, "Vuelta 58" (Abu Dabi), lo que significó, radios y galería. En las dos páginas de 2021 las radios van justo antes de la galería (lo pidió el usuario: el final de Abu Dabi pesa más).
   - Textos en `src/content/max2021.ts`; datos del duelo en `src/lib/duel2021.ts` (compartidos con la futura página de Hamilton).
   - Gráfico: `src/components/special/GapChart.tsx`. Colores de datos validados con el validador de dataviz sobre el fondo oscuro: Max `#e06c00` y Hamilton `#00a991`. El acento de la página es el naranja `#ff8000`.
   - Fotos libres de 2021 de Commons (Lukas Raich, rsyphotography, Grahampurse, Jen Ross). No hay retratos oficiales de 2021 en el CDN de F1.
