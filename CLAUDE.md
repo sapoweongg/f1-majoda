@@ -50,9 +50,13 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
   - Textos en `src/content/max2021.ts`; datos del duelo en `src/lib/duel2021.ts` (compartidos con la futura página de Hamilton).
   - Gráfico: `src/components/special/GapChart.tsx`. Colores de datos validados con el validador de dataviz sobre el fondo oscuro: Max `#e06c00` y Hamilton `#00a991`. El acento de la página es el naranja `#ff8000`.
   - Fotos libres de 2021 de Commons (Lukas Raich, rsyphotography, Grahampurse, Jen Ross). No hay retratos oficiales de 2021 en el CDN de F1.
-- **Pendiente: `/hamilton-2021`**, la misma temporada contada desde el lado de Hamilton y enalteciéndolo a él. Reutiliza `duel2021.ts` y `GapChart`.
-  - Hay que darle identidad propia: colores de Mercedes, y la remontada de Brasil, Catar y Arabia Saudí.
-  - Añadir la página en `SPECIAL_SEASONS` (`src/lib/special-pages.ts`), que pone la etiqueta "Histórico" en el año de la ficha.
+- **`/hamilton-2021`**: la misma temporada contada desde el lado de Hamilton (14 oct 2026).
+  - Negro de Mercedes y turquesa `#00d7b6`, con un 44 gigante.
+  - Secciones propias: "100 y 100" (su pole y su victoria número 100), "La remontada" (de Brasil a Abu Dabi) y "Con la cabeza alta" (Abu Dabi desde su lado, el relevo del director de carrera y su nombramiento como caballero).
+  - En la balanza, hacia arriba es Hamilton. Los colores de datos son los mismos que en la de Max: el color sigue al piloto.
+  - Textos en `src/content/hamilton2021.ts`.
+- Las dos páginas de 2021 comparten `src/components/special/Duel2021Parts.tsx`: parrilla carrera a carrera, momentos y tarjetas. Cada página elige su lado (`me`), su acento y su fondo.
+- Las páginas especiales se enlazan desde la ficha del piloto con `SPECIAL_SEASONS` (`src/lib/special-pages.ts`), que pone la etiqueta "Histórico" en ese año.
 - Piezas comunes de las páginas especiales en `src/components/special/` (`SectionTitle`, `PhotoBanner`, `CountUp`, `RevealOnView`, `RadioCard`, `GapChart`).
 - **`/parc-ferme`**: easter egg **secreto**. Carta romántica para María José ("Mi campeonato más importante"), solo enlazada desde el **2025** de la ficha de Max, que se ve igual que los demás años. Incluye el recuerdo del martes 29 de septiembre en el noveno piso, la firma "Tu foquita 🦭 / tu corazón, siempre" (así le dice ella) y una posdata de F1. Ella le dice a él "mi corazón" o "foquita"; él a ella "pollito". Reglas: no aparece en el sitemap, `noindex`, y **los commits que la toquen llevan mensajes neutros** (p. ej. "Pequeñas mejoras de estilo").
 - El footer dice, en texto pequeño: "proyecto dedicado a ti mj".

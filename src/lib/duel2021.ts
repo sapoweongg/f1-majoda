@@ -15,6 +15,8 @@ export type DuelSide = {
   pole: boolean;
   fastestLap: boolean;
   sprintWin: boolean;
+  /** Salida y llegada en el sprint, si esa ronda lo tuvo. */
+  sprint?: { grid: number; position: number | null };
   /** Puntos de la carrera y el sprint de esa ronda. */
   points: number;
   /** Puntos acumulados tras la ronda. */
@@ -63,6 +65,7 @@ export function buildDuel(results: Race[], sprints: Race[]) {
         pole: isPole(race, id),
         fastestLap: r?.FastestLap?.rank === "1",
         sprintWin: s?.position === "1",
+        sprint: s ? { grid: Number(s.grid), position: /^\d+$/.test(s.positionText) ? Number(s.position) : null } : undefined,
         points,
         total: totals[id],
       };

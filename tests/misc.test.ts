@@ -104,6 +104,8 @@ describe("duelo de 2021", () => {
     const d = buildDuel(results, sprints);
     expect(d.rounds.map((r) => r.gap)).toEqual([-7, 18, 8, 15]);
     expect(d.rounds[2].ver.sprintWin).toBe(true);
+    expect(d.rounds[2].ham.sprint).toEqual({ grid: 2, position: 2 });
+    expect(d.rounds[1].ham.sprint).toBeUndefined();
     expect(d.rounds[1].ham.position).toBeNull();
     expect(d.leadChanges).toBe(1);
     expect(d.ver).toMatchObject({ wins: 2, podiums: 4, points: 86, leadRounds: 3, poles: 2 });

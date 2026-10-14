@@ -20,6 +20,8 @@ type Props = {
   labels: { aAhead: string; bAhead: string; tie: string; table: string; round: string; gp: string; gap: string };
   /** Rondas con la cifra escrita junto a la barra (los extremos y el final); el resto, en el tooltip. */
   highlight?: number[];
+  /** Color del fondo, para el anillo del punto de empate. */
+  surface?: string;
 };
 
 const TICK = 10;
@@ -28,7 +30,7 @@ const TICK = 10;
  * La balanza: ventaja en puntos de A sobre B tras cada ronda, en barras divergentes desde el cero.
  * Cada barra enlaza a su carrera y muestra el detalle al pasar por encima o al enfocarla.
  */
-export function GapChart({ points, locale, a, b, labels, highlight = [] }: Props) {
+export function GapChart({ points, locale, a, b, labels, highlight = [], surface = "#0b1530" }: Props) {
   const nf = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
   const signed = (n: number) => (n > 0 ? `+${nf.format(n)}` : n < 0 ? `−${nf.format(-n)}` : "0");
   const gaps = points.map((p) => p.a - p.b);
@@ -86,8 +88,8 @@ export function GapChart({ points, locale, a, b, labels, highlight = [] }: Props
                   <Link href={p.href} aria-label={label} className="group absolute inset-0 block rounded-sm outline-offset-2 hover:bg-white/[0.04]">
                     {gap === 0 ? (
                       <span
-                        className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink-2 ring-2 ring-[#0b1530]"
-                        style={{ top: `${zero}%` }}
+                        className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink-2"
+                        style={{ top: `${zero}%`, boxShadow: `0 0 0 2px ${surface}` }}
                       />
                     ) : (
                       <span

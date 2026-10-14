@@ -4,4 +4,7 @@ export const SPECIAL_SEASONS: Partial<Record<string, Record<number, { href: stri
     2021: { href: "/max-2021", color: "#ff8000" },
     2023: { href: "/max-2023", color: "#ffcc00" },
   },
+  hamilton: {
+    2021: { href: "/hamilton-2021", color: "#00d7b6" },
+  },
 };

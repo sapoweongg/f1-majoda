@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
-import { ArrowLeft, Crown, Equal, Timer } from "lucide-react";
+import { ArrowLeft, Crown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { MAX_2021, PHOTOS } from "@/content/max2021";
 import { getCommonsFiles } from "@/lib/api/wikimedia";
@@ -9,9 +9,10 @@ import { trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
 import { getDuel2021, type DuelSide } from "@/lib/duel2021";
 import { cn } from "@/lib/format";
-import { gpName, gpPlace } from "@/lib/gp-names";
+import { gpName } from "@/lib/gp-names";
 import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
+import { DuelMoments, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
 import { GapChart } from "@/components/special/GapChart";
 import { PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
@@ -33,6 +34,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/max-2021
   const c = MAX_2021[locale === "en" ? "en" : "es"];
   return { title: `Max Verstappen 2021 · ${c.title}`, description: c.subtitle };
 }
+
+const THEME: DuelTheme = { me: "ver", rival: { code: "HAM", color: HAM_COLOR }, accent: ORANGE, surface: NAVY };
 
 const SectionTitle = (props: { eyebrow?: string; title: string; intro?: string }) => <Title {...props} accent={ORANGE} />;
 
@@ -60,7 +63,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
   const { rounds, ver, ham, leadChanges } = duel;
   const last = rounds.at(-1)!;
   const byRound = new Map(rounds.map((r) => [r.round, r]));
-  const result = (s: DuelSide) => (s.position ? `P${s.position}` : s.positionText === "R" ? c.retired : s.positionText);
+  const result = (s: DuelSide) => resultLabel(s, c.retired);
   // Cifras directas en la balanza: la mayor ventaja de cada uno, el empate y el final
   const gaps = rounds.map((r) => r.gap);
   const highlight = [
@@ -185,59 +188,12 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
       {/* ---------- CARRERA A CARRERA ---------- */}
       <section>
         <SectionTitle title={c.seasonTitle} intro={c.seasonIntro} />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {rounds.map((r) => {
-            const shape = trackShape(r.circuitId, 2021);
-            const win = r.ver.position === 1;
-            return (
-              <Link
-                key={r.round}
-                href={`/races/2021/${r.round}`}
-                className={cn(
-                  "relative overflow-hidden rounded-2xl border p-4 transition-transform hover:-translate-y-0.5",
-                  win ? "border-[#ff8000]/40" : "border-white/10",
-                )}
-                style={{ background: win ? `linear-gradient(160deg, rgb(255 128 0 / 0.16), ${NAVY} 70%)` : "#111114" }}
-              >
-                {shape && (
-                  <TrackOutline
-                    shape={shape}
-                    variant="mini"
-                    className={cn("absolute -right-3 -top-3 h-24 w-24", win ? "text-[#ff8000]/25" : "text-white/[0.07]")}
-                  />
-                )}
-                <p className="relative flex items-center gap-1.5 text-[11px] text-ink-3">
-                  <span className="num">R{r.round}</span>
-                  <Flag iso={countryToIso(r.country)} />
-                  {r.gap > 0 && <Crown size={12} className="text-[#ff8000]" aria-label={c.leader} />}
-                  {r.gap === 0 && <Equal size={12} className="text-ink-2" aria-label={c.tie} />}
-                </p>
-                <p className="display relative mt-5 text-4xl" style={{ color: win ? ORANGE : undefined }}>
-                  {result(r.ver)}
-                </p>
-                <p className="relative mt-1 truncate text-xs font-semibold">{gpPlace(r.raceName, locale)}</p>
-                <p className="relative text-[11px] text-ink-3">{r.ver.grid > 0 ? c.started(r.ver.grid) : c.pitLane}</p>
-                <div className="relative mt-2 flex flex-wrap items-center gap-1.5">
-                  {r.ver.pole && <span className="rounded bg-white/10 px-1.5 text-[10px] font-bold">POLE</span>}
-                  {r.ver.fastestLap && (
-                    <span className="rounded bg-[#af52de]/25 px-1.5 text-[10px] font-bold text-[#d6a4f0]" title={c.stats.fastestLaps}>
-                      <Timer size={10} className="inline" aria-hidden /> VR
-                    </span>
-                  )}
-                  {r.ver.sprintWin && (
-                    <span className="rounded bg-[#ff8000]/20 px-1.5 text-[10px] font-bold text-[#ff8000]" title={c.sprintWin}>
-                      S1
-                    </span>
-                  )}
-                  <span className="ml-auto flex items-center gap-1 text-[10px] text-ink-3">
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: HAM_COLOR }} aria-hidden />
-                    HAM {result(r.ham)}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <DuelRaceGrid
+          rounds={rounds}
+          theme={THEME}
+          locale={locale}
+          labels={{ started: c.started, pitLane: c.pitLane, retired: c.retired, leader: c.leader, tie: c.tie, sprintWin: c.sprintWin, fastestLap: c.stats.fastestLaps }}
+        />
       </section>
 
       {/* ---------- GOLPES ---------- */}
@@ -272,31 +228,13 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
       {/* ---------- MOMENTOS ---------- */}
       <section>
         <SectionTitle title={c.momentsTitle} />
-        <ol className="relative max-w-3xl space-y-6 border-l pl-6 sm:pl-8" style={{ borderColor: "rgb(255 128 0 / 0.3)" }}>
-          {Object.entries(c.moments).map(([key, text]) => {
-            const r = byRound.get(Number(key));
-            if (!r || !text) return null;
-            const win = r.ver.position === 1;
-            return (
-              <li key={key} className="relative">
-                <span
-                  className="absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full border-2 sm:-left-[39px]"
-                  style={{ borderColor: ORANGE, background: win ? ORANGE : NAVY }}
-                  aria-hidden
-                />
-                <Link href={`/races/2021/${r.round}`} className="group block">
-                  <p className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-3">
-                    <span className="num">R{r.round}</span> <Flag iso={countryToIso(r.country)} /> {gpName(r.raceName, locale)}
-                    <span className="display ml-1 text-sm normal-case" style={{ color: win ? ORANGE : undefined }}>
-                      {result(r.ver)}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-lg text-ink group-hover:text-white">{text}</p>
-                </Link>
-              </li>
-            );
-          })}
-        </ol>
+        <DuelMoments
+          items={Object.entries(c.moments).map(([k, text]) => [Number(k), text ?? ""])}
+          rounds={rounds}
+          theme={THEME}
+          locale={locale}
+          retired={c.retired}
+        />
       </section>
 
       {/* ---------- LA ÚLTIMA VUELTA ---------- */}
@@ -333,19 +271,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
       {/* ---------- LO QUE SIGNIFICÓ ---------- */}
       <section>
         <SectionTitle title={c.legacyTitle} />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {c.legacy.map((card) => (
-            <div
-              key={card.title}
-              className="rounded-[1.5rem] border border-[#ff8000]/25 p-5"
-              style={{ background: `radial-gradient(120% 100% at 100% 0%, rgb(255 128 0 / 0.14), ${NAVY} 60%)` }}
-            >
-              <Crown size={18} className="text-[#ff8000]" aria-hidden />
-              <p className="display mt-4 text-3xl">{card.title}</p>
-              <p className="mt-2 text-sm leading-relaxed text-ink-2">{card.text}</p>
-            </div>
-          ))}
-        </div>
+        <HonourCards cards={c.legacy} theme={THEME} icon={<Crown size={18} aria-hidden />} />
       </section>
 
       {/* ---------- GALERÍA ---------- */}
