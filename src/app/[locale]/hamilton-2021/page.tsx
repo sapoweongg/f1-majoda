@@ -276,12 +276,6 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
         />
       </section>
 
-      {/* ---------- RADIOS ---------- */}
-      <section>
-        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
-        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
-      </section>
-
       {/* ---------- CON LA CABEZA ALTA ---------- */}
       <section
         className="relative -mx-4 overflow-hidden border-y px-6 py-12 sm:mx-0 sm:rounded-[2rem] sm:border sm:p-12"
@@ -321,6 +315,12 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ---------- RADIOS ---------- */}
+      <section>
+        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
+        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- LO QUE DEMOSTRÓ ---------- */}

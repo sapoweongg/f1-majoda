@@ -237,12 +237,6 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
         />
       </section>
 
-      {/* ---------- RADIOS ---------- */}
-      <section>
-        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
-        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
-      </section>
-
       {/* ---------- LA ÚLTIMA VUELTA ---------- */}
       <section
         className="relative -mx-4 overflow-hidden border-y border-[#ff8000]/30 px-6 py-12 sm:mx-0 sm:rounded-[2rem] sm:border sm:p-12"
@@ -272,6 +266,12 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
             </div>
           )}
         </div>
+      </section>
+
+      {/* ---------- RADIOS ---------- */}
+      <section>
+        <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
+        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- LO QUE SIGNIFICÓ ---------- */}
