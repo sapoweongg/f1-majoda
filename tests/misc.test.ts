@@ -4,7 +4,7 @@ import { deltaE, distinctPair } from "@/lib/color";
 import { headToHead, roundByRound, seasonStats } from "@/lib/compare";
 import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
 import { isPole } from "@/lib/poles";
-import { buildDuel } from "@/lib/duel2021";
+import { buildDuel } from "@/lib/duel";
 import radios2021 from "@/data/duel2021-radios.json";
 import { commonsSrcSet } from "@/lib/api/wikimedia";
 import { driverFinals, teamFinals } from "@/lib/standings";
@@ -93,7 +93,7 @@ describe("fotos de Commons", () => {
   });
 });
 
-describe("duelo de 2021", () => {
+describe("duelos", () => {
   const race = (round: string, rows: [string, string, string][], key: "Results" | "SprintResults" = "Results") =>
     ({
       season: "2021",
@@ -108,34 +108,44 @@ describe("duelo de 2021", () => {
         grid: position === "1" ? "1" : "2",
       })),
     }) as unknown as Race;
+  const season = [
+    race("1", [["hamilton", "1", "25"], ["max_verstappen", "2", "18"]]),
+    race("2", [["max_verstappen", "1", "25"], ["hamilton", "R", "0"]]),
+    race("3", [["hamilton", "1", "26"], ["max_verstappen", "3", "15"]]),
+    race("4", [["max_verstappen", "1", "25"], ["hamilton", "2", "18"]]),
+  ];
 
   it("acumula puntos con sprints, cuenta cambios de líder y no cuenta el empate", () => {
-    const results = [
-      race("1", [["hamilton", "1", "25"], ["max_verstappen", "2", "18"]]),
-      race("2", [["max_verstappen", "1", "25"], ["hamilton", "R", "0"]]),
-      race("3", [["hamilton", "1", "26"], ["max_verstappen", "3", "15"]]),
-      race("4", [["max_verstappen", "1", "25"], ["hamilton", "2", "18"]]),
-    ];
     const sprints = [race("3", [["max_verstappen", "1", "3"], ["hamilton", "2", "2"]], "SprintResults")];
-    const d = buildDuel(results, sprints);
+    const d = buildDuel(season, sprints, "max_verstappen", "hamilton");
     expect(d.rounds.map((r) => r.gap)).toEqual([-7, 18, 8, 15]);
-    expect(d.rounds[2].ver.sprintWin).toBe(true);
-    expect(d.rounds[2].ham.sprint).toEqual({ grid: 2, position: 2 });
-    expect(d.rounds[1].ham.sprint).toBeUndefined();
-    expect(d.rounds[1].ham.position).toBeNull();
+    expect(d.rounds[2].a.sprintWin).toBe(true);
+    expect(d.rounds[2].b.sprint).toEqual({ grid: 2, position: 2 });
+    expect(d.rounds[1].b.sprint).toBeUndefined();
+    expect(d.rounds[1].b.position).toBeNull();
     expect(d.leadChanges).toBe(1);
-    expect(d.ver).toMatchObject({ wins: 2, podiums: 4, points: 86, leadRounds: 3, poles: 2 });
-    expect(d.ham).toMatchObject({ wins: 2, leadRounds: 1 });
+    expect(d.a).toMatchObject({ wins: 2, podiums: 4, points: 86, gross: 86, leadRounds: 3, poles: 2 });
+    expect(d.b).toMatchObject({ wins: 2, leadRounds: 1 });
     // Un empate no es un cambio de líder
-    const tie = buildDuel([results[0], race("2", [["max_verstappen", "1", "25"], ["hamilton", "3", "18"]])], []);
+    const tie = buildDuel([season[0], race("2", [["max_verstappen", "1", "25"], ["hamilton", "3", "18"]])], [], "max_verstappen", "hamilton");
     expect(tie.rounds.map((r) => r.gap)).toEqual([-7, 0]);
     expect(tie.leadChanges).toBe(0);
+  });
+
+  it("con descartes solo cuentan los mejores resultados", () => {
+    // Con los 3 mejores de 4: A suma 25+18+15+25 = 83, pero cuentan 25+25+18 = 68
+    const d = buildDuel(season, [], "max_verstappen", "hamilton", { bestOf: 3 });
+    expect(d.a.gross).toBe(83);
+    expect(d.a.points).toBe(68);
+    expect(d.b.points).toBe(25 + 26 + 18);
+    // Hasta la tercera carrera no hay nada que descartar
+    expect(d.rounds[2].a.total).toBe(58);
   });
 
   it("cada radio es del piloto y la temporada que dice", () => {
     for (const r of radios2021) {
       expect(r.url, r.url).toMatch(/^https:\/\/livetiming\.formula1\.com\/static\/2021\/.+\.mp3$/);
-      expect(r.url, r.url).toContain(r.driver === "ver" ? "/MAXVER01_33_" : "/LEWHAM01_44_");
+      expect(r.url, r.url).toContain(r.driver === "max_verstappen" ? "/MAXVER01_33_" : "/LEWHAM01_44_");
       expect(r.round).toBeGreaterThanOrEqual(1);
       expect(r.round).toBeLessThanOrEqual(22);
     }

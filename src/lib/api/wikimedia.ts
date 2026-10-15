@@ -47,7 +47,9 @@ type ImageInfo = {
 };
 
 function stripHtml(s = "") {
-  return s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  const text = s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  // Commons repite a veces el texto en dos etiquetas: "Unknown authorUnknown author" → "Unknown author"
+  return text.match(/^(.+?)\s?\1$/)?.[1] ?? text;
 }
 
 function parse(url: string): { host: string; title: string } | null {

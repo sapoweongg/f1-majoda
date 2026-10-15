@@ -6,12 +6,13 @@ import { MAX_2021, PHOTOS } from "@/content/max2021";
 import { getCommonsFiles } from "@/lib/api/wikimedia";
 import { trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
-import { getDuel2021, type DuelSide } from "@/lib/duel2021";
+import radios from "@/data/duel2021-radios.json";
+import { getDuel, type DuelSide } from "@/lib/duel";
 import { cn } from "@/lib/format";
 import { gpName } from "@/lib/gp-names";
 import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
-import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
+import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/DuelParts";
 import { GapChart } from "@/components/special/GapChart";
 import { CommonsImg, GALLERY_NARROW, GALLERY_WIDE, PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
@@ -34,7 +35,14 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/max-2021
   return { title: `Max Verstappen 2021 · ${c.title}`, description: c.subtitle };
 }
 
-const THEME: DuelTheme = { me: "ver", rival: { code: "HAM", color: HAM_COLOR }, accent: ORANGE, surface: NAVY };
+const THEME = {
+  season: 2021,
+  me: "a",
+  a: { code: "VER", color: MAX_COLOR },
+  b: { code: "HAM", color: HAM_COLOR },
+  accent: ORANGE,
+  surface: NAVY,
+} as const satisfies DuelTheme;
 
 const SectionTitle = (props: { eyebrow?: string; title: string; intro?: string }) => <Title {...props} accent={ORANGE} />;
 
@@ -46,7 +54,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
   const nf = new Intl.NumberFormat(lang, { maximumFractionDigits: 1 });
 
   const [duel, photos] = await Promise.all([
-    safe(getDuel2021(), null),
+    safe(getDuel(2021, "max_verstappen", "hamilton"), null),
     safe(getCommonsFiles(Object.values(PHOTOS), 1800), new Map()),
   ]);
   if (!duel?.rounds.length) return <EmptyState>{lang === "en" ? "Data unavailable right now." : "Datos no disponibles ahora mismo."}</EmptyState>;
@@ -59,7 +67,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
     .map((key) => ({ key, img: photo(key) }))
     .filter((g): g is { key: (typeof g)["key"]; img: NonNullable<typeof g.img> } => Boolean(g.img));
 
-  const { rounds, ver, ham, leadChanges } = duel;
+  const { rounds, a: ver, b: ham, leadChanges } = duel;
   const last = rounds.at(-1)!;
   const byRound = new Map(rounds.map((r) => [r.round, r]));
   const result = (s: DuelSide) => resultLabel(s, c.retired);
@@ -170,8 +178,8 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
               round: r.round,
               label: gpName(r.raceName, locale),
               href: `/races/2021/${r.round}`,
-              a: r.ver.total,
-              b: r.ham.total,
+              a: r.a.total,
+              b: r.b.total,
             }))}
             a={{ name: "Verstappen", color: MAX_COLOR }}
             b={{ name: "Hamilton", color: HAM_COLOR }}
@@ -213,9 +221,9 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
                   <span className="num">R{r.round}</span> <Flag iso={countryToIso(r.country)} /> {card.title}
                 </p>
                 <p className="display mt-3 text-3xl">
-                  <span className="text-ink-3">{r.ver.grid > 0 ? `${r.ver.grid}.º` : "PL"}</span>
+                  <span className="text-ink-3">{r.a.grid > 0 ? `${r.a.grid}.º` : "PL"}</span>
                   <span className="mx-2 text-ink-3">→</span>
-                  <span style={{ color: r.ver.position && r.ver.position <= 3 ? ORANGE : undefined }}>{result(r.ver)}</span>
+                  <span style={{ color: r.a.position && r.a.position <= 3 ? ORANGE : undefined }}>{result(r.a)}</span>
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-ink-2">{card.text}</p>
               </Link>
@@ -256,7 +264,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
               href={`/races/2021/${last.round}`}
               className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#ff8000]/50 px-4 py-1.5 text-sm font-semibold hover:bg-[#ff8000]/10"
             >
-              <Flag iso={countryToIso(last.country)} /> {gpName(last.raceName, locale)} · {result(last.ver)}
+              <Flag iso={countryToIso(last.country)} /> {gpName(last.raceName, locale)} · {result(last.a)}
             </Link>
           </div>
           {yas && (
@@ -276,7 +284,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
       {/* ---------- RADIOS ---------- */}
       <section>
         <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
-        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
+        <DuelRadios clips={radios.filter((x) => x.driver === "max_verstappen")} titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- GALERÍA ---------- */}

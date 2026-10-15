@@ -47,7 +47,7 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 - **`/max-2023`**: homenaje a la temporada 2023 de Max Verstappen (récords, racha, 22 carreras, momentos, galería y 14 radios oficiales postcarrera en `src/data/max2023-radios.json`). Textos en `src/content/max2023.ts`. Se entra desde el 2023 de la ficha de Max (etiqueta "★ Histórico"). Se genera en cada visita (`force-dynamic`) para que un fallo de la API en el build no quede guardado.
 - **`/max-2021`**: el primer título de Max, contado desde su lado (14 oct 2026).
   - Secciones: marcador final, cifras, "La balanza" (ventaja en puntos sobre Hamilton tras cada carrera), carrera a carrera con el resultado de los dos, "Golpes que no lo frenaron", momentos, "Vuelta 58" (Abu Dabi), lo que significó, radios y galería. En las dos páginas de 2021 las radios van justo antes de la galería (lo pidió el usuario: el final de Abu Dabi pesa más).
-  - Textos en `src/content/max2021.ts`; datos del duelo en `src/lib/duel2021.ts` (compartidos con la futura página de Hamilton).
+  - Textos en `src/content/max2021.ts`; datos del duelo con `getDuel(2021, "max_verstappen", "hamilton")` de `src/lib/duel.ts` (Max es el lado A y Hamilton el B).
   - Gráfico: `src/components/special/GapChart.tsx`. Colores de datos validados con el validador de dataviz sobre el fondo oscuro: Max `#e06c00` y Hamilton `#00a991`. El acento de la página es el naranja `#ff8000`.
   - Fotos libres de 2021 de Commons (Lukas Raich, rsyphotography, Grahampurse, Jen Ross). No hay retratos oficiales de 2021 en el CDN de F1.
 - **`/hamilton-2021`**: la misma temporada contada desde el lado de Hamilton (14 oct 2026).
@@ -59,7 +59,16 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
   - Se eligieron por hora: la primera radio tras la bandera a cuadros de cada carrera clave, y la de Max justo después del reventón de Bakú. No se escucharon, por eso los títulos describen el momento y no lo que dicen.
   - Ojo: la hora del nombre del archivo va en hora de Reino Unido (verano, de abril a octubre, = UTC+1). La fiable es el campo `Utc` del stream, unos 40 s posterior a la grabación.
   - En Brasil y Catar el archivo se corta antes del final de carrera: no hay radios de después de la meta.
-- Las dos páginas de 2021 comparten `src/components/special/Duel2021Parts.tsx`: parrilla carrera a carrera, momentos, tarjetas y radios. Cada página elige su lado (`me`), su acento y su fondo.
+- **`/senna-prost-1989`**: el duelo de Senna y Prost en McLaren, contado sin tomar partido (15 oct 2026).
+  - Fondo casi negro y acento rojo `#ff4a3d`. Colores de datos validados: Senna `#b38f00` (su casco) y Prost `#4f7fe4`.
+  - Secciones: cara a cara con barras desde el centro (`DuelCompare`), la balanza, carrera a carrera con los dos por igual (`DuelPairGrid`), momentos, "La chicane" (Suzuka), "Dos miradas", lo que vino después y galería.
+  - Los puntos cuentan los 11 mejores resultados, como en el reglamento de 1989 (`bestOf: 11`). Prost sumó 81, pero le contaron 76.
+  - Fotos de Commons de Imola y Spa 1989 (madagascarica, Gabriele y una de dominio público). Sin radios: no hay archivo de 1989.
+  - Se enlaza desde el 1989 de las fichas de Senna y de Prost.
+- Duelos: `src/lib/duel.ts` (`getDuel(temporada, idA, idB, { bestOf })`) calcula el duelo de dos pilotos cualquiera, con descartes si los hubo. Las páginas comparten `src/components/special/DuelParts.tsx`: parrilla carrera a carrera, momentos, cara a cara, tarjetas y radios.
+  - El tema (`DuelTheme`) lleva la temporada, los dos pilotos con su código y color, el acento y el fondo.
+  - Con protagonista (`me: "a" | "b"`) la página se cuenta desde su lado; sin él es neutral.
+  - Para otro duelo histórico: una página nueva con su `getDuel`, sus textos en `src/content/` y su entrada en `SPECIAL_SEASONS`.
 - Las páginas especiales se enlazan desde la ficha del piloto con `SPECIAL_SEASONS` (`src/lib/special-pages.ts`), que pone la etiqueta "Histórico" en ese año.
 - Piezas comunes de las páginas especiales en `src/components/special/` (`SectionTitle`, `PhotoBanner`, `CountUp`, `RevealOnView`, `RadioCard`, `GapChart`).
 - **`/parc-ferme`**: easter egg **secreto**. Carta romántica para María José ("Mi campeonato más importante"), solo enlazada desde el **2025** de la ficha de Max, que se ve igual que los demás años. Incluye el recuerdo del martes 29 de septiembre en el noveno piso, la firma "Tu foquita 🦭 / tu corazón, siempre" (así le dice ella) y una posdata de F1. Ella le dice a él "mi corazón" o "foquita"; él a ella "pollito". Reglas: no aparece en el sitemap, `noindex`, y **los commits que la toquen llevan mensajes neutros** (p. ej. "Pequeñas mejoras de estilo").

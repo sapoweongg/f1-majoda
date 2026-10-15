@@ -2,10 +2,8 @@ import "server-only";
 import { getSeasonResults, getSeasonSprints, type Race } from "./api/jolpica";
 import { isPole } from "./poles";
 
-// Datos del duelo Verstappen–Hamilton de 2021, compartidos por las dos páginas especiales.
-
-export const VER = "max_verstappen";
-export const HAM = "hamilton";
+// Duelo de dos pilotos en una temporada, carrera a carrera, para las páginas especiales
+// (Verstappen–Hamilton 2021, Senna–Prost 1989…). El piloto A va primero: la ventaja es A − B.
 
 export type DuelSide = {
   grid: number;
@@ -19,7 +17,7 @@ export type DuelSide = {
   sprint?: { grid: number; position: number | null };
   /** Puntos de la carrera y el sprint de esa ronda. */
   points: number;
-  /** Puntos acumulados tras la ronda. */
+  /** Puntos que cuentan para el campeonato tras la ronda (con descartes si los hay). */
   total: number;
 };
 
@@ -28,11 +26,11 @@ export type DuelRound = {
   raceName: string;
   circuitId: string;
   country: string;
-  /** Código del ganador de la carrera (VER, HAM, PER…). */
+  /** Código del ganador de la carrera (VER, HAM…) o su apellido si no tiene código (años antiguos). */
   winner: string;
-  ver: DuelSide;
-  ham: DuelSide;
-  /** Puntos de ventaja de Max sobre Hamilton tras la ronda (negativo: manda Hamilton). */
+  a: DuelSide;
+  b: DuelSide;
+  /** Puntos de ventaja de A sobre B tras la ronda (negativo: manda B). */
   gap: number;
 };
 
@@ -42,21 +40,35 @@ export type DuelTotals = {
   poles: number;
   fastestLaps: number;
   sprintWins: number;
+  /** Puntos que cuentan al final (con descartes si los hay). */
   points: number;
+  /** Todos los puntos sumados, sin descartes. */
+  gross: number;
   /** Rondas tras las que lideraba el campeonato (sin contar empates). */
   leadRounds: number;
 };
 
-export function buildDuel(results: Race[], sprints: Race[]) {
-  const totals = { [VER]: 0, [HAM]: 0 };
+export type DuelOptions = {
+  /** Solo cuentan los N mejores resultados (p. ej. 11 de 16 en 1989). */
+  bestOf?: number;
+};
+
+/** Suma de los N mejores resultados (o de todos si no hay descartes). */
+function counted(scores: number[], bestOf?: number) {
+  const kept = bestOf ? [...scores].sort((x, y) => y - x).slice(0, bestOf) : scores;
+  return kept.reduce((s, x) => s + x, 0);
+}
+
+export function buildDuel(results: Race[], sprints: Race[], aId: string, bId: string, opts: DuelOptions = {}) {
+  const scores: Record<"a" | "b", number[]> = { a: [], b: [] };
   const rounds: DuelRound[] = [];
-  for (const race of [...results].sort((a, b) => Number(a.round) - Number(b.round))) {
+  for (const race of [...results].sort((x, y) => Number(x.round) - Number(y.round))) {
     const sprint = sprints.find((s) => s.round === race.round);
-    const side = (id: typeof VER | typeof HAM): DuelSide => {
+    const side = (key: "a" | "b", id: string): DuelSide => {
       const r = race.Results?.find((x) => x.Driver.driverId === id);
       const s = sprint?.SprintResults?.find((x) => x.Driver.driverId === id);
       const points = (Number(r?.points) || 0) + (Number(s?.points) || 0);
-      totals[id] += points;
+      scores[key].push(points);
       const classified = r ? /^\d+$/.test(r.positionText) : false;
       return {
         grid: Number(r?.grid ?? 0),
@@ -67,25 +79,26 @@ export function buildDuel(results: Race[], sprints: Race[]) {
         sprintWin: s?.position === "1",
         sprint: s ? { grid: Number(s.grid), position: /^\d+$/.test(s.positionText) ? Number(s.position) : null } : undefined,
         points,
-        total: totals[id],
+        total: counted(scores[key], opts.bestOf),
       };
     };
-    const ver = side(VER);
-    const ham = side(HAM);
+    const a = side("a", aId);
+    const b = side("b", bId);
+    const winner = race.Results?.find((x) => x.position === "1")?.Driver;
     rounds.push({
       round: Number(race.round),
       raceName: race.raceName,
       circuitId: race.Circuit.circuitId,
       country: race.Circuit.Location.country,
-      winner: race.Results?.find((x) => x.position === "1")?.Driver.code ?? "",
-      ver,
-      ham,
-      gap: ver.total - ham.total,
+      winner: winner?.code ?? winner?.familyName ?? "",
+      a,
+      b,
+      gap: a.total - b.total,
     });
   }
 
-  const sum = (pick: (r: DuelRound) => DuelSide, sign: 1 | -1): DuelTotals => {
-    const sides = rounds.map(pick);
+  const sum = (key: "a" | "b", sign: 1 | -1): DuelTotals => {
+    const sides = rounds.map((r) => r[key]);
     return {
       wins: sides.filter((s) => s.position === 1).length,
       podiums: sides.filter((s) => s.position !== null && s.position <= 3).length,
@@ -93,6 +106,7 @@ export function buildDuel(results: Race[], sprints: Race[]) {
       fastestLaps: sides.filter((s) => s.fastestLap).length,
       sprintWins: sides.filter((s) => s.sprintWin).length,
       points: sides.at(-1)?.total ?? 0,
+      gross: scores[key].reduce((s, x) => s + x, 0),
       leadRounds: rounds.filter((r) => r.gap * sign > 0).length,
     };
   };
@@ -106,12 +120,12 @@ export function buildDuel(results: Race[], sprints: Race[]) {
     if (sign) last = sign;
   }
 
-  return { rounds, ver: sum((r) => r.ver, 1), ham: sum((r) => r.ham, -1), leadChanges };
+  return { rounds, a: sum("a", 1), b: sum("b", -1), leadChanges };
 }
 
-export type Duel2021 = ReturnType<typeof buildDuel>;
+export type Duel = ReturnType<typeof buildDuel>;
 
-export async function getDuel2021(): Promise<Duel2021> {
-  const [results, sprints] = await Promise.all([getSeasonResults(2021), getSeasonSprints(2021)]);
-  return buildDuel(results, sprints);
+export async function getDuel(season: number, aId: string, bId: string, opts: DuelOptions = {}): Promise<Duel> {
+  const [results, sprints] = await Promise.all([getSeasonResults(season), getSeasonSprints(season)]);
+  return buildDuel(results, sprints, aId, bId, opts);
 }

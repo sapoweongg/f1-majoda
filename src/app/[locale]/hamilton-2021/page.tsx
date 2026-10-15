@@ -6,12 +6,13 @@ import { HAMILTON_2021, PHOTOS } from "@/content/hamilton2021";
 import { getCommonsFiles } from "@/lib/api/wikimedia";
 import { trackShape } from "@/lib/circuits";
 import { countryToIso } from "@/lib/countries";
-import { getDuel2021 } from "@/lib/duel2021";
+import radios from "@/data/duel2021-radios.json";
+import { getDuel } from "@/lib/duel";
 import { cn } from "@/lib/format";
 import { gpName, gpPlace } from "@/lib/gp-names";
 import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
-import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
+import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/DuelParts";
 import { GapChart } from "@/components/special/GapChart";
 import { CommonsImg, GALLERY_NARROW, GALLERY_WIDE, PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
@@ -28,7 +29,14 @@ const TEAL = "#00d7b6";
 const HAM_COLOR = "#00a991";
 const MAX_COLOR = "#e06c00";
 
-const THEME: DuelTheme = { me: "ham", rival: { code: "VER", color: MAX_COLOR }, accent: TEAL, surface: BLACK };
+const THEME = {
+  season: 2021,
+  me: "b",
+  a: { code: "VER", color: MAX_COLOR },
+  b: { code: "HAM", color: HAM_COLOR },
+  accent: TEAL,
+  surface: BLACK,
+} as const satisfies DuelTheme;
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/hamilton-2021">): Promise<Metadata> {
   const { locale } = await params;
@@ -46,7 +54,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
   const nf = new Intl.NumberFormat(lang, { maximumFractionDigits: 1 });
 
   const [duel, photos] = await Promise.all([
-    safe(getDuel2021(), null),
+    safe(getDuel(2021, "max_verstappen", "hamilton"), null),
     safe(getCommonsFiles(Object.values(PHOTOS), 1800), new Map()),
   ]);
   if (!duel?.rounds.length) return <EmptyState>{lang === "en" ? "Data unavailable right now." : "Datos no disponibles ahora mismo."}</EmptyState>;
@@ -59,7 +67,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
     .map((key) => ({ key, img: photo(key) }))
     .filter((g): g is { key: (typeof g)["key"]; img: NonNullable<typeof g.img> } => Boolean(g.img));
 
-  const { rounds, ver, ham } = duel;
+  const { rounds, a: ver, b: ham } = duel;
   const last = rounds.at(-1)!;
   const byCircuit = (id: string) => rounds.find((r) => r.circuitId === id);
   // La remontada: de México (ventaja de Max) a Arabia Saudí (empate)
@@ -129,9 +137,9 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
               <div key={r.round} className="flex items-center gap-3 border-t border-white/10 py-2 first:border-t-0">
                 <Flag iso={countryToIso(r.country)} />
                 <span className="flex-1 truncate font-semibold">{gpPlace(r.raceName, locale)}</span>
-                <span className="text-xs text-ink-3">{c.started(r.ham.grid)}</span>
-                <span className="display num w-12 text-right text-2xl" style={{ color: r.ham.position === 1 ? TEAL : undefined }}>
-                  {resultLabel(r.ham, c.retired)}
+                <span className="text-xs text-ink-3">{c.started(r.b.grid)}</span>
+                <span className="display num w-12 text-right text-2xl" style={{ color: r.b.position === 1 ? TEAL : undefined }}>
+                  {resultLabel(r.b, c.retired)}
                 </span>
               </div>
             ))}
@@ -202,8 +210,8 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
               round: r.round,
               label: gpName(r.raceName, locale),
               href: `/races/2021/${r.round}`,
-              a: r.ham.total,
-              b: r.ver.total,
+              a: r.b.total,
+              b: r.a.total,
             }))}
             a={{ name: "Hamilton", color: HAM_COLOR }}
             b={{ name: "Verstappen", color: MAX_COLOR }}
@@ -222,7 +230,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
         <SectionTitle title={c.comebackTitle} intro={c.comebackIntro} />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {comeback.map(({ r, card }) => {
-            const s = r.ham;
+            const s = r.b;
             const win = s.position === 1;
             return (
               <Link
@@ -325,7 +333,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
       {/* ---------- RADIOS ---------- */}
       <section>
         <SectionTitle title={c.radiosTitle} intro={c.radiosIntro} />
-        <DuelRadios titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
+        <DuelRadios clips={radios.filter((x) => x.driver === "hamilton")} titles={c.radios} theme={THEME} labels={{ play: c.play, pause: c.pause }} />
       </section>
 
       {/* ---------- GALERÍA ---------- */}

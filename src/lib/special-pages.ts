@@ -7,4 +7,10 @@ export const SPECIAL_SEASONS: Partial<Record<string, Record<number, { href: stri
   hamilton: {
     2021: { href: "/hamilton-2021", color: "#00d7b6" },
   },
+  senna: {
+    1989: { href: "/senna-prost-1989", color: "#ff4a3d" },
+  },
+  prost: {
+    1989: { href: "/senna-prost-1989", color: "#ff4a3d" },
+  },
 };
