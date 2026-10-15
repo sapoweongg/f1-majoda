@@ -19,7 +19,7 @@ import { LineSeriesChart } from "@/components/charts/LineSeriesChart";
 import { CountUp } from "@/components/special/CountUp";
 import { RadioCard } from "@/components/special/RadioCard";
 import { RevealOnView } from "@/components/special/RevealOnView";
-import { PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
+import { CommonsImg, GALLERY_NARROW, GALLERY_WIDE, PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { EmptyState, Flag } from "@/components/ui/primitives";
 
@@ -104,14 +104,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
         style={{ background: NAVY }}
       >
         {hero && (
-          <Image
-            src={hero.src}
-            alt="Red Bull RB19"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[60%_50%] opacity-70"
-          />
+          <CommonsImg img={hero} alt="Red Bull RB19" priority sizes="100vw" className="object-[60%_50%] opacity-70" />
         )}
         <div
           className="absolute inset-0"
@@ -398,6 +391,7 @@ export default async function Max2023Page({ params }: PageProps<"/[locale]/max-2
                 img={img}
                 caption={c.gallery[key]}
                 small
+                sizes={["side", "battle"].includes(key) ? GALLERY_WIDE : GALLERY_NARROW}
                 className={cn(
                   "h-full",
                   key === "side" && "col-span-2 row-span-2",

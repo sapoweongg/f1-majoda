@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { ArrowLeft, Crown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -14,7 +13,7 @@ import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
 import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
 import { GapChart } from "@/components/special/GapChart";
-import { PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
+import { CommonsImg, GALLERY_NARROW, GALLERY_WIDE, PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { EmptyState, Flag } from "@/components/ui/primitives";
 
@@ -82,7 +81,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
         style={{ background: NAVY }}
       >
         {hero && (
-          <Image src={hero.src} alt={c.heroAlt} fill priority sizes="100vw" className="object-cover object-[70%_40%] opacity-75" />
+          <CommonsImg img={hero} alt={c.heroAlt} priority sizes="100vw" className="object-[70%_40%] opacity-75" />
         )}
         <div
           className="absolute inset-0"
@@ -291,6 +290,7 @@ export default async function Max2021Page({ params }: PageProps<"/[locale]/max-2
                 img={img}
                 caption={c.gallery[key]}
                 small
+                sizes={["wave", "austin"].includes(key) ? GALLERY_WIDE : GALLERY_NARROW}
                 className={cn("h-full", key === "wave" && "col-span-2 row-span-2", key === "austin" && "col-span-2")}
                 position={key === "wave" ? "object-[50%_20%]" : undefined}
               />

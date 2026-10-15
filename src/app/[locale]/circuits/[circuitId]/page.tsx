@@ -22,12 +22,11 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/circuits
 export default async function CircuitPage({ params }: PageProps<"/[locale]/circuits/[circuitId]">) {
   const { locale, circuitId } = await params;
   setRequestLocale(locale);
-  const circuit = await safe(getCircuit(circuitId), undefined);
+  const [circuit, winners] = await Promise.all([safe(getCircuit(circuitId), undefined), safe(getCircuitWinners(circuitId), [])]);
   if (!circuit) notFound();
   const t = await getTranslations("circuit");
   const tc = await getTranslations("common");
 
-  const winners = await safe(getCircuitWinners(circuitId), []);
   const shape = trackShape(circuitId);
   const facts = circuitFacts(circuitId);
 

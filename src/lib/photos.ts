@@ -15,21 +15,20 @@ export type Photo = {
   creditUrl?: string;
 };
 
-/** Pilotos de OpenF1 de la primera y la última carrera de la temporada (incluye cambios de equipo). */
+/**
+ * Pilotos de OpenF1 de la primera y la última carrera de la temporada (incluye cambios de equipo).
+ * Si OpenF1 falla, lanza: así el resultado vacío no se queda en la caché de abajo.
+ */
 async function openf1Drivers(season: number): Promise<OFDriver[]> {
   if (season < OPENF1_FIRST_SEASON) return [];
-  try {
-    const races = (await getSessions({ year: season, session_name: "Race" }))
-      .filter((s) => new Date(s.date_start) < new Date())
-      .sort((a, b) => a.date_start.localeCompare(b.date_start));
-    const pick = [races[0], races.at(-1)].filter((s): s is Session => Boolean(s));
-    const unique = [...new Map(pick.map((s) => [s.session_key, s])).values()];
-    const lists = await Promise.all(unique.map((s) => getDrivers(s)));
-    // La última sesión manda (equipo y foto más recientes)
-    return lists.flat().reverse();
-  } catch {
-    return [];
-  }
+  const races = (await getSessions({ year: season, session_name: "Race" }))
+    .filter((s) => new Date(s.date_start) < new Date())
+    .sort((a, b) => a.date_start.localeCompare(b.date_start));
+  const pick = [races[0], races.at(-1)].filter((s): s is Session => Boolean(s));
+  const unique = [...new Map(pick.map((s) => [s.session_key, s])).values()];
+  const lists = await Promise.all(unique.map((s) => getDrivers(s)));
+  // La última sesión manda (equipo y foto más recientes)
+  return lists.flat().reverse();
 }
 
 /**
@@ -70,32 +69,44 @@ function newHeadshot(constructorId: string | undefined, code: string | undefined
   return slug && code ? driverHeadshot(slug, code, season) : null;
 }
 
+/**
+ * Recortes oficiales de una temporada (acrónimo y apellido → URL). Se guarda el resultado entero seis
+ * horas: sin esto cada página con fotos leía de la caché unas 25 piezas (sesiones, pilotos y cada recorte).
+ */
+const officialHeadshots = unstable_cache(
+  async (season: number): Promise<[string, string][]> => {
+    const map = new Map<string, string>();
+    const seen = new Set<string>();
+    const drivers = (await openf1Drivers(season)).filter((d) => {
+      if (seen.has(d.name_acronym)) return false;
+      seen.add(d.name_acronym);
+      return true;
+    });
+    // Los pilotos nuevos ya no tienen el recorte antiguo que enlaza OpenF1: probamos también el nuevo
+    const srcs = await Promise.all(
+      drivers.map((d) =>
+        firstExisting([
+          largeHeadshot(d.headshot_url),
+          newHeadshot(constructorIdFromOpenF1(d.team_name), f1DriverCode(d.headshot_url, d.first_name, d.last_name), season),
+        ]),
+      ),
+    );
+    drivers.forEach((d, i) => {
+      const src = srcs[i];
+      if (!src) return;
+      map.set(d.name_acronym, src);
+      const last = d.last_name?.toLowerCase();
+      if (last && !map.has(last)) map.set(last, src);
+    });
+    return [...map];
+  },
+  ["official-headshots"],
+  { revalidate: 6 * 3600 },
+);
+
 export async function getOfficialHeadshots(season: number): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  if (!OFFICIAL_MEDIA) return map;
-  const seen = new Set<string>();
-  const drivers = (await openf1Drivers(season)).filter((d) => {
-    if (seen.has(d.name_acronym)) return false;
-    seen.add(d.name_acronym);
-    return true;
-  });
-  // Los pilotos nuevos ya no tienen el recorte antiguo que enlaza OpenF1: probamos también el nuevo
-  const srcs = await Promise.all(
-    drivers.map((d) =>
-      firstExisting([
-        largeHeadshot(d.headshot_url),
-        newHeadshot(constructorIdFromOpenF1(d.team_name), f1DriverCode(d.headshot_url, d.first_name, d.last_name), season),
-      ]),
-    ),
-  );
-  drivers.forEach((d, i) => {
-    const src = srcs[i];
-    if (!src) return;
-    map.set(d.name_acronym, src);
-    const last = d.last_name?.toLowerCase();
-    if (last && !map.has(last)) map.set(last, src);
-  });
-  return map;
+  if (!OFFICIAL_MEDIA) return new Map();
+  return new Map(await officialHeadshots(season).catch(() => []));
 }
 
 /**

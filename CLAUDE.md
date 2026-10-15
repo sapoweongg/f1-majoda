@@ -135,3 +135,26 @@ Todo pasa por `src/lib/media.ts`: fotos, coches, logos y retratos de cuerpo ente
 **Queda (decidido no tocar por ahora):**
 - Las rutas inexistentes responden 200 con `noindex`, no 404, por el `loading.tsx` global. Google no las indexa, y quitarlo dejaría todas las páginas sin animación de carga.
 - `/max-2023` se genera en cada visita (unos 3,6 s).
+
+### Revisión de rendimiento (15 oct 2026)
+
+**Medido:**
+- La web publicada responde en 0,38–0,6 s en todas las páginas, incluso en la estática del inicio (0,38 s). Casi todo es distancia de red hasta Vercel: las dinámicas solo suman 50–150 ms. Por eso no compensa seguir afinando lecturas de caché.
+- Lo que más pesaba era lo que descarga el navegador.
+
+**Hecho:**
+- Recharts (unos 100 KB comprimidos) se carga aparte, después de la página.
+  - `LineSeriesChart` deja la leyenda, el selector y la tabla en el HTML del servidor; el dibujo va en `LinePlot.tsx` con `next/dynamic` y `ssr: false`, con un esqueleto mientras carga.
+  - El JS inicial de las páginas con gráfica bajó de unos 280 a 180 KB comprimidos.
+- Fotos de Commons de las páginas especiales con `srcset` (`CommonsImg` en `SpecialParts.tsx`).
+  - Wikimedia solo sirve miniaturas de 250, 330, 500, 960, 1280, 1920 y 3840 px; las demás dan error 400. Al pedir 1800, la API devuelve la de 1920.
+  - `next/image` no sirve aquí: con `unoptimized` borra el `srcSet` propio.
+  - En `/max-2021` las fotos bajaron de 3,8 MB a 1,2 MB en escritorio.
+- `allRaces` pide las páginas a la vez: el throttle sigue espaciando las que no están en caché. Las vueltas de una carrera son unas 12 páginas.
+- `getOfficialHeadshots` guarda el resultado entero por temporada, 6 h. Antes eran unas 25 lecturas de caché por página. Si OpenF1 falla, el error se propaga y no se guarda un resultado vacío.
+- Peticiones en paralelo en la página de carrera (temporada actual y resultados; paradas y sesiones de OpenF1) y en la de circuito.
+
+**Notas:**
+- `npm run build` local usa 19 procesos, cada uno con su propio throttle, y Jolpica responde 429 a algunas peticiones. Aquí eran renovaciones en segundo plano y se conservó la caché. Si algún día un build de Vercel sale con secciones vacías, limitar los procesos (`experimental.cpus`).
+- El chunk de unos 109 KB que sale en todas las páginas son los polyfills de Next (`noModule`): los navegadores modernos no lo descargan.
+- Posible mejora futura: los trazados de `circuits.json` usan 3 decimales en una caja de 500. Con 1 decimal y redondeo que compense el error acumulado (los comandos son relativos), el HTML de calendario, circuitos y páginas especiales bajaría bastante.

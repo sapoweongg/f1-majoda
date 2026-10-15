@@ -121,17 +121,19 @@ function get<T>(path: string, revalidate: number, tags: string[] = []) {
   return cachedJson<MRData<T>>(`${BASE}${path}`, { revalidate, throttle, tags: ["jolpica", ...tags] });
 }
 
-/** Recorre todas las páginas (máx. 100 por página) y une las carreras por ronda. */
+/**
+ * Recorre todas las páginas (máx. 100 por página) y une las carreras por ronda. La primera dice cuántas
+ * hay; el resto se piden a la vez (el throttle sigue espaciando las que no están en caché).
+ */
 async function allRaces(path: string, revalidate: number, tags: string[] = []): Promise<Race[]> {
   const pageUrl = (offset: number) =>
     `${path}.json?limit=100${offset ? `&offset=${offset}` : ""}`;
   const first = await get<RaceTable>(pageUrl(0), revalidate, tags);
   const total = Number(first.MRData.total);
-  const pages = [first];
-  for (let offset = 100; offset < total; offset += 100) {
-    pages.push(await get<RaceTable>(pageUrl(offset), revalidate, tags));
-  }
-  return mergeRacePages(pages.map((p) => p.MRData.RaceTable.Races));
+  const offsets: number[] = [];
+  for (let offset = 100; offset < total; offset += 100) offsets.push(offset);
+  const rest = await Promise.all(offsets.map((offset) => get<RaceTable>(pageUrl(offset), revalidate, tags)));
+  return mergeRacePages([first, ...rest].map((p) => p.MRData.RaceTable.Races));
 }
 
 /**

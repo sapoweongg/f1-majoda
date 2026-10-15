@@ -94,13 +94,15 @@ export default async function RacePage({
   const tc = await getTranslations("common");
   const ts = await getTranslations("sessions");
 
-  const current = await safe(getCurrentSeason(), season);
   const started = raceStart(race).getTime() < serverNow();
   const finished = raceStart(race).getTime() + 2 * 3600 * 1000 < serverNow();
   const hasSprint = Boolean(race.Sprint);
   const tab = ["results", "qualifying", "sprint", "laps", "strategy"].includes(String(sp.tab)) ? String(sp.tab) : "results";
 
-  const raceData = started ? await safe(getRace(season, round), undefined) : undefined;
+  const [current, raceData] = await Promise.all([
+    safe(getCurrentSeason(), season),
+    started ? safe(getRace(season, round), undefined) : undefined,
+  ]);
   const results = raceData?.Results ?? [];
 
   const base = `/races/${season}/${round}`;
@@ -244,8 +246,10 @@ export default async function RacePage({
       );
     }
   } else if (tab === "strategy") {
-    const pits = results.length ? await safe(getRacePitStops(season, round), []) : [];
-    const weekend = season >= OPENF1_FIRST_SEASON && results.length ? await safe(findWeekendSessions(race), null) : null;
+    const [pits, weekend] = await Promise.all([
+      results.length ? safe(getRacePitStops(season, round), []) : [],
+      season >= OPENF1_FIRST_SEASON && results.length ? safe(findWeekendSessions(race), null) : null,
+    ]);
     const raceSession = weekend?.race;
     const [stints, control, weather] = raceSession
       ? await Promise.all([

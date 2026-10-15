@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { ArrowLeft, Award, Medal } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -14,7 +13,7 @@ import { safe } from "@/lib/safe";
 import { CountUp } from "@/components/special/CountUp";
 import { DuelMoments, DuelRadios, DuelRaceGrid, HonourCards, resultLabel, type DuelTheme } from "@/components/special/Duel2021Parts";
 import { GapChart } from "@/components/special/GapChart";
-import { PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
+import { CommonsImg, GALLERY_NARROW, GALLERY_WIDE, PhotoBanner, SectionTitle as Title } from "@/components/special/SpecialParts";
 import { TrackOutline } from "@/components/track/TrackOutline";
 import { EmptyState, Flag } from "@/components/ui/primitives";
 
@@ -89,7 +88,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
         className="relative -mx-4 overflow-hidden border-y border-white/10 sm:mx-0 sm:rounded-[2rem] sm:border"
         style={{ background: BLACK }}
       >
-        {hero && <Image src={hero.src} alt={c.heroAlt} fill priority sizes="100vw" className="object-cover object-[65%_60%] opacity-70" />}
+        {hero && <CommonsImg img={hero} alt={c.heroAlt} priority sizes="100vw" className="object-[65%_60%] opacity-70" />}
         <div
           className="absolute inset-0"
           style={{
@@ -340,6 +339,7 @@ export default async function Hamilton2021Page({ params }: PageProps<"/[locale]/
                 img={img}
                 caption={c.gallery[key]}
                 small
+                sizes={["portrait", "side"].includes(key) ? GALLERY_WIDE : GALLERY_NARROW}
                 className={cn("h-full", key === "portrait" && "col-span-2 row-span-2", key === "side" && "col-span-2")}
                 position={key === "portrait" ? "object-[50%_25%]" : undefined}
               />

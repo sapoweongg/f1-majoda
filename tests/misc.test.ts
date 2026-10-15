@@ -6,6 +6,7 @@ import { activeIn, gapYears, lapTime, parseLapTime } from "@/lib/format";
 import { isPole } from "@/lib/poles";
 import { buildDuel } from "@/lib/duel2021";
 import radios2021 from "@/data/duel2021-radios.json";
+import { commonsSrcSet } from "@/lib/api/wikimedia";
 import { driverFinals, teamFinals } from "@/lib/standings";
 import { mergeRacePages, type Circuit, type ConstructorStanding, type DriverStanding, type Race } from "@/lib/api/jolpica";
 import { addTeamSeason, mergeFamilies, type TeamIndexEntry } from "@/lib/constructors";
@@ -75,6 +76,20 @@ describe("comparativa", () => {
     // Monza 1952: Moss aparece en la pole por error
     expect(isPole(race("1952", "8", [["moss", "1"]]), "moss")).toBe(false);
     expect(isPole(race("2026", "1", [["moss", "1"]]), "moss")).toBe(true);
+  });
+});
+
+describe("fotos de Commons", () => {
+  it("arma el srcset con los anchos que sirve Wikimedia, sin pasar del original", () => {
+    const thumb =
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Foto_23.jpg/1920px-Foto_23.jpg?utm_source=commons.wikimedia.org";
+    expect(commonsSrcSet(thumb, 8640)).toBe(
+      [500, 960, 1280, 1920].map((w) => `https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Foto_23.jpg/${w}px-Foto_23.jpg ${w}w`).join(", "),
+    );
+    // Una foto de 1100 px de ancho no tiene miniaturas de 1280 ni de 1920
+    expect(commonsSrcSet(thumb, 1100)?.split(", ").map((x) => x.split(" ")[1])).toEqual(["500w", "960w"]);
+    // Sin miniatura (la URL del original) no hay srcset
+    expect(commonsSrcSet("https://upload.wikimedia.org/wikipedia/commons/4/46/Foto_23.jpg", 8640)).toBeUndefined();
   });
 });
 

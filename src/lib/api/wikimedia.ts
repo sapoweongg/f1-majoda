@@ -9,10 +9,24 @@ const TTL = 30 * 86400;
 
 export type WikiImage = {
   src: string;
+  /** Miniaturas estándar para `srcset` (solo en getCommonsFiles). */
+  srcSet?: string;
   /** Autor y licencia para el crédito. */
   credit: string;
   filePage: string;
 };
+
+/** Anchos de miniatura que sirve Wikimedia: los demás (480, 1440, 1800…) responden 400. */
+const THUMB_WIDTHS = [500, 960, 1280, 1920];
+
+/** srcset con las miniaturas estándar de una foto, sin pasar de su ancho original. */
+export function commonsSrcSet(thumbUrl: string, originalWidth: number): string | undefined {
+  const url = thumbUrl.split("?")[0];
+  const segment = /\/\d+px-([^/]+)$/;
+  if (!segment.test(url)) return undefined;
+  const widths = THUMB_WIDTHS.filter((w) => w < originalWidth);
+  return widths.length ? widths.map((w) => `${url.replace(segment, `/${w}px-$1`)} ${w}w`).join(", ") : undefined;
+}
 
 type Mapping = { from: string; to: string }[];
 type PageImages = {
@@ -133,14 +147,20 @@ export async function getCommonsFiles(files: string[], width = 1600): Promise<Ma
         string,
         {
           title: string;
-          imageinfo?: { thumburl?: string; url: string; descriptionurl: string; extmetadata?: Record<string, { value: string } | undefined> }[];
+          imageinfo?: {
+            thumburl?: string;
+            url: string;
+            width?: number;
+            descriptionurl: string;
+            extmetadata?: Record<string, { value: string } | undefined>;
+          }[];
         }
       >;
     };
   };
   try {
     info = await cachedJson(
-      `https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=extmetadata|url&iiurlwidth=${width}&titles=${encodeURIComponent(titles.join("|"))}`,
+      `https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=extmetadata|url|size&iiurlwidth=${width}&titles=${encodeURIComponent(titles.join("|"))}`,
       { revalidate: TTL, tags: ["wiki"], headers, throttle },
     );
   } catch {
@@ -155,6 +175,7 @@ export async function getCommonsFiles(files: string[], width = 1600): Promise<Ma
     const license = stripHtml(meta.LicenseShortName?.value);
     out.set(file, {
       src: ii.thumburl ?? ii.url,
+      srcSet: ii.thumburl && ii.width ? commonsSrcSet(ii.thumburl, ii.width) : undefined,
       credit: license ? `${artist} · ${license}` : artist,
       filePage: ii.descriptionurl,
     });

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/format";
 
 // Piezas comunes de las páginas especiales (Max 2023, Max 2021…): cada una pasa su color de acento.
@@ -17,6 +16,46 @@ export function SectionTitle({ eyebrow, title, intro, accent }: { eyebrow?: stri
   );
 }
 
+type CommonsPhoto = { src: string; srcSet?: string; credit: string; filePage: string };
+
+/** Galerías de las páginas especiales: 2 columnas en el móvil y 4 en escritorio. Fotos que ocupan dos columnas: */
+export const GALLERY_WIDE = "(min-width: 1024px) 50vw, 100vw";
+/** …y las que ocupan una. */
+export const GALLERY_NARROW = "(min-width: 1024px) 25vw, 50vw";
+
+/**
+ * Foto de Commons a pantalla del contenedor, con las miniaturas estándar en `srcset`: el navegador baja
+ * solo el ancho que necesita (en el móvil, la de 960 en vez de la de 1920). next/image no sirve aquí:
+ * con `unoptimized` descarta el srcSet propio.
+ */
+export function CommonsImg({
+  img,
+  alt,
+  sizes,
+  priority,
+  className,
+}: {
+  img: Pick<CommonsPhoto, "src" | "srcSet">;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- ver arriba
+    <img
+      src={img.src}
+      srcSet={img.srcSet}
+      sizes={img.srcSet ? sizes : undefined}
+      alt={alt}
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
+      decoding="async"
+      className={cn("absolute inset-0 h-full w-full object-cover", className)}
+    />
+  );
+}
+
 /** Foto con degradado, pie y crédito (autor y licencia enlazados a Commons). */
 export function PhotoBanner({
   img,
@@ -25,13 +64,16 @@ export function PhotoBanner({
   small,
   className,
   position = "object-center",
+  sizes,
 }: {
-  img: { src: string; credit: string; filePage: string };
+  img: CommonsPhoto;
   caption: string;
   quote?: string;
   small?: boolean;
   className?: string;
   position?: string;
+  /** Ancho que ocupa en pantalla, para elegir la miniatura (por defecto según `small`). */
+  sizes?: string;
 }) {
   return (
     <figure
@@ -41,12 +83,11 @@ export function PhotoBanner({
         className,
       )}
     >
-      <Image
-        src={img.src}
+      <CommonsImg
+        img={img}
         alt={caption}
-        fill
-        sizes={small ? "(min-width: 1024px) 40vw, 100vw" : "100vw"}
-        className={cn("object-cover transition-transform duration-700 group-hover:scale-[1.03]", position)}
+        sizes={sizes ?? (small ? "(min-width: 1024px) 40vw, 100vw" : "100vw")}
+        className={cn("transition-transform duration-700 group-hover:scale-[1.03]", position)}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
       {quote && (

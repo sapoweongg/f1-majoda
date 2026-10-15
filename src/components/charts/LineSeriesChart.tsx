@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/format";
+import { chartValueFormat, type ChartFormat } from "./chart-format";
+
+// Recharts pesa unos 100 KB comprimidos. Solo puede dibujar en el navegador (necesita medir el ancho),
+// así que se carga aparte, sin bloquear el resto de la página: leyenda y tabla salen del servidor.
+const LinePlot = dynamic(() => import("./LinePlot").then((m) => m.LinePlot), { ssr: false });
 
 export type Series = {
   id: string;
@@ -22,21 +27,13 @@ type Props = {
   reversed?: boolean;
   yDomain?: [number | "auto", number | "auto"];
   /** Formato de valores (no se pueden pasar funciones desde el servidor). */
-  format?: "int" | "laptime";
+  format?: ChartFormat;
   tableLabel?: string;
   chartLabel?: string;
   xTitle?: string;
   /** Series ordenadas por valor en el tooltip (mayor primero, o menor si reversed). */
   sortTooltip?: boolean;
 };
-
-const AXIS = { stroke: "#6e6e78", fontSize: 11 };
-
-function formatLap(v: number) {
-  const m = Math.floor(v / 60);
-  const sec = (v - m * 60).toFixed(1).padStart(4, "0");
-  return m ? `${m}:${sec}` : sec;
-}
 
 export function LineSeriesChart({
   labels,
@@ -51,7 +48,7 @@ export function LineSeriesChart({
   sortTooltip = true,
 }: Props) {
   const [view, setView] = useState<"chart" | "table">("chart");
-  const valueFormat = format === "laptime" ? formatLap : (v: number) => String(Math.round(v * 10) / 10);
+  const valueFormat = chartValueFormat(format);
   const [focus, setFocus] = useState<string | null>(null);
   const rows = labels.map((label, i) => {
     const row: Record<string, number | string | null> = { label, i };
@@ -109,66 +106,19 @@ export function LineSeriesChart({
       </div>
 
       {view === "chart" ? (
-        <div style={{ height }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={rows} margin={{ top: 8, right: 12, bottom: 4, left: -8 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="label" tick={AXIS} tickLine={false} axisLine={{ stroke: "rgba(255,255,255,0.12)" }} interval="preserveStartEnd" minTickGap={8} />
-              <YAxis
-                tick={AXIS}
-                tickLine={false}
-                axisLine={false}
-                reversed={reversed}
-                domain={yDomain ?? ["auto", "auto"]}
-                allowDecimals={false}
-                width={format === "laptime" ? 58 : 44}
-                tickFormatter={(v: number) => valueFormat(v)}
-              />
-              <Tooltip
-                cursor={{ stroke: "rgba(255,255,255,0.25)", strokeWidth: 1 }}
-                content={({ active, payload, label }) => {
-                  if (!active || !payload?.length) return null;
-                  const i = Number(payload[0]?.payload?.i ?? 0);
-                  const items = series
-                    .map((s) => ({ s, v: rows[i]?.[s.id] as number | null }))
-                    .filter((x) => x.v != null);
-                  if (sortTooltip) items.sort((a, b) => (reversed ? a.v! - b.v! : b.v! - a.v!));
-                  return (
-                    <div className="glass min-w-44 !rounded-xl p-3 text-xs shadow-2xl">
-                      <p className="mb-2 font-semibold text-ink">{fullLabels?.[i] ?? label}</p>
-                      <ul className="space-y-1">
-                        {items.slice(0, 12).map(({ s, v }) => (
-                          <li key={s.id} className="flex items-center gap-2">
-                            <svg width="12" height="4" aria-hidden>
-                              <line x1="0" y1="2" x2="12" y2="2" stroke={s.color} strokeWidth="2.5" strokeDasharray={s.dashed ? "3 2" : undefined} />
-                            </svg>
-                            <span className="display num text-sm text-ink">{valueFormat(v!)}</span>
-                            <span className="truncate text-ink-2">{s.label}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                }}
-              />
-              {series.map((s) => (
-                <Line
-                  key={s.id}
-                  type="monotone"
-                  dataKey={s.id}
-                  name={s.label}
-                  stroke={s.color}
-                  strokeWidth={focus === s.id ? 3 : 2}
-                  strokeOpacity={focus && focus !== s.id ? 0.2 : 1}
-                  strokeDasharray={s.dashed ? "5 4" : undefined}
-                  dot={false}
-                  activeDot={{ r: 4, stroke: "#111114", strokeWidth: 2 }}
-                  connectNulls
-                  isAnimationActive={false}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+        // El servidor manda el hueco con el esqueleto; se oculta en cuanto Recharts dibuja el SVG
+        <div className="chart-panel relative" style={{ height }}>
+          <div className="chart-skeleton pointer-events-none absolute inset-0 animate-pulse rounded-lg bg-white/[0.04]" aria-hidden />
+          <LinePlot
+            rows={rows}
+            series={series}
+            fullLabels={fullLabels}
+            reversed={reversed}
+            yDomain={yDomain}
+            format={format}
+            sortTooltip={sortTooltip}
+            focus={focus}
+          />
         </div>
       ) : (
         <div className="scroll-x max-h-[420px] overflow-y-auto rounded-xl border border-line">
